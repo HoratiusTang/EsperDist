@@ -1,6 +1,12 @@
-bin/
+# old SVN folders
 .svn/
+
+# Java Bins
+bin/
 *.class
+
+# Logs
+log.txt*
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
