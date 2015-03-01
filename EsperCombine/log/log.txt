@@ -1,0 +1,45 @@
+03-02 00:25:43 INFO [Coordinator.newReceivedLink()] coordinator accept link(1) from worker1
+03-02 00:25:43 DEBUG [Coordinator.handleReceiving()] coordinator regist new [worker1:127.0.0.1,1001]
+03-02 00:25:43 INFO [Coordinator.newReceivedLink()] coordinator accept link(3) from worker2
+03-02 00:25:43 DEBUG [Coordinator.handleReceiving()] coordinator regist new [worker2:127.0.0.1,1002]
+03-02 00:25:43 INFO [Coordinator.newReceivedLink()] coordinator accept link(5) from worker3
+03-02 00:25:43 DEBUG [Coordinator.handleReceiving()] coordinator regist new [worker3:127.0.0.1,1003]
+03-02 00:25:44 INFO [Coordinator.newReceivedLink()] coordinator accept link(7) from worker4
+03-02 00:25:44 DEBUG [Coordinator.handleReceiving()] coordinator regist new [worker4:127.0.0.1,1004]
+03-02 00:25:44 INFO [Coordinator.newReceivedLink()] coordinator accept link(9) from worker5
+03-02 00:25:44 DEBUG [Coordinator.handleReceiving()] coordinator regist new [worker5:127.0.0.1,1005]
+03-02 00:25:44 INFO [Coordinator.newReceivedLink()] coordinator accept link(11) from spout1
+03-02 00:25:44 DEBUG [Coordinator.handleReceiving()] coordinator regist new [spout1:127.0.0.1,2001] with Event A
+03-02 00:25:44 INFO [Coordinator.newReceivedLink()] coordinator accept link(13) from spout2
+03-02 00:25:44 DEBUG [Coordinator.handleReceiving()] coordinator regist new [spout2:127.0.0.1,2002] with Event B
+03-02 00:25:44 INFO [Coordinator.newReceivedLink()] coordinator accept link(15) from spout3
+03-02 00:25:44 DEBUG [Coordinator.handleReceiving()] coordinator regist new [spout3:127.0.0.1,2003] with Event C
+03-02 00:25:44 INFO [Coordinator.newReceivedLink()] coordinator accept link(17) from spout4
+03-02 00:25:44 DEBUG [Coordinator.handleReceiving()] coordinator regist new [spout4:127.0.0.1,2004] with Event D
+03-02 00:25:44 INFO [Coordinator.start()] Coordinator is running...
+03-02 00:25:44 INFO [Spout.start()] Spout spout1 is running...
+03-02 00:25:44 INFO [Spout.run()] spout1 is running, sending A
+03-02 00:25:44 INFO [Spout.start()] Spout spout2 is running...
+03-02 00:25:44 INFO [Spout.start()] Spout spout3 is running...
+03-02 00:25:44 INFO [Spout.start()] Spout spout4 is running...
+03-02 00:25:44 INFO [Spout.run()] spout3 is running, sending C
+03-02 00:25:44 INFO [Worker.start()] Worker worker1 is running...
+03-02 00:25:44 INFO [Worker.start()] Worker worker2 is running...
+03-02 00:25:44 INFO [Worker.start()] Worker worker3 is running...
+03-02 00:25:44 INFO [Spout.run()] spout2 is running, sending B
+03-02 00:25:44 INFO [Worker.start()] Worker worker4 is running...
+03-02 00:25:44 INFO [Worker.start()] Worker worker5 is running...
+03-02 00:25:44 INFO [Spout.run()] spout4 is running, sending D
+03-02 00:25:45 DEBUG [EPAdministratorHelper.compileEPL()] .createEPLStmt statementName=null eplStatement=select b01.id, b01.price from B(id>3).win:time(5 sec) as b01
+03-02 00:25:45 INFO [Spout.newReceivedLink()] spout2 accept link(19) from worker2
+03-02 00:25:45 DEBUG [EPAdministratorHelper.compileEPL()] .createEPLStmt statementName=null eplStatement=select b01.id, b01.price from B(id>3).win:time(5 sec) as b01 output every 1000 msec
+03-02 00:25:46 DEBUG [EPAdministratorHelper.compileEPL()] .createEPLStmt statementName=null eplStatement=select a01.id, a01.time, a01.price from A(id>5).win:time(5 sec) as a01
+03-02 00:25:47 INFO [Spout.newReceivedLink()] spout1 accept link(21) from worker3
+03-02 00:25:47 DEBUG [EPAdministratorHelper.compileEPL()] .createEPLStmt statementName=null eplStatement=select a01.id, a01.time, a01.price from A(id>5).win:time(5 sec) as a01 output every 1000 msec
+03-02 00:25:47 INFO [Instance.update()] epl 0 output 20 events
+03-02 00:25:48 DEBUG [EPAdministratorHelper.compileEPL()] .createEPLStmt statementName=null eplStatement=select a20.id, a20.clientIds, b20.id, b20.name, b20.clientIds from A(id>5).win:time(6 sec) as a20, B(id>3).win:time(5 sec) as b20 where a20.id=b20.id
+03-02 00:25:48 INFO [Spout.newReceivedLink()] spout1 accept link(23) from worker4
+03-02 00:25:48 INFO [Spout.newReceivedLink()] spout2 accept link(25) from worker4
+03-02 00:25:48 DEBUG [EPAdministratorHelper.compileEPL()] .createEPLStmt statementName=null eplStatement=select a20.id, a20.clientIds, b20.id, b20.name, b20.clientIds from A(id>5).win:time(6 sec) as a20, B(id>3).win:time(5 sec) as b20 where a20.id=b20.id output every 1000 msec
+03-02 00:25:48 INFO [Instance.update()] epl 1 output 20 events
+03-02 00:25:48 INFO [Instance.update()] epl 0 output 40 events
