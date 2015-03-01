@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="core"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path="monitor"/>
+	<classpathentry kind="src" path="io"/>
+	<classpathentry kind="src" path="kryonet"/>
+	<classpathentry kind="src" path="external"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0-tjy.jar"/>
+	<classpathentry kind="lib" path="lib/sigar-bin/lib/sigar.jar"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins">
+		<accessrules>
+			<accessrule kind="accessible" pattern="**/internal/**"/>
+		</accessrules>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/kryonet/asm-4.0.jar"/>
+	<classpathentry kind="lib" path="lib/kryonet/jsonbeans-0.2.jar"/>
+	<classpathentry kind="lib" path="lib/kryonet/minlog-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/kryonet/objenesis-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/kryonet/reflectasm-1.07.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-configuration-1.9.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-logging-1.1.3.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-math3-3.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-codec-1.10.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esper/antlr-runtime-4.1.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esper/cglib-nodep-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-amqp/commons-cli-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-amqp/commons-io-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-amqp/rabbitmq-client.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-http/httpclient-4.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-http/httpcore-4.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-http/httpcore-nio-4.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-springjms/commons-pool-1.6.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-springjms/slf4j-api-1.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-springjms/slf4j-log4j12-1.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-stax/axiom-api-1.2.9.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-stax/axiom-c14n-1.2.9.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-stax/axiom-dom-1.2.9.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-stax/axiom-impl-1.2.9.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-stax/geronimo-activation_1.1_spec-1.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-stax/geronimo-javamail_1.4_spec-1.6.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-stax/geronimo-stax-api_1.0_spec-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-stax/jaxen-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/esper-5.0.0/esperio-stax/wstx-asl-3.2.9.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart/hamcrest-core-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart/jcommon-1.0.23.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart/jfreechart-1.0.19-experimental.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart/jfreechart-1.0.19-swt.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart/jfreesvg-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart/orsoncharts-1.4-eval-nofx.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart/orsonpdf-1.6-eval.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart/servlet.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart/swtgraphics2d.jar"/>
+	<classpathentry kind="lib" path="F:/OpenSource/NatTableExamples-1.2.0.jar" sourcepath="F:/eclipse_se_3.7/plugins/org.eclipse.nebula.widgets.nattable.core.source_1.2.0.201501272102.jar"/>
+	<classpathentry kind="lib" path="lib/util/junit-4.11.jar"/>
+	<classpathentry kind="lib" path="lib/util/log4j-1.2.17.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

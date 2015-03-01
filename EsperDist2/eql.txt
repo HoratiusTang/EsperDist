@@ -1,0 +1,10 @@
+select a, b, c from pattern [a=A-> b=B-> c=C]
+select a, b, c from pattern [every(a=A-> b=B-> c=C)]
+select a, b, c from pattern [every(a=A)-> b=B-> c=C]
+select a, b from pattern [a=A and b=B]//no squence, B can occur before a
+select a, b from pattern every [a=A and b=B]
+select a, b from pattern [every(a=A) and b=B]
+select a, b, c from pattern [A->B->C]
+
+A until B
+A until [2]B
