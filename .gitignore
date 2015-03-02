@@ -4,6 +4,9 @@
 # Sigar library
 sigar*/
 
+# Local temp files
+*.bin
+
 # Java Bins
 bin/
 *.class
