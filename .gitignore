@@ -12,6 +12,7 @@ bin/
 *.class
 
 # Logs
+log/
 log.txt*
 
 # Mobile Tools for Java (J2ME)
