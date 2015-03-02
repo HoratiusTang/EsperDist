@@ -1,6 +1,9 @@
 # old SVN folders
 .svn/
 
+# Sigar library
+sigar*/
+
 # Java Bins
 bin/
 *.class
