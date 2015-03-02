@@ -1,0 +1,1 @@
+export EsperDist2 project (only packages core/io/external) to EsperDist2-core.jar here
