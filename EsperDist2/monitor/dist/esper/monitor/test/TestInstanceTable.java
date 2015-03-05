@@ -1,6 +1,8 @@
 package dist.esper.monitor.test;
 
-
+/** 
+ * This class need NatTableExamples.jar, which is very big and is NOT contained in the project.
+ * 
 import org.eclipse.nebula.widgets.nattable.examples.AbstractNatExample;
 import org.eclipse.nebula.widgets.nattable.examples.runner.StandaloneNatExampleRunner;
 import org.eclipse.swt.widgets.Composite;
@@ -42,3 +44,4 @@ public class TestInstanceTable extends AbstractNatExample {
 	}
 
 }
+*/
