@@ -396,13 +396,21 @@ public class CostEvaluator {
 			DeltaResourceUsage[] agentDRUs=new DeltaResourceUsage[fsl.getIndirectReusableContainerMapComparisonResultList().size()];
 			for(int i=0; i<fsl.getIndirectReusableContainerMapComparisonResultList().size(); i++){
 				ContainerAndMapAndBoolComparisonResult cmcr=fsl.getIndirectReusableContainerMapComparisonResultList().get(i);
-				agentDRUs[i]=computeReusableDeltaResourceUsageRecursively(fsl, cmcr);
+				if(cmcr.getFirst() instanceof FilterDelayedStreamContainer){
+					agentDRUs[i]=null;
+				}
+				else{
+					agentDRUs[i]=computeReusableDeltaResourceUsageRecursively(fsl, cmcr);
+				}
 			}
 			List<WorkerStat> wsList=getIndirectReuseLimitedWorkerStatList(fsl, parentWorkerId, procWorkerStatMap);
 			for(WorkerStat ws: wsList){
 			//for(WorkerStat ws: this.procWorkerStatMap.values()){
 				if(!fsl.hasDirectResuableContainerOnWorker(ws.id)){
 					for(int i=0; i<agentDRUs.length; i++){
+						if(agentDRUs[i]==null){
+							continue;
+						}
 						DeltaResourceUsage filterCompDRU=new DeltaResourceUsage(ws, CandidateContainerType.FILTER_INDIRECT_REUSE, fsl, null);//container is set below
 						filterCompDRU.addChild(agentDRUs[i]);
 						filterCompDRU.setContainer(fsl.getIndirectReusableContainerMapComparisonResultList().get(i).getFirst());
@@ -443,13 +451,21 @@ public class CostEvaluator {
 			DeltaResourceUsage[] agentDRUs=new DeltaResourceUsage[jsl.getIndirectReusableContainerMapComparisonResultList().size()];
 			for(int i=0; i<jsl.getIndirectReusableContainerMapComparisonResultList().size(); i++){
 				ContainerAndMapAndBoolComparisonResult cmcr=jsl.getIndirectReusableContainerMapComparisonResultList().get(i);
-				agentDRUs[i]=computeReusableDeltaResourceUsageRecursively(jsl, cmcr);//JOIN_REUSE
+				if(cmcr.getFirst() instanceof JoinDelayedStreamContainer){
+					agentDRUs[i]=null;
+				}
+				else{
+					agentDRUs[i]=computeReusableDeltaResourceUsageRecursively(jsl, cmcr);//JOIN_REUSE
+				}
 			}
 			List<WorkerStat> wsList=getIndirectReuseLimitedWorkerStatList(jsl, parentWorkerId, procWorkerStatMap);
 			//for(WorkerStat ws: this.procWorkerStatMap.values()){
 			for(WorkerStat ws: wsList){
 				if(!jsl.hasDirectResuableContainerOnWorker(ws.id)){
 					for(int i=0; i<agentDRUs.length; i++){
+						if(agentDRUs[i]==null){
+							continue;
+						}
 						DeltaResourceUsage joinCompDRU=new DeltaResourceUsage(ws, CandidateContainerType.JOIN_INDIRECT_REUSE, jsl, null);
 						joinCompDRU.setContainer(agentDRUs[i].getContainer());
 						joinCompDRU.addChild(agentDRUs[i]);

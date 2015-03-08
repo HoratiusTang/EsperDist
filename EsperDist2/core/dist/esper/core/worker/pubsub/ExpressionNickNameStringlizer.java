@@ -14,7 +14,7 @@ class ExpressionNickNameStringlizer extends ExpressionStringlizer{
 		se.getSelectExpr().accept(this,sw);
 	}
 	
-	public StringBuilder visitEventSpecification(
+	public StringBuilder visitEventOrPropertySpecification(
 			EventOrPropertySpecification eops, StringBuilder sw){
 		sw.append(eops.getInternalEventNickName()+"."+eops.getInternalEventPropertyName());
 		return sw;
@@ -23,25 +23,25 @@ class ExpressionNickNameStringlizer extends ExpressionStringlizer{
 	@Override
 	public StringBuilder visitEventSpecification(EventSpecification es,
 			StringBuilder sw) {
-		return visitEventSpecification(es, sw);
+		return visitEventOrPropertySpecification(es, sw);
 	}
 
 	@Override
 	public StringBuilder visitEventIndexedSpecification(EventIndexedSpecification eis,
 			StringBuilder sw) {
-		return visitEventSpecification(eis, sw);
+		return visitEventOrPropertySpecification(eis, sw);
 	}
 
 	@Override
 	public StringBuilder visitEventPropertySpecification(
 			EventPropertySpecification eps, StringBuilder sw) {
-		return visitEventSpecification(eps, sw);
+		return visitEventOrPropertySpecification(eps, sw);
 	}
 
 	@Override
 	public StringBuilder visitEventPropertyIndexedSpecification(
 			EventPropertyIndexedSpecification epis, StringBuilder sw) {
-		return visitEventSpecification(epis, sw);
+		return visitEventOrPropertySpecification(epis, sw);
 	}
 	
 }

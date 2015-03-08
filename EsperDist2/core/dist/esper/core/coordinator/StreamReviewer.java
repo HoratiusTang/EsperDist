@@ -173,7 +173,7 @@ public class StreamReviewer {
 				exprComp.setEventAliasMap(fcscEplMap);
 				List<AbstractBooleanExpression> fslExtraFilterCondList=dumpImplyingAndSurplusConditionList(agentCr.getOwnPairList());
 				cr=beComp.compareConjunctionLists(fslExtraFilterCondList, fcsc.getExtraFilterCondList(), 0);
-				if(cr.getTotalState()==State.EQUIVALENT){// || cr.getTotalState()==State.COMPATIBLE){
+				if(cr.getTotalState()==State.EQUIVALENT || cr.getTotalState()==State.IMPLYING){
 					Map<EventAlias, EventAlias> fcscAgentEplMap=new HashMap<EventAlias, EventAlias>(4);
 					agentCr=check(fsl, fcsc.getAgent(), fcsc.getAgent().getEplId(), fcscAgentEplMap);
 					
@@ -184,9 +184,9 @@ public class StreamReviewer {
 					if(cr.getTotalState()==State.EQUIVALENT){
 						fsl.addDirectReusableContainerMapComparisonResult(cmcr2);
 					}
-//					else{
-//						fsl.addCompatibleContainerMapComparisonResult(cmcr2);
-//					}					
+					else{
+						fsl.addIndirectReusableContainerMapComparisonResult(cmcr2);
+					}				
 					check(fsl, fcsc.getAgent(), parentContainerEplId, parentContainerMap);
 				}
 			}
@@ -238,7 +238,7 @@ public class StreamReviewer {
 					BooleanExpressionComparisonResult childCr=beComp.compareConjunctionLists(jslExtraChildCondList, jcsc.getExtraChildCondList(), 0);
 					cr.addChildResult(childCr);
 				}
-				if(cr.getTotalState()==State.EQUIVALENT){// || cr.getTotalState()==State.COMPATIBLE){					
+				if(cr.getTotalState()==State.EQUIVALENT || cr.getTotalState()==State.IMPLYING){					
 					Map<EventAlias, EventAlias> jcscAgentEplMap=new HashMap<EventAlias, EventAlias>(4);
 					agentCr=check(jsl, jcsc.getAgent(), jcsc.getAgent().getEplId(), jcscAgentEplMap);
 					
@@ -249,9 +249,9 @@ public class StreamReviewer {
 					if(cr.getTotalState()==State.EQUIVALENT){
 						jsl.addDirectReusableContainerMapComparisonResult(cmcr2);
 					}
-//					else{
-//						jsl.addCompatibleContainerMapComparisonResult(cmcr2);
-//					}
+					else{
+						jsl.addIndirectReusableContainerMapComparisonResult(cmcr2);
+					}
 					check(jsl, jcsc.getAgent(), parentContainerEplId, parentContainerMap);
 				}
 			}
@@ -389,6 +389,9 @@ public class StreamReviewer {
 	
 	public void checkIndividual(Stream sl){
 		//no XXXCompitableStreamLocation here
+//		if(sl instanceof RootStream){
+//			
+//		}
 		if(sl instanceof JoinStream){
 			JoinStream jsl=(JoinStream)sl;
 			for(JoinStreamContainer jsc: this.existedJscList){

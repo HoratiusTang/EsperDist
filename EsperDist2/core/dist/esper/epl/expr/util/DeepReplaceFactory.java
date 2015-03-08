@@ -67,13 +67,16 @@ public class DeepReplaceFactory implements IExpressionVisitor<AbstractExpression
 	public AbstractExpression visitEventSpecification(EventSpecification es) {
 		EventAlias e1=eaMap.get(es.getEventAlias());
 		EventAlias e2=eaMap.get(es.getOwnEventAlias());
-		if(e1==null){
-			System.out.print("");
+		try{
+			if(e1==null){
+				throw new NullPointerException("e1 is null");
+			}
+			es.setEventAlias(e1);
+			es.setOwnEventAlias(e2);
 		}
-		assert(e1!=null);
-		//assert(e2!=null);
-		es.setEventAlias(e1);
-		es.setOwnEventAlias(e2);
+		catch(NullPointerException ex){
+			ex.printStackTrace();
+		}
 		return es;
 	}
 

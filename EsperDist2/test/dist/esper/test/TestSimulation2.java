@@ -252,10 +252,10 @@ public class TestSimulation2 {
 		sleep(5000);
 		//randomSort(eplPairs);
 		//eplPairs=new Pair[]{};
-		eplPairs=new Pair[]{new Pair(00,epl00), new Pair(02,epl02), new Pair(03,epl03), new Pair(04,epl04),
-				new Pair(10,epl10), new Pair(11,epl11), new Pair(12,epl12), new Pair(13,epl13), new Pair(14,epl14),
-				new Pair(20,epl20), new Pair(21, epl21)};
-		//eplPairs=new Pair[]{eplPairs[02], eplPairs[20]};
+//		eplPairs=new Pair[]{new Pair(00,epl00), new Pair(02,epl02), new Pair(03,epl03), new Pair(04,epl04),
+//				new Pair(10,epl10), new Pair(11,epl11), new Pair(12,epl12), new Pair(13,epl13), new Pair(14,epl14),
+//				new Pair(20,epl20), new Pair(21, epl21), eplPairs[22]};
+//		eplPairs=new Pair[]{eplPairs[02], eplPairs[21], eplPairs[22]};
 //		eplPairs=new Pair[]{new Pair(22,epl22)};
 		//eplPairs=new Pair[]{new Pair(01,epl01), new Pair(11,epl11), new Pair(20,epl20), new Pair(22,epl22), new Pair(30, epl30)};
 //		eplPairs=new Pair[]{new Pair(30,epl30)};
@@ -269,6 +269,9 @@ public class TestSimulation2 {
 					eplId=eplPairs[i].getFirst();
 					System.err.println(eplId);
 					printPairs(eplPairs);
+					if(eplId==22){
+						System.out.print("");
+					}
 					coord.executeEPL(eplPairs[i].getSecond());
 					sleep(5000);
 				}
