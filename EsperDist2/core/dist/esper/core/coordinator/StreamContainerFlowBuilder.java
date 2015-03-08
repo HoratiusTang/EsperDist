@@ -302,14 +302,14 @@ public class StreamContainerFlowBuilder {
 			RootStreamContainer rsc=(RootStreamContainer)sc;
 			assginUniqueName(rsc.getUpContainer());
 			if(rsc.getUniqueName()==null){					
-				rsc.setUniqueName(nextStreamUniqueName());
+				rsc.setUniqueName(nextStreamUniqueName(rsc));
 			}
 		}
 		else if(sc instanceof JoinDelayedStreamContainer){
 			JoinDelayedStreamContainer jcsc=(JoinDelayedStreamContainer)sc;
 			assginUniqueName(jcsc.getAgent());
-			if(jcsc.getUniqueName()==null){					
-				jcsc.setUniqueName(nextStreamUniqueName());
+			if(jcsc.getUniqueName()==null){
+				jcsc.setUniqueName(nextStreamUniqueName(jcsc));
 			}
 		}
 		else if(sc instanceof JoinStreamContainer){
@@ -318,26 +318,26 @@ public class StreamContainerFlowBuilder {
 				assginUniqueName(csl);
 			}
 			if(jsc.getUniqueName()==null){					
-				jsc.setUniqueName(nextStreamUniqueName());
+				jsc.setUniqueName(nextStreamUniqueName(jsc));
 			}
 		}
 		else if(sc instanceof FilterDelayedStreamContainer){
 			FilterDelayedStreamContainer fcsc=(FilterDelayedStreamContainer)sc;
 			assginUniqueName(fcsc.getAgent());
 			if(fcsc.getUniqueName()==null){					
-				fcsc.setUniqueName(nextStreamUniqueName());
+				fcsc.setUniqueName(nextStreamUniqueName(fcsc));
 			}
 		}
 		else if(sc instanceof FilterStreamContainer){
 			FilterStreamContainer fsc=(FilterStreamContainer)sc;
-			if(fsc.getUniqueName()==null){					
-				fsc.setUniqueName(nextStreamUniqueName());
+			if(fsc.getUniqueName()==null){
+				fsc.setUniqueName(nextStreamUniqueName(fsc));
 			}
 		}
 		else if(sc instanceof PatternStreamContainer){
 			PatternStreamContainer psc=(PatternStreamContainer)sc;
 			if(psc.getUniqueName()==null){
-				psc.setUniqueName(nextStreamUniqueName());
+				psc.setUniqueName(nextStreamUniqueName(psc));
 			}
 		}			
 		assginUniqueNameToSelectElement(sc);			
@@ -374,7 +374,27 @@ public class StreamContainerFlowBuilder {
 		return "se_"+coordinator.selectElementUID.getAndIncrement();
 	}
 	
-	public String nextStreamUniqueName(){
-		return "sl_"+coordinator.streamUID.getAndIncrement();
+//	public String nextStreamUniqueName(){
+//		return "sl_"+coordinator.streamUID.getAndIncrement();
+//	}
+	
+	public String nextStreamUniqueName(DerivedStreamContainer dsc){
+		long sid=coordinator.streamUID.getAndIncrement();
+		if(dsc instanceof RootStreamContainer){
+			return "RT"+sid;
+		}
+		else if(dsc instanceof JoinDelayedStreamContainer){
+			return "JD"+sid;
+		}
+		else if(dsc instanceof JoinStreamContainer){
+			return "JN"+sid;
+		}
+		else if(dsc instanceof FilterDelayedStreamContainer){
+			return "FD"+sid;
+		}
+		else if(dsc instanceof FilterStreamContainer){
+			return "FT"+sid;
+		}
+		return null;
 	}
 }

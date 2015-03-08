@@ -27,6 +27,7 @@ import dist.esper.monitor.ui.custom.EplTable;
 import dist.esper.monitor.ui.layout.FlowLayoutAlgorithm;
 import dist.esper.monitor.ui.layout.GridFixedSizeLayoutAlgorithm;
 
+@Deprecated
 public class WorkerInstancesComposite extends AbstractMonitorComposite{
 	//CBanner banner;	
 	Composite wiComp;

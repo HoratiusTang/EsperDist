@@ -379,20 +379,21 @@ public class StreamReviewer {
 		this.crMap.clear();
 	}
 	
-	public void check(){
-		for(RootStreamContainer rsc: this.existedRscList){
-			Map<EventAlias, EventAlias> rscToRslMap=new HashMap<EventAlias, EventAlias>(4);
-			this.checkRslAndRslc(rootStream, rsc, rsc.getEplId(), rscToRslMap);
-		}
-		checkIndividual(rootStream.getUpStream());
+	public void check(){		
+		checkIndividual(rootStream);
 	}
 	
 	public void checkIndividual(Stream sl){
 		//no XXXCompitableStreamLocation here
-//		if(sl instanceof RootStream){
-//			
-//		}
-		if(sl instanceof JoinStream){
+		if(sl instanceof RootStream){
+			RootStream rs=(RootStream)sl;
+			for(RootStreamContainer rsc: this.existedRscList){
+				Map<EventAlias, EventAlias> rscToRslMap=new HashMap<EventAlias, EventAlias>(4);
+				this.checkRslAndRslc(rs, rsc, rsc.getEplId(), rscToRslMap);
+			}
+			checkIndividual(rs.getUpStream());
+		}
+		else if(sl instanceof JoinStream){
 			JoinStream jsl=(JoinStream)sl;
 			for(JoinStreamContainer jsc: this.existedJscList){
 				if(this.getBoolComparisonResult(jsl, jsc)==null){

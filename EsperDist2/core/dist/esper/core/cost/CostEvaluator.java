@@ -315,8 +315,11 @@ public class CostEvaluator {
 		return cms[0].getIndex();
 	}
 
-	public List<DeltaResourceUsage> searchUnrootPlan(DerivedStream psl, String parentWorkerId){
-		if(psl instanceof JoinStream){
+	public List<DeltaResourceUsage> searchPlan(DerivedStream psl, String parentWorkerId){
+		if(psl instanceof RootStream){
+			return searchRootPlan((RootStream)psl);
+		}
+		else if(psl instanceof JoinStream){
 			return searchJoinPlan((JoinStream)psl, parentWorkerId);
 		}
 		else if(psl instanceof FilterStream){
@@ -482,8 +485,8 @@ public class CostEvaluator {
 			for(WorkerStat ws: wsList){
 			//for(WorkerStat ws: this.procWorkerStatMap.values()){
 				if(!jsl.hasDirectOrIndirectReusableContainerOnWorker(ws.id)){
-					List<DeltaResourceUsage> childDRUList0=searchUnrootPlan((DerivedStream)jsl.getUpStream(0), ws.id);//the best one for parentId=ws.id
-					List<DeltaResourceUsage> childDRUList1=searchUnrootPlan((DerivedStream)jsl.getUpStream(1), ws.id);//the best one for parentId=ws.id
+					List<DeltaResourceUsage> childDRUList0=searchPlan((DerivedStream)jsl.getUpStream(0), ws.id);//the best one for parentId=ws.id
+					List<DeltaResourceUsage> childDRUList1=searchPlan((DerivedStream)jsl.getUpStream(1), ws.id);//the best one for parentId=ws.id
 					for(int i=0; i<childDRUList0.size(); i++){
 						for(int j=0; j<childDRUList1.size(); j++){
 							DeltaResourceUsage joinDRU=new DeltaResourceUsage(ws, CandidateContainerType.JOIN_NEW, jsl);
@@ -515,7 +518,7 @@ public class CostEvaluator {
 			for(WorkerStat ws: wsList){
 			//for(WorkerStat ws: this.gateWorkerStatMap.values()){
 				if(!rsl.hasDirectResuableContainerOnWorker(ws.id)){
-					List<DeltaResourceUsage> childDRUs=searchUnrootPlan((DerivedStream)rsl.getUpStream(), ws.id);//the best one for parentId=ws.id
+					List<DeltaResourceUsage> childDRUs=searchPlan((DerivedStream)rsl.getUpStream(), ws.id);//the best one for parentId=ws.id
 					for(int i=0; i<childDRUs.size(); i++){
 						DeltaResourceUsage rootDRU=new DeltaResourceUsage(ws, CandidateContainerType.ROOT_NEW, rsl);
 						rootDRU.addChild(childDRUs.get(i));

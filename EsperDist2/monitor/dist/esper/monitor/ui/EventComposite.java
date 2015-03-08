@@ -57,7 +57,6 @@ import dist.esper.util.StringUtil;
 
 import static dist.esper.core.util.ServiceManager.format;
 
-@Deprecated
 public class EventComposite extends AbstractMonitorComposite{
 //	GlobalStat gs;	
 //	Composite parent;
