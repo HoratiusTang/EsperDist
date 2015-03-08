@@ -1,4 +1,4 @@
-package dist.esper.test;
+package dist.esper.monitor.test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;

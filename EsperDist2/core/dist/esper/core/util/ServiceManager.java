@@ -10,7 +10,7 @@ import org.apache.commons.configuration.*;
 import org.apache.log4j.PropertyConfigurator;
 
 import dist.esper.core.comm.LinkManager;
-import dist.esper.core.comm.simulation.SimutationLinkPool;
+import dist.esper.core.comm.simulation.SimulationLinkPool;
 import dist.esper.core.comm.socket.SocketLinkManager;
 import dist.esper.core.id.WorkerId;
 import dist.esper.event.EventRegistry;
@@ -116,7 +116,7 @@ public class ServiceManager {
 		WorkerId myId=getMyWorkerId();
 		if(linkManager==null){
 			if(isSimulation){
-				linkManager=SimutationLinkPool.getInstance().newLinkManager(myId);
+				linkManager=SimulationLinkPool.getInstance().newLinkManager(myId);
 			}
 			else{
 				linkManager=new SocketLinkManager(myId);

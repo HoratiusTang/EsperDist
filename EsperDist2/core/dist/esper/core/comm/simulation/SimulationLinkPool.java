@@ -8,19 +8,24 @@ import dist.esper.core.id.WorkerId;
 import dist.esper.core.worker.Worker;
 import dist.esper.util.Tuple2D;
 
-public class SimutationLinkPool{
+/**
+ * the class to simulate virtual local link 
+ * @author tjy
+ *
+ */
+public class SimulationLinkPool{
 	Map<WorkerId,LinkManager> linkManagerMap=new HashMap<WorkerId,LinkManager>();
 	List<LinkPair> linkPairList=new ArrayList<LinkPair>();	
 	
-	public static SimutationLinkPool pool=null;
-	public static SimutationLinkPool getInstance(){
+	public static SimulationLinkPool pool=null;
+	public static SimulationLinkPool getInstance(){
 		if(pool==null){
-			pool=new SimutationLinkPool();
+			pool=new SimulationLinkPool();
 		}
 		return pool;
 	}
 	
-	private SimutationLinkPool(){}
+	private SimulationLinkPool(){}
 
 	public LinkManager newLinkManager(WorkerId myId){
 		SimulationLinkManager lm=new SimulationLinkManager(myId);

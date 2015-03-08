@@ -8,19 +8,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import dist.esper.io.GlobalStat;
-import dist.esper.monitor.ui.old.StatComposite;
-import dist.esper.monitor.ui.old.WorkerInstancesComposite;
 
 public class MonitorWindow {
 	Display display;
 	Shell shell;
 	GlobalStat gs;
 	int width=1200;
-	int height=700;
-	StatComposite mc=null;
+	int height=700;	
 	StatComposite2 mc2=null;
-	EventComposite ec=null;
-	WorkerInstancesComposite wcc=null;
+	EventComposite ec=null;	
 	WorkerInstancesComposite2 wcc2=null;
 	CTabFolder tabFolder=null;
 	
