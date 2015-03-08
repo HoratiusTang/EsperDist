@@ -2,7 +2,7 @@
 .svn/
 
 # Sigar library
-sigar*/
+# sigar*/
 
 # Local temp files
 *.bin
@@ -19,7 +19,7 @@ log.txt*
 .mtj.tmp/
 
 # Package Files #
-*.jar
+# *.jar
 *.war
 *.ear
 
