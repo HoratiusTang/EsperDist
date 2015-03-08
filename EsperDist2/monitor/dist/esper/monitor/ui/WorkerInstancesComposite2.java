@@ -328,6 +328,9 @@ public class WorkerInstancesComposite2 extends AbstractMonitorComposite {
 		
 		public void flowGraphNodeDoubleClicked(GraphNode node){
 			DerivedStreamContainer psc=gs.getContainerNameMap().get(node.getData());
+			if(psc==null){
+				return;
+			}
 			for(Long downId: psc.getDownContainerIdList()){
 				DerivedStreamContainer downStream=gs.getContainerIdMap().get(downId);
 				if(flowGraph.getData(downStream.getUniqueName())==null){

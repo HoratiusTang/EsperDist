@@ -3,13 +3,11 @@ package dist.esper.monitor.ui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 import dist.esper.io.GlobalStat;
-import dist.esper.io.KryoFileWriter;
 import dist.esper.monitor.ui.old.StatComposite;
 import dist.esper.monitor.ui.old.WorkerInstancesComposite;
 
@@ -26,14 +24,6 @@ public class MonitorWindow {
 	WorkerInstancesComposite2 wcc2=null;
 	CTabFolder tabFolder=null;
 	
-	public static void main(String[] args){
-		String filePath="globalstat.bin";
-		GlobalStat gs=(GlobalStat)KryoFileWriter.readFromFile(filePath);
-		MonitorWindow win=new MonitorWindow();
-		win.init();
-		win.update(gs);
-		win.display();
-	}
 	
 	public MonitorWindow(){
 		super();

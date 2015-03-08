@@ -250,7 +250,7 @@ public class TestSimulation2 {
 		};
 		
 		sleep(5000);
-		//randomSort(eplPairs);
+		randomSort(eplPairs);
 		//eplPairs=new Pair[]{};
 //		eplPairs=new Pair[]{new Pair(00,epl00), new Pair(02,epl02), new Pair(03,epl03), new Pair(04,epl04),
 //				new Pair(10,epl10), new Pair(11,epl11), new Pair(12,epl12), new Pair(13,epl13), new Pair(14,epl14),
