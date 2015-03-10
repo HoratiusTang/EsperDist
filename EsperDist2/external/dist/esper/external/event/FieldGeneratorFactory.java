@@ -11,6 +11,12 @@ public class FieldGeneratorFactory {
 			this.n=n0;
 			this.step=step;
 		}
+		
+		@Override
+		public Class<?> getFieldClassType() {
+			return Long.class;
+		}
+		
 		@Override
 		protected long nextLong(){
 			n += step;
@@ -20,11 +26,21 @@ public class FieldGeneratorFactory {
 		public Object next() {			
 			return Long.valueOf(nextLong());
 		}
+		
+		@Override
+		public Object random(){ 
+			return n + 1000*step;
+		}
 	}
 	
 	public static class IntegerMonotoGenerator extends LongMonotoGenerator{
 		public IntegerMonotoGenerator(int n0, int step) {
 			super(n0, step);
+		}
+		
+		@Override
+		public Class<?> getFieldClassType() {
+			return Integer.class;
 		}
 
 		@Override
@@ -42,6 +58,11 @@ public class FieldGeneratorFactory {
 			this.step=step;
 		}
 		
+		@Override
+		public Class<?> getFieldClassType() {
+			return Double.class;
+		}
+		
 		protected double nextDouble(){
 			n += step;
 			return n;
@@ -49,6 +70,11 @@ public class FieldGeneratorFactory {
 		@Override
 		public Object next() {			
 			return Double.valueOf(nextDouble());
+		}
+		
+		@Override
+		public Object random(){ 
+			return n + 1000*step;
 		}
 	}
 	
@@ -62,6 +88,11 @@ public class FieldGeneratorFactory {
 			this.min = min;
 			this.max = max;
 			rand = new Random();
+		}
+		
+		@Override
+		public Class<?> getFieldClassType() {
+			return Long.class;
 		}
 		
 		@Override
@@ -80,6 +111,12 @@ public class FieldGeneratorFactory {
 		public IntegerUniformGenerator(int min, int max) {
 			super(min, max);			
 		}
+		
+		@Override
+		public Class<?> getFieldClassType() {
+			return Integer.class;
+		}
+		
 		@Override
 		public Object next() {			
 			return Integer.valueOf((int)nextLong());
@@ -96,6 +133,11 @@ public class FieldGeneratorFactory {
 			this.min = min;
 			this.max = max;
 			rand = new Random();
+		}
+		
+		@Override
+		public Class<?> getFieldClassType() {
+			return Double.class;
 		}
 		
 		@Override
@@ -137,6 +179,11 @@ public class FieldGeneratorFactory {
 		}
 		
 		@Override
+		public Class<?> getFieldClassType() {
+			return Double.class;
+		}
+		
+		@Override
 		public double nextDouble(){
 			double g=rand.nextGaussian();
 			double v=g*standardDeviation+expectedValue;
@@ -159,14 +206,17 @@ public class FieldGeneratorFactory {
 		public IntegerNormalGenerator(double expectedValue,
 				double standardDeviation) {
 			super(expectedValue, standardDeviation, Integer.MIN_VALUE, Integer.MAX_VALUE);
-		}
-		
+		}		
 
 		public IntegerNormalGenerator(double expectedValue,
 				double standardDeviation, double minValue, double maxValue) {
 			super(expectedValue, standardDeviation, minValue, maxValue);
 		}
 
+		@Override
+		public Class<?> getFieldClassType() {
+			return Integer.class;
+		}
 
 		@Override
 		public Object next() {
@@ -185,6 +235,10 @@ public class FieldGeneratorFactory {
 			super(expectedValue, standardDeviation, minValue, maxValue);
 		}
 
+		@Override
+		public Class<?> getFieldClassType() {
+			return Long.class;
+		}
 
 		@Override
 		public Object next() {
@@ -200,6 +254,11 @@ public class FieldGeneratorFactory {
 			super();
 			array=new int[size];
 			intGen=new IntegerUniformGenerator(100, 1000);
+		}
+		
+		@Override
+		public Class<?> getFieldClassType() {
+			return int[].class;
 		}
 
 		@Override
@@ -220,6 +279,11 @@ public class FieldGeneratorFactory {
 			array=new Integer[size];
 			intGen=new IntegerUniformGenerator(100, 1000);
 		}
+		
+		@Override
+		public Class<?> getFieldClassType() {
+			return Integer[].class;
+		}
 
 		@Override
 		public Object next() {
@@ -238,6 +302,11 @@ public class FieldGeneratorFactory {
 			super();
 			array=new long[size];
 			longGen=new LongUniformGenerator(100, 1000);
+		}
+		
+		@Override
+		public Class<?> getFieldClassType() {
+			return long[].class;
 		}
 
 		@Override
@@ -258,6 +327,11 @@ public class FieldGeneratorFactory {
 			array=new Long[size];
 			longGen=new LongUniformGenerator(100, 1000);
 		}
+		
+		@Override
+		public Class<?> getFieldClassType() {
+			return Long[].class;
+		}
 
 		@Override
 		public Object next() {
@@ -276,6 +350,11 @@ public class FieldGeneratorFactory {
 			super();
 			array=new double[size];
 			doubleGen=new DoubleUniformGenerator(100, 1000);
+		}
+		
+		@Override
+		public Class<?> getFieldClassType() {
+			return double[].class;
 		}
 
 		@Override
@@ -296,6 +375,11 @@ public class FieldGeneratorFactory {
 			array=new Double[size];
 			doubleGen=new DoubleUniformGenerator(100, 1000);
 		}
+		
+		@Override
+		public Class<?> getFieldClassType() {
+			return Double[].class;
+		}
 
 		@Override
 		public Object next() {
@@ -312,6 +396,11 @@ public class FieldGeneratorFactory {
 		public StringRandomChooser(String[] strs){
 			this.strs = strs;
 			rand=new Random();
+		}
+		
+		@Override
+		public Class<?> getFieldClassType() {
+			return String.class;
 		}
 		
 		@Override

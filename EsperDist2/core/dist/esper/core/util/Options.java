@@ -11,5 +11,6 @@ public class Options {
 	public static String THIS_ID="this.id";
 	public static String THIS_PORT="this.port";
 	
+	public static String EVENT_CATEGORY="event.category";
 	public static String EVENT_NAME="event.name";
 }

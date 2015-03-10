@@ -6,6 +6,7 @@
 	<classpathentry kind="src" path="io"/>
 	<classpathentry kind="src" path="kryonet"/>
 	<classpathentry kind="src" path="external"/>
+	<classpathentry kind="src" path="experiment"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="lib/esper-5.0.0-tjy.jar"/>
 	<classpathentry kind="lib" path="lib/sigar-bin/lib/sigar.jar"/>

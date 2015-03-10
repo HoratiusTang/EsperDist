@@ -13,6 +13,7 @@ import dist.esper.core.util.ServiceManager;
 import dist.esper.core.worker.Worker;
 import dist.esper.event.Event;
 import dist.esper.event.EventRegistry;
+import dist.esper.experiment.EventGeneratorFactory;
 import dist.esper.external.Spout;
 import dist.esper.external.event.EventInstanceGenerator;
 import dist.esper.external.event.FieldGenerator;
@@ -96,68 +97,13 @@ public class TestSimulation2 {
 	private void genEventInstanceGenerators(){
 		String[] eventNames={"A","B","C","D"};
 		for(String eventName: eventNames){
-			EventInstanceGenerator eventGen=genEventInstanceGenerator(eventName);
+			EventInstanceGenerator eventGen=
+					EventGeneratorFactory.
+					genEventInstanceGenerator(eventName, eventName);//let eventName be categoryName
 			eventGenList.add(eventGen);
 		}
-	}
+	}	
 	
-	private static EventInstanceGenerator genEventInstanceGenerator(String eventName){
-		Event e=new Event(eventName);
-		e.addProperty("id", Integer.class);
-		e.addProperty("age", Integer.class);
-		e.addProperty("name", String.class);
-		e.addProperty("price", Double.class);
-		e.addProperty("time", Long.class);
-		e.addProperty("clientIds", int[].class);
-		
-		Map<String,FieldGenerator> fgMap=new HashMap<String,FieldGenerator>();
-		fgMap.put("id", new FieldGeneratorFactory.IntegerMonotoGenerator(0, 1));
-		fgMap.put("age", new FieldGeneratorFactory.IntegerNormalGenerator(40, 1, 1, 100));
-		fgMap.put("name", new FieldGeneratorFactory.StringRandomChooser(new String[]{"Alice","Bob","Cleve","David","Elvis","Fedon","Glora","Harry","Illis"}));
-		fgMap.put("price", new FieldGeneratorFactory.DoubleUniformGenerator(10, 100));
-		fgMap.put("time", new FieldGeneratorFactory.LongNormalGenerator(10, 1, 1, 30));
-		fgMap.put("clientIds", new FieldGeneratorFactory.IntArrayGenerator(10));
-		
-		EventInstanceGenerator eventGen=new EventInstanceGenerator(e, fgMap);
-		return eventGen;
-	}
-	
-	/**
-	public void genEvents(){
-		Event a=new Event("A");
-		a.addProperty("id", Integer.class);
-		a.addProperty("name", String.class);
-		a.addProperty("price", Double.class);
-		a.addProperty("time", Long.class);
-		a.addProperty("clientIds", int[].class);
-		
-		Event b=new Event("B");
-		b.addProperty("id", Integer.class);
-		b.addProperty("name", String.class);
-		b.addProperty("price", Double.class);
-		b.addProperty("time", Long.class);
-		b.addProperty("clientIds", int[].class);
-		
-		Event c=new Event("C");
-		c.addProperty("id", Integer.class);
-		c.addProperty("name", String.class);
-		c.addProperty("price", Double.class);
-		c.addProperty("time", Long.class);
-		c.addProperty("clientIds", int[].class);
-		
-//		Event d=new Event("D");
-//		c.addProperty("id", Integer.class);
-//		c.addProperty("name", String.class);
-//		c.addProperty("price", Double.class);
-//		c.addProperty("time", Long.class);
-//		c.addProperty("clientIds", int[].class);
-		
-		eventList.add(a);
-		eventList.add(b);
-		eventList.add(c);
-//		eventList.add(d);
-	}
-	*/
 	public void run(){
 		coord.start(false);
 		for(Spout spout: spoutList){
