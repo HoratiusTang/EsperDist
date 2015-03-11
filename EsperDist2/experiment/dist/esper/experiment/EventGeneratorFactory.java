@@ -34,61 +34,56 @@ public class EventGeneratorFactory {
 		else if(eventCategory.equals("E")){
 			eventGen=genEventInstanceGeneratorE();
 		}
+		else{
+			throw new RuntimeException(String.format("no such event category %s", eventCategory));
+		}
+		return eventGen;
+	}
+	
+	public static String[] genRandomStrings(int size){
+		String[] s=new String[size];
+		for(int i=0;i<s.length;i++){
+			s[i]="randomstring"+String.format("%04d", i);
+		}
+		return s;
+	}
+	
+	public static EventInstanceGenerator genEventInstanceGeneratorDefault(){
+		EventInstanceGenerator eventGen=new EventInstanceGenerator();
+		eventGen.addProperty("im0", new FieldGeneratorFactory.IntegerMonotoGenerator(0, 1));
+		eventGen.addProperty("in0", new FieldGeneratorFactory.IntegerNormalGenerator(100, 10, 0, 200));
+		eventGen.addProperty("in1", new FieldGeneratorFactory.IntegerNormalGenerator(200, 20, 0, 400));		
+		eventGen.addProperty("in2", new FieldGeneratorFactory.IntegerNormalGenerator(300, 30, 0, 600));
+		eventGen.addProperty("in3", new FieldGeneratorFactory.IntegerNormalGenerator(400, 40, 0, 800));
+		eventGen.addProperty("in4", new FieldGeneratorFactory.IntegerNormalGenerator(500, 50, 0, 1000));
+		eventGen.addProperty("iu0", new FieldGeneratorFactory.IntegerUniformGenerator(100, 500));
+		eventGen.addProperty("iu1", new FieldGeneratorFactory.IntegerUniformGenerator(0, 600));
+		eventGen.addProperty("dn0", new FieldGeneratorFactory.DoubleNormalGenerator(200, 20, 0, 400));
+		eventGen.addProperty("dn1", new FieldGeneratorFactory.DoubleNormalGenerator(300,30, 0, 600));
+		eventGen.addProperty("du0", new FieldGeneratorFactory.DoubleUniformGenerator(200, 600));
+		eventGen.addProperty("du1", new FieldGeneratorFactory.DoubleUniformGenerator(300, 800));
+		eventGen.addProperty("sr0", new FieldGeneratorFactory.StringRandomChooser(genRandomStrings(100)));		
+		eventGen.addProperty("ia0", new FieldGeneratorFactory.IntArrayGenerator(10));
 		return eventGen;
 	}
 	
 	public static EventInstanceGenerator genEventInstanceGeneratorA(){
-		EventInstanceGenerator eventGen=new EventInstanceGenerator();
-		eventGen.addProperty("id", new FieldGeneratorFactory.IntegerMonotoGenerator(0, 1));
-		eventGen.addProperty("age", new FieldGeneratorFactory.IntegerNormalGenerator(40, 1, 1, 100));
-		eventGen.addProperty("name", new FieldGeneratorFactory.StringRandomChooser(new String[]{"Alice","Bob","Cleve","David","Elvis","Fedon","Glora","Harry","Illis"}));
-		eventGen.addProperty("price", new FieldGeneratorFactory.DoubleUniformGenerator(10, 100));
-		eventGen.addProperty("time", new FieldGeneratorFactory.LongNormalGenerator(10, 1, 1, 30));
-		eventGen.addProperty("clientIds", new FieldGeneratorFactory.IntArrayGenerator(10));
-		return eventGen;
+		return genEventInstanceGeneratorDefault();
 	}
 	
 	public static EventInstanceGenerator genEventInstanceGeneratorB(){
-		EventInstanceGenerator eventGen=new EventInstanceGenerator();
-		eventGen.addProperty("id", new FieldGeneratorFactory.IntegerMonotoGenerator(0, 1));
-		eventGen.addProperty("age", new FieldGeneratorFactory.IntegerNormalGenerator(40, 1, 1, 100));
-		eventGen.addProperty("name", new FieldGeneratorFactory.StringRandomChooser(new String[]{"Alice","Bob","Cleve","David","Elvis","Fedon","Glora","Harry","Illis"}));
-		eventGen.addProperty("price", new FieldGeneratorFactory.DoubleUniformGenerator(10, 100));
-		eventGen.addProperty("time", new FieldGeneratorFactory.LongNormalGenerator(10, 1, 1, 30));
-		eventGen.addProperty("clientIds", new FieldGeneratorFactory.IntArrayGenerator(10));
-		return eventGen;
+		return genEventInstanceGeneratorDefault();
 	}
 	
 	public static EventInstanceGenerator genEventInstanceGeneratorC(){
-		EventInstanceGenerator eventGen=new EventInstanceGenerator();
-		eventGen.addProperty("id", new FieldGeneratorFactory.IntegerMonotoGenerator(0, 1));
-		eventGen.addProperty("age", new FieldGeneratorFactory.IntegerNormalGenerator(40, 1, 1, 100));
-		eventGen.addProperty("name", new FieldGeneratorFactory.StringRandomChooser(new String[]{"Alice","Bob","Cleve","David","Elvis","Fedon","Glora","Harry","Illis"}));
-		eventGen.addProperty("price", new FieldGeneratorFactory.DoubleUniformGenerator(10, 100));
-		eventGen.addProperty("time", new FieldGeneratorFactory.LongNormalGenerator(10, 1, 1, 30));
-		eventGen.addProperty("clientIds", new FieldGeneratorFactory.IntArrayGenerator(10));
-		return eventGen;
+		return genEventInstanceGeneratorDefault();
 	}
 	
 	public static EventInstanceGenerator genEventInstanceGeneratorD(){
-		EventInstanceGenerator eventGen=new EventInstanceGenerator();
-		eventGen.addProperty("id", new FieldGeneratorFactory.IntegerMonotoGenerator(0, 1));
-		eventGen.addProperty("age", new FieldGeneratorFactory.IntegerNormalGenerator(40, 1, 1, 100));
-		eventGen.addProperty("name", new FieldGeneratorFactory.StringRandomChooser(new String[]{"Alice","Bob","Cleve","David","Elvis","Fedon","Glora","Harry","Illis"}));
-		eventGen.addProperty("price", new FieldGeneratorFactory.DoubleUniformGenerator(10, 100));
-		eventGen.addProperty("time", new FieldGeneratorFactory.LongNormalGenerator(10, 1, 1, 30));
-		eventGen.addProperty("clientIds", new FieldGeneratorFactory.IntArrayGenerator(10));
-		return eventGen;
+		return genEventInstanceGeneratorDefault();
 	}
 	
 	public static EventInstanceGenerator genEventInstanceGeneratorE(){
-		EventInstanceGenerator eventGen=new EventInstanceGenerator();
-		eventGen.addProperty("id", new FieldGeneratorFactory.IntegerMonotoGenerator(0, 1));
-		eventGen.addProperty("age", new FieldGeneratorFactory.IntegerNormalGenerator(40, 1, 1, 100));
-		eventGen.addProperty("name", new FieldGeneratorFactory.StringRandomChooser(new String[]{"Alice","Bob","Cleve","David","Elvis","Fedon","Glora","Harry","Illis"}));
-		eventGen.addProperty("price", new FieldGeneratorFactory.DoubleUniformGenerator(10, 100));
-		eventGen.addProperty("time", new FieldGeneratorFactory.LongNormalGenerator(10, 1, 1, 30));
-		eventGen.addProperty("clientIds", new FieldGeneratorFactory.IntArrayGenerator(10));
-		return eventGen;
+		return genEventInstanceGeneratorDefault();
 	}
 }

@@ -34,6 +34,8 @@ public class QueryTemplate {
 		Matcher em=eventPattern.matcher(template);
 		while(em.find()){
 			String var=em.group(0);//whole pattern
+			//var=var.replace("\\$", "\\\\$");
+			var="\\"+var;
 			String eventType=em.group(1);
 			EventVariable evar=new EventVariable(var, eventType);
 			evarList.add(evar);
@@ -42,6 +44,7 @@ public class QueryTemplate {
 		Matcher pm=propPattern.matcher(template);
 		while(pm.find()){
 			String var=pm.group(0);//whole pattern
+			var="\\"+var;
 			String eventType=pm.group(1);
 			String propName=pm.group(2);
 			PropertyVariable pvar=new PropertyVariable(var, eventType, propName);

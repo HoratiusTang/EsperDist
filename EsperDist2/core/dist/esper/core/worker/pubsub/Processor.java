@@ -2,10 +2,13 @@ package dist.esper.core.worker.pubsub;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.apache.log4j.Level;
 
 import com.espertech.esper.client.EPAdministrator;
 import com.espertech.esper.client.EPServiceProvider;
@@ -32,10 +35,16 @@ import dist.esper.epl.expr.util.ExpressionStringlizer;
 import dist.esper.event.Event;
 import dist.esper.event.EventProperty;
 import dist.esper.event.EventRegistry;
-import dist.esper.util.Logger2;
+import dist.esper.util.*;
 
 public class Processor implements ISubscriberObserver{
-	static Logger2 log=Logger2.getLogger(Processor.class);
+	static Logger2 log;
+	static Logger2 outputLog;
+	static{
+		log=Logger2.getLogger(Processor.class);
+		outputLog=AsyncLogger2.getAsyncLogger(Processor.EPListener.class, Level.DEBUG, "log/output.txt", false, "%d{MM-dd HH:mm:ss} %p %m%n");		
+	}
+	
 	String workerId;
 	long id;
 	State state=State.NONE;
@@ -440,6 +449,32 @@ public class Processor implements ISubscriberObserver{
 				events.length);
 	}
 	
+	public void logOutputEvents(EventBean[] newEvents){		
+		RootStreamContainer rsc=(RootStreamContainer)streamContainer;
+		for(int i=0;i<rsc.getDirectReuseStreamMapComparisonResultList().size();i++){
+			Stream stream=rsc.getDirectReuseStreamMapComparisonResultList().get(i).getFirst();
+			for(EventBean event: newEvents){
+				ResultElementData[] reds=new ResultElementData[stream.getResultElementList().size()];
+				for(int j=0;j<stream.getResultElementList().size();j++){
+					SelectClauseExpressionElement se=stream.getResultElementList().get(j);
+					reds[j]=new ResultElementData(se.toString(), event.get(se.getUniqueName()));
+				}
+				outputLog.debug("eplId:%d, output: %s", stream.getEplId(), Arrays.asList(reds).toString());
+			}
+		}		
+	}
+	
+	class ResultElementData extends Tuple2D<String,Object>{
+		private static final long serialVersionUID = -7956967873667310298L;
+		public ResultElementData(String first, Object second) {
+			super(first, second);			
+		}
+		@Override
+		public String toString(){
+			return first+":"+second;
+		}
+	}
+	
 	
 	class EPListener implements UpdateListener{
 		@Override
@@ -453,34 +488,12 @@ public class Processor implements ISubscriberObserver{
 				System.err.format("** processor receives %s EventBeans in EPListener, but is not in RUNNING STATE.\n", newEvents.length);
 				return;
 			}
-			if(streamContainer instanceof JoinDelayedStreamContainer){
-				System.out.print("");
-			}
-			if(streamContainer instanceof JoinStreamContainer){
-				System.out.print("");
+			if(streamContainer instanceof RootStreamContainer){
+				logOutputEvents(newEvents);
 			}
 			for(IProcessorObserver pub: pubList){
 				pubScheduler.sumbit(newEvents, pub);
 			}
-//			if(streamLocationContainer instanceof RootStreamLocationContainer){
-//				RootStreamLocationContainer rsc=(RootStreamLocationContainer)streamLocationContainer;
-//				Map<String,Object> map=new TreeMap<String,Object>();
-//				for(EventBean event: newEvents){
-//					for(int i=0;i<rsc.getReusedLocationMapComparisonResultList().size();i++){
-//						StreamLocation streamLocation=rsc.getReusedLocationMapComparisonResultList().get(i).getFirst();
-//						map.clear();
-//						map.put("eplId", streamLocation.getEplId());
-//						for(int j=0;j<streamLocation.getResultElementList().size();j++){
-//							SelectClauseExpressionElement se=streamLocation.getResultElementList().get(j);
-//							//se.toString()==a.id, se.toStringBuilderWithNickName()=sl2.se_6
-//							map.put(se.toString(), event.get(se.getUniqueName()));
-//						}
-//						System.out.print(map);
-//						System.out.print(" | ");
-//					}
-//					();
-//				}				
-//			}
 		}
 	}
 	

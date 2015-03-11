@@ -29,7 +29,7 @@ public class Logger2 {
 
 	Logger logger;
 
-	protected Logger2(Logger logger) {
+	public Logger2(Logger logger) {
 		this.logger = logger;
 	}
 
