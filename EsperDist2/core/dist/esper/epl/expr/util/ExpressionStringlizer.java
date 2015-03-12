@@ -12,8 +12,16 @@ public class ExpressionStringlizer extends AbstractExpressionVisitor2<StringBuil
 		return instance;
 	}
 	
+	public String toString(AbstractExpression expr){
+		StringBuilder sb=new StringBuilder();
+		toStringBuilder(expr, sb);
+		return sb.toString();
+	}
+	
 	public void toStringBuilder(AbstractExpression expr, StringBuilder sb){
-		expr.accept(this, sb);
+		if(expr!=null){
+			expr.accept(this, sb);
+		}	
 	}
 	
 	public StringBuilder toStringBuilder(List<AbstractBooleanExpression> bExprList, RelationTypeEnum relation, StringBuilder sw){

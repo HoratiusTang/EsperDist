@@ -44,6 +44,7 @@ import dist.esper.core.flow.container.StreamContainerFlow;
 import dist.esper.core.flow.stream.RawStream;
 import dist.esper.core.flow.stream.Stream;
 import dist.esper.core.id.WorkerId;
+import dist.esper.epl.expr.util.BooleanExpressionNoEventAliasStringlizer;
 import dist.esper.io.GlobalStat;
 import dist.esper.monitor.ui.custom.CGraph;
 import dist.esper.monitor.ui.custom.EplTable;
@@ -165,9 +166,11 @@ public class WorkerInstancesComposite2 extends AbstractMonitorComposite {
 			InstanceStat insStat=gs.getContainerStatMap().get(instanceName);
 			
 			if(insStat!=null){
+				DerivedStreamContainer dsc=(DerivedStreamContainer)gs.getContainerNameMap().get(instanceName);
 				addInstanceStatTableItem("unique name",insStat.getUniqueName());
 				addInstanceStatTableItem("type",insStat.getType());
 				addInstanceStatTableItem("worker id",insStat.getWorkerId());
+				addInstanceStatTableItem("condition",BooleanExpressionNoEventAliasStringlizer.getInstance().toString(dsc.getOwnCondition()));
 				addInstanceStatTableItem("duration",insStat.durationUS()/1000000 + " s");
 				addInstanceStatTableItem("event count",insStat.getEventCount());
 				addInstanceStatTableItem("processing time",insStat.getProcTimeUS()/100000 + " s");
@@ -300,7 +303,8 @@ public class WorkerInstancesComposite2 extends AbstractMonitorComposite {
 		
 		private GraphNode newFlowGraphNode(Stream stream){
 			GraphNode node=new GraphNode(flowGraph, SWT.ALPHA);
-			node.setText(getFlowGraphNodeText(stream));
+			String text=getFlowGraphNodeText(stream);
+			node.setText(text);
 			node.setData(stream.getUniqueName());
 			Color color=getInstanceColor(stream);
 			node.setBackgroundColor(color);	
@@ -318,7 +322,8 @@ public class WorkerInstancesComposite2 extends AbstractMonitorComposite {
 			}
 			else{
 				DerivedStreamContainer dsc=(DerivedStreamContainer)stream;
-				return dsc.getUniqueName()+"("+dsc.getDownContainerIdList().size()+")";
+				String condStr=BooleanExpressionNoEventAliasStringlizer.getInstance().toString(dsc.getOwnCondition());
+				return dsc.getUniqueName()+"("+dsc.getDownContainerIdList().size()+")"+"\n"+condStr;
 			}
 		}
 		

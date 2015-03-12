@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import dist.esper.core.cost.InstanceStat;
 import dist.esper.core.flow.container.*;
+import dist.esper.core.util.NumberFormatter;
 import dist.esper.monitor.ui.data.ContainerListWrapper;
 
 public class InstanceTable {
@@ -225,8 +226,8 @@ public class InstanceTable {
 			if(sc!=null){
 				InstanceStat insStat=clw.getContainerStatMap().get(sc.getUniqueName());
 				str=sc.getUniqueName();
-				str+="\n("+sc.getDownContainerIdList().size()+")";
-				str+="("+insStat.getOutputRateSec()+")";
+				str+="("+sc.getDownContainerIdList().size()+")\n";
+				str+="("+NumberFormatter.format(insStat.getOutputRateSec())+")";
 			}
 			return str;
 		}

@@ -62,7 +62,7 @@ public class MonitorWindow {
 		shell.setSize(width, height);
 		shell.setLayout(new FillLayout());
 		
-		tabFolder=new CTabFolder(shell, SWT.NONE);
+		tabFolder=new CTabFolder(shell, SWT.BORDER);
 		tabFolder.setTabHeight(20);
 		
 		CTabItem ecTabItem=new CTabItem(tabFolder, SWT.NONE);

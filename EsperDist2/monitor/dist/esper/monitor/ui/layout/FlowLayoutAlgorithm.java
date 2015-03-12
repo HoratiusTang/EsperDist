@@ -10,8 +10,8 @@ public class FlowLayoutAlgorithm extends EmptyLayoutAlgorithm {
 	int marginY=30;
 	int spaceX=60;
 	int spaceY=30;
-	int nodeWidth=50;
-	int nodeHeight=30;
+	int nodeWidth=120;
+	int nodeHeight=40;
 	
 	public FlowLayoutAlgorithm(int styles) {
 		super(styles);		
