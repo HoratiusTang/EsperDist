@@ -114,7 +114,13 @@ public class JoinStats {
 		JoinSimulator js=SampleNumberJoinSimulator.getJoinSimulator(prop1, prop2, op);
 		js.setFirst(list1);
 		js.setSecond(list2);
-		double sf=js.estimateSelectFactor();
+		double sf=JoinComparison.DEFUALT_SELECT_FACTOR;
+		try{
+			sf=js.estimateSelectFactor();
+		}
+		catch(Exception ex){
+			ex.printStackTrace();			
+		}
 		return sf;
 	}
 	

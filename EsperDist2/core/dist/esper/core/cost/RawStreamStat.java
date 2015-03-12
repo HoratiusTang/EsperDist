@@ -15,7 +15,7 @@ public class RawStreamStat implements Serializable{
 	long lastTimestampUS;//us
 	long eventCount=0;
 	long batchCount=0;
-	transient Map<String, AbstractPropertyStat<?>> propStatMap=new HashMap<String, AbstractPropertyStat<?>>();
+	Map<String, AbstractPropertyStat<?>> propStatMap=new HashMap<String, AbstractPropertyStat<?>>();
 	
 	public RawStreamStat() {
 		super();
