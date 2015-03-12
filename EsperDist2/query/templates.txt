@@ -3,10 +3,10 @@ SELECT a%01.im0, a%01.in1
 FROM $A#01(in1>$A.in1#01) as a%01
 
 SELECT a%01.im0, a%01.in2  
-FROM $A#01(in2<$A.in2#01)
+FROM $A#01(in2<$A.in2#01) as a%01
 
 SELECT a%01.im0, a%01.iu0 
-FROM $A#01(iu0<=$A.iu0#01)
+FROM $A#01(iu0<=$A.iu0#01) as a%01
 
 #B
 SELECT b%02.im0, b%02.iu0 

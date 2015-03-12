@@ -14,6 +14,7 @@ import dist.esper.core.worker.Worker;
 import dist.esper.event.Event;
 import dist.esper.event.EventRegistry;
 import dist.esper.experiment.EventGeneratorFactory;
+import dist.esper.experiment.QueryGeneratorMain;
 import dist.esper.experiment.util.MultiLineFileWriter;
 import dist.esper.external.Spout;
 import dist.esper.external.event.EventInstanceGenerator;
@@ -70,7 +71,7 @@ public class TestSimulation3 {
 			w.init();
 		}
 		
-		genEventInstanceGenerators();
+		eventGenList=QueryGeneratorMain.genEventInstanceGenerators();
 		for(int i=0;i<eventGenList.size();i++){
 			String id="spout"+(i+1);
 			WorkerId spoutId=new WorkerId(id,"127.0.0.1",2001+i);
@@ -82,16 +83,6 @@ public class TestSimulation3 {
 			spout.init();
 		}
 	}
-	
-	private void genEventInstanceGenerators(){
-		String[] eventNames={"A","B","C","D"};
-		for(String eventName: eventNames){
-			EventInstanceGenerator eventGen=
-					EventGeneratorFactory.
-					genEventInstanceGenerator(eventName.substring(0,1), eventName);//let eventName[0] be categoryName
-			eventGenList.add(eventGen);
-		}
-	}	
 	
 	public void run() throws Exception{
 		String queriesFilePath="query/queries.txt";
@@ -109,13 +100,15 @@ public class TestSimulation3 {
 
 		int i=0;
 		try {
-			for(i=0; i<queryList.size();i++){
-				coord.executeEPL(queryList.get(i));
+			for(i=0; i<10;i++){
+				String query=queryList.get(i);
+				coord.executeEPL(query);
 				sleep(5000);
+				System.gc();
 			}
 			writeGlobalStat(coord);
 			while(true){
-				sleep(100000);
+				sleep(10000);
 			}
 			//System.out.print("");
 		}
@@ -127,6 +120,7 @@ public class TestSimulation3 {
 	}
 	
 	public static void writeGlobalStat(Coordinator coord){
+		log.info("start writing to GlobalStat");
 		String filePath="globalstat.bin";
 		GlobalStat gs=new GlobalStat();
 		gs.setEventMap(ServiceManager.getDefaultInstance().getEventRegistry().getEventMap());
@@ -140,7 +134,7 @@ public class TestSimulation3 {
 		gs.setContainerIdMap(coord.containerIdMap);
 		
 		KryoFileWriter.writeToFile(gs, filePath);
-		log.info("write finish");
+		log.info("finish writing to GlobalStat");
 	}
 	
 	public static void sleep(long timeMS){

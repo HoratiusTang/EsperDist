@@ -26,12 +26,15 @@ public abstract class BaseStream extends DerivedStream{
 	}
 	public void setViewSpecs(ViewSpecification[] viewSpecs) {
 		this.viewSpecs = viewSpecs;
-		if(viewSpecs!=null){
+		if(viewSpecs!=null && viewSpecs.length>0){
 			assert(viewSpecs[0].getNamespace().equals("win")):viewSpecs[0].toString();
 			assert(viewSpecs[0].getFunction().equals("time")):viewSpecs[0].toString();
 			TimePeriod t=(TimePeriod)viewSpecs[0].getParamList().get(0);
 			long timeUS=t.getTimeUS();
 			this.setWindowTimeUS(timeUS);
+		}
+		else{//might be filter, no ViewSpecification
+			this.setWindowTimeUS(60*1000000);
 		}
 	}
 	public int getLevel(){

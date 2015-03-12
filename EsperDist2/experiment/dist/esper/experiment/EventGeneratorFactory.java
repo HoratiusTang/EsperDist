@@ -48,8 +48,8 @@ public class EventGeneratorFactory {
 		return s;
 	}
 	
-	public static EventInstanceGenerator genEventInstanceGeneratorDefault(){
-		EventInstanceGenerator eventGen=new EventInstanceGenerator();
+	public static EventInstanceGenerator genEventInstanceGeneratorDefault(String categoryName){
+		EventInstanceGenerator eventGen=new EventInstanceGenerator(categoryName);
 		eventGen.addProperty("im0", new FieldGeneratorFactory.IntegerMonotoGenerator(0, 1));
 		eventGen.addProperty("in0", new FieldGeneratorFactory.IntegerNormalGenerator(100, 10, 0, 200));
 		eventGen.addProperty("in1", new FieldGeneratorFactory.IntegerNormalGenerator(200, 20, 0, 400));		
@@ -68,22 +68,22 @@ public class EventGeneratorFactory {
 	}
 	
 	public static EventInstanceGenerator genEventInstanceGeneratorA(){
-		return genEventInstanceGeneratorDefault();
+		return genEventInstanceGeneratorDefault("A");
 	}
 	
 	public static EventInstanceGenerator genEventInstanceGeneratorB(){
-		return genEventInstanceGeneratorDefault();
+		return genEventInstanceGeneratorDefault("B");
 	}
 	
 	public static EventInstanceGenerator genEventInstanceGeneratorC(){
-		return genEventInstanceGeneratorDefault();
+		return genEventInstanceGeneratorDefault("C");
 	}
 	
 	public static EventInstanceGenerator genEventInstanceGeneratorD(){
-		return genEventInstanceGeneratorDefault();
+		return genEventInstanceGeneratorDefault("D");
 	}
 	
 	public static EventInstanceGenerator genEventInstanceGeneratorE(){
-		return genEventInstanceGeneratorDefault();
+		return genEventInstanceGeneratorDefault("E");
 	}
 }

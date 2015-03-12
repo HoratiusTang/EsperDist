@@ -36,7 +36,7 @@ implements IClauseVisitor<AbstractClause>, IExpressionVisitor2<AbstractExpressio
 		if(uep.isFullName()){
 			EventAlias ea=this.eventAliasMap.get(uep.eventAsName);
 			if(ea==null){
-				throw new RuntimeException(String.format("can not find event with name %s", uep.eventAsName));
+				throw new RuntimeException(String.format("can not find event with assigned name %s", uep.eventAsName));
 			}
 			EventSpecification es=null;
 			EventPropertySpecification eps=null;

@@ -4,16 +4,22 @@ import java.util.*;
 
 import dist.esper.event.Event;
 
-public class EventInstanceGenerator {	
+public class EventInstanceGenerator {
+	String categoryName;//different event may share the same prototype(category).
 	Map<String,FieldGenerator> fgMap=new HashMap<String,FieldGenerator>();
-	Event event;
+	Event event;//event.name might be empty
 
 	public EventInstanceGenerator() {
-		this("");
+		this("DEFUALT_EVENT_CATEGORY", "");
 	}
 	
-	public EventInstanceGenerator(String eventName){
-		event=new Event(eventName);
+	public EventInstanceGenerator(String categoryName) {
+		this(categoryName, "");
+	}
+	
+	public EventInstanceGenerator(String categoryName, String eventName){
+		this.categoryName = categoryName;
+		this.event=new Event(eventName);
 	}
 	
 	public void addProperty(String propName, FieldGenerator fgen){
@@ -38,6 +44,14 @@ public class EventInstanceGenerator {
 		return event;
 	}
 	
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
+
 	public void setEventName(String eventName){
 		event.setName(eventName);	
 	}
