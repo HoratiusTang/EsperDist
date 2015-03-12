@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import dist.esper.core.util.NumberFormatter;
 import dist.esper.experiment.QueryTemplate.EventVariable;
 import dist.esper.experiment.QueryTemplate.PropertyVariable;
 import dist.esper.experiment.util.MultiLineFileWriter;
@@ -57,6 +58,7 @@ public class QueryGenerator {
 				int index= (int)(Math.random() * tempList.size());
 				QueryTemplate qt=tempList.get(index);
 				String query=generateQuery(qt, seq);
+				seq++;
 				queryList.add(query);
 			}
 		}
@@ -73,7 +75,7 @@ public class QueryGenerator {
 		}
 		for(PropertyVariable pvar: pvarList){
 			Object num=randomChooseNumber(pvar.getEventCategory(), pvar.getPropName());
-			replaceMap.put(pvar.getVar(), num.toString());
+			replaceMap.put(pvar.getVar(), NumberFormatter.format(num));
 		}
 		String query=qt.generateQuery(replaceMap, seq);
 		return query;

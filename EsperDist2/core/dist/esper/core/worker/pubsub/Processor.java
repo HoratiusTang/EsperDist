@@ -19,6 +19,7 @@ import com.espertech.esper.client.UpdateListener;
 import dist.esper.core.cost.InstanceStat;
 import dist.esper.core.flow.container.*;
 import dist.esper.core.flow.stream.*;
+import dist.esper.core.util.Options;
 import dist.esper.core.util.ServiceManager;
 import dist.esper.core.worker.pubsub.Subscriber.State;
 import dist.esper.epl.expr.AbstractBooleanExpression;
@@ -60,6 +61,7 @@ public class Processor implements ISubscriberObserver{
 	String epl;
 	PublishingScheduler2 pubScheduler;
 	InstanceStat instanceStat;
+	boolean isLogQueryResult=false;
 	static AtomicLong UID=new AtomicLong(0L);
 
 	public Processor(String workerId, EPServiceProvider epService, 
@@ -75,6 +77,8 @@ public class Processor implements ISubscriberObserver{
 		this.pubScheduler = pubScheduler;
 		this.instanceStat = instanceStat;
 		this.id=UID.getAndIncrement();
+		String logQueryResultStr=ServiceManager.getConfig().get(Options.LOG_QUERY_RESULT);
+		try{isLogQueryResult=Boolean.valueOf(logQueryResultStr);}catch(Exception ex){}
 	}
 
 	public void init(){
@@ -449,7 +453,7 @@ public class Processor implements ISubscriberObserver{
 				events.length);
 	}
 	
-	public void logOutputEvents(EventBean[] newEvents){		
+	public void logQueryResult(EventBean[] newEvents){		
 		RootStreamContainer rsc=(RootStreamContainer)streamContainer;
 		for(int i=0;i<rsc.getDirectReuseStreamMapComparisonResultList().size();i++){
 			Stream stream=rsc.getDirectReuseStreamMapComparisonResultList().get(i).getFirst();
@@ -488,8 +492,8 @@ public class Processor implements ISubscriberObserver{
 				System.err.format("** processor receives %s EventBeans in EPListener, but is not in RUNNING STATE.\n", newEvents.length);
 				return;
 			}
-			if(streamContainer instanceof RootStreamContainer){
-				logOutputEvents(newEvents);
+			if(isLogQueryResult && (streamContainer instanceof RootStreamContainer)){
+				logQueryResult(newEvents);
 			}
 			for(IProcessorObserver pub: pubList){
 				pubScheduler.sumbit(newEvents, pub);

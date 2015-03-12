@@ -28,6 +28,7 @@ public class Config {
 	public static void initDefaultOption(Map<String,String> context){
 		context.put(Options.CONFIG_FILE_PATH, "./conf/config.properties");
 		context.put(Options.LOG4J_CONF_PATH, "./conf/log4j.properties");
+		context.put(Options.LOG_QUERY_RESULT, "false");
 	}
 	
 	public String get(String key){

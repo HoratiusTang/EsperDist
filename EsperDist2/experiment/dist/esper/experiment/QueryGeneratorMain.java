@@ -8,9 +8,12 @@ import dist.esper.external.event.EventInstanceGenerator;
 
 public class QueryGeneratorMain {
 	public static void main(String[] args){
+		String templatesFilePath="query/templates.txt";
+		String queriesFilePath="query/queries.txt";
 		QueryGenerator qg=new QueryGenerator();
 		try {
-			qg.readTemplatesFromFile("query/templates.txt");
+			qg.readTemplatesFromFile(templatesFilePath);
+			System.out.format("read %d templates from %s\n", qg.templateStrs.size(), templatesFilePath);
 			buildEvents(qg);
 			
 			IntPair[] pairs={
@@ -22,8 +25,9 @@ public class QueryGeneratorMain {
 			};
 			
 			List<String> queryList=qg.generateQuries(Arrays.asList(pairs));
-			//System.out.println(queryList.toString());
-			MultiLineFileWriter.writeToFile("query/quries.txt", queryList);
+			MultiLineFileWriter.writeToFile(queriesFilePath, queryList);
+			System.out.format("generate %d queries, and write to %s\n", 
+					queryList.size(), queriesFilePath);
 		}
 		catch (Exception e) {
 			e.printStackTrace();			
