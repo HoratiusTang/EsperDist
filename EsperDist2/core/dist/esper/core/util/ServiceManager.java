@@ -25,22 +25,7 @@ public class ServiceManager {
 	EventRegistry eventRegistry=new EventRegistry();
 	SortedMap<String,WorkerId> workerIdMap=new ConcurrentSkipListMap<String,WorkerId>();
 	String myId;
-	long OutputIntervalUS=1*1000*1000;
-	
-	public static NumberFormat numberFormat;
-	
-	static{
-		numberFormat=NumberFormat.getInstance();
-		numberFormat.setMaximumFractionDigits(2);
-	}
-	
-	public static String format(double d){
-		return numberFormat.format(d);
-	}
-	
-	public static String format(long n){
-		return numberFormat.format(n);
-	}
+	long OutputIntervalUS=1*1000*1000;	
 	
 	public static void initConfig(String[] args) throws ConfigurationException{
 		if(config==null){

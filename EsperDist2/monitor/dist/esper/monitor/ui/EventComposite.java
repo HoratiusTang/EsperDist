@@ -6,45 +6,34 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
-import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TreeListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.jface.*;
-import org.eclipse.jface.viewers.*;
 
 import dist.esper.core.cost.InstanceStat;
 import dist.esper.core.cost.RawStreamStat;
-import dist.esper.core.flow.container.*;
+import dist.esper.core.flow.container.DerivedStreamContainer;
 import dist.esper.core.flow.container.DerivedStreamContainer.StreamAndMapAndBoolComparisonResult;
+import dist.esper.core.flow.container.StreamContainerFlow;
 import dist.esper.core.flow.stream.Stream;
 import dist.esper.core.message.SubmitEplResponse;
-import dist.esper.core.util.ServiceManager;
+import dist.esper.core.util.NumberFormatter;
 import dist.esper.epl.expr.AbstractBooleanExpression;
 import dist.esper.epl.expr.EventAlias;
 import dist.esper.epl.expr.EventOrPropertySpecification;
 import dist.esper.epl.expr.EventPropertySpecification;
 import dist.esper.epl.expr.util.DeepCloneReplaceFactory;
-import dist.esper.epl.expr.util.DeepReplaceFactory;
 import dist.esper.epl.expr.util.EventAliasDumper;
 import dist.esper.epl.expr.util.EventOrPropertySpecReferenceDumper;
 import dist.esper.event.Event;
@@ -53,9 +42,6 @@ import dist.esper.io.GlobalStat;
 import dist.esper.monitor.ui.custom.EplTable;
 import dist.esper.util.CollectionUtils;
 import dist.esper.util.MultiValueMap;
-import dist.esper.util.StringUtil;
-
-import static dist.esper.core.util.ServiceManager.format;
 
 public class EventComposite extends AbstractMonitorComposite{
 //	GlobalStat gs;	
@@ -218,7 +204,7 @@ public class EventComposite extends AbstractMonitorComposite{
 		RawStreamStat rawStat=gs.getRawStreamStatMap().get(event.getName());
 		TreeItem eventItem=new TreeItem(eventTree, SWT.NULL);
 		eventItem.setData(event);
-		eventItem.setText(event.getName()+" ["+format(rawStat.getOutputRateSec())+"/s]");
+		eventItem.setText(event.getName()+" ["+NumberFormatter.format(rawStat.getOutputRateSec())+"/s]");
 		for(EventProperty prop: event.getPropList()){
 			TreeItem propItem=new TreeItem(eventItem, SWT.NULL);
 			propItem.setData(prop);
@@ -291,8 +277,8 @@ public class EventComposite extends AbstractMonitorComposite{
 			AbstractBooleanExpression cond=(AbstractBooleanExpression)cloneReplaceFactory.deepClone(dsc.getOwnCondition());
 			cols[1]=(cond==null)?"":cond.toString();
 			
-			cols[2]=format(insStat.getOutputRateSec());
-			cols[3]=format(insStat.computeSelectFactor());
+			cols[2]=NumberFormatter.format(insStat.getOutputRateSec());
+			cols[3]=NumberFormatter.format(insStat.computeSelectFactor());
 			item.setText(cols);
 		}
 		for(TableColumn col: eplStatTable.getColumns()){
@@ -384,8 +370,8 @@ public class EventComposite extends AbstractMonitorComposite{
 				cols[1]=psc.getClass().getSimpleName()+" "+psc.getId();
 				AbstractBooleanExpression cond=psc.getOwnCondition();
 				cols[2]=(cond==null)?"":cond.toString();
-				cols[3]=format(insStat.getOutputRateSec());
-				cols[4]=format(insStat.computeSelectFactor());
+				cols[3]=NumberFormatter.format(insStat.getOutputRateSec());
+				cols[4]=NumberFormatter.format(insStat.computeSelectFactor());
 				item2.setText(cols);
 			}
 		}

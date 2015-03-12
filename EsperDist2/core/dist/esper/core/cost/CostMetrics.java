@@ -4,8 +4,8 @@ import java.util.*;
 
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
-
-import static dist.esper.core.util.ServiceManager.format;
+import dist.esper.core.util.NumberFormatter;
+import static dist.esper.core.util.NumberFormatter.format;
 
 public class CostMetrics {
 	public static final StandardDeviation var=new StandardDeviation();

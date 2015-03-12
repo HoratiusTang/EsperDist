@@ -1,3 +1,409 @@
-SELECT e%01.n0, e%01.d0, e%01.s0, e%02.n1, e%02.s1 
-FROM $A#01(m0>$E.m0#01) as e%01, $B#02(m1>$E.m1#02) as e%02 
-WHERE e%01.n1=e%02.n1 and e%01.d0>e%02.d0
+#A
+SELECT a%01.im0, a%01.in1  
+FROM $A#01(in1>$A.in1#01) as a%01
+
+SELECT a%01.im0, a%01.in2  
+FROM $A#01(in2<$A.in2#01)
+
+SELECT a%01.im0, a%01.iu0 
+FROM $A#01(iu0<=$A.iu0#01)
+
+#B
+SELECT b%02.im0, b%02.iu0 
+FROM $B#02(iu0>$B.iu0#02) as b%02
+
+SELECT b%02.im0, b%02.dn0
+FROM $B#02(dn0<=$B.dn0#02) as b%02 
+
+SELECT b%02.im0, b%02.du0 
+FROM $B#02(du0>$B.du0#02) as b%02
+
+#C
+SELECT c%03.im0, c%03.iu1 
+FROM $C#03(iu1>=$C.iu1#03) as c%03
+
+SELECT c%03.im0, c%03.in0
+FROM $C#03(in0<$C.in0#03) as c%03 
+
+SELECT c%03.im0, c%03.du0 
+FROM $C#03(du0<=$C.du0#03) as c%03
+
+#D
+SELECT d%04.im0, d%04.in1 
+FROM $D#04(in1<$D.in1#04) as d%04
+
+SELECT d%04.im0, d%04.iu0
+FROM $D#04(iu0>$D.iu0#04) as d%04 
+
+SELECT d%04.im0, d%04.dn0 
+FROM $D#04(dn0>$D.dn0#04) as d%04
+
+#E
+SELECT e%05.im0, e%05.in2 
+FROM $E#05(in2<$E.in2#05) as e%05
+
+SELECT e%05.im0, e%05.iu1
+FROM $E#05(iu1<=$E.iu1#05) as e%05 
+
+SELECT e%05.im0, e%05.in0 
+FROM $E#05(in0<$E.in0#05) as e%05
+
+#A-B
+SELECT a%01.im0, a%01.in1, a%01.in0, b%02.im0, b%02.iu0, b%02.in0 
+FROM $A#01(in1>$A.in1#01).win:time(60 sec) as a%01, 
+$B#02(iu0>$B.iu0#02).win:time(60 sec) as b%02 
+WHERE a%01.in0=b%02.in0
+
+SELECT a%01.im0, a%01.in2, a%01.in0, b%02.im0, b%02.dn0, b%02.in0
+FROM $A#01(in2<$A.in2#01).win:time(120 sec) as a%01, 
+$B#02(dn0<=$B.dn0#02).win:time(120 sec) as b%02 
+WHERE 
+a%01.in0=b%02.in0
+
+SELECT a%01.im0, a%01.iu0, a%01.in0, b%02.im0, b%02.du0, b%02.in0 
+FROM $A#01(iu0<=$A.iu0#01).win:time(180 sec) as a%01, 
+$B#02(du0>$B.du0#02).win:time(180 sec) as b%02 
+WHERE a%01.in0=b%02.in0
+
+SELECT a%01.im0, a%01.in1, a%01.in0, b%02.im0, b%02.dn0, b%02.in0 
+FROM $A#01(in1>$A.in1#01).win:time(60 sec) as a%01, 
+$B#02(dn0<=$B.dn0#02).win:time(120 sec) as b%02 
+WHERE a%01.in0=b%02.in0
+
+SELECT a%01.im0, a%01.in2, a%01.in0, b%02.im0, b%02.du0, b%02.in0 
+FROM $A#01(in2<$A.in2#01).win:time(120 sec) as a%01, 
+$B#02(du0>$B.du0#02).win:time(180 sec) as b%02 
+WHERE a%01.in0=b%02.in0
+
+SELECT a%01.im0, a%01.iu0, a%01.in0, b%02.im0, b%02.iu0, b%02.in0 
+FROM $A#01(iu0<=$A.iu0#01).win:time(180 sec) as a%01, 
+$B#02(iu0>$B.iu0#02).win:time(60 sec) as b%02 
+WHERE a%01.in0=b%02.in0
+
+#B-C
+SELECT b%02.im0, b%02.iu0, b%02.in1, c%03.im0, c%03.iu1, c%03.in1 
+FROM $B#02(iu0>$B.iu0#02).win:time(60 sec) as b%02, 
+$C#03(iu1>=$C.iu1#03).win:time(60 sec) as c%03
+WHERE b%02.in1=c%03.in1
+
+SELECT b%02.im0, b%02.dn0, b%02.in1, c%03.im0, c%03.in0, c%03.in1 
+FROM $B#02(dn0<=$B.dn0#02).win:time(120 sec) as b%02, 
+$C#03(in0<$C.in0#03).win:time(120 sec) as c%03 
+WHERE b%02.in1=c%03.in1
+
+SELECT b%02.im0, b%02.du0, b%02.in1, c%03.im0, c%03.du0, c%03.in1 
+FROM $B#02(du0>$B.du0#02).win:time(180 sec) as b%02, 
+$C#03(du0<=$C.du0#03).win:time(180 sec) as c%03 
+WHERE b%02.in1=c%03.in1
+
+SELECT b%02.im0, b%02.iu0, b%02.in1, c%03.im0, c%03.in0, c%03.in1 
+FROM $B#02(iu0>$B.iu0#02).win:time(60 sec) as b%02, 
+$C#03(in0<$C.in0#03).win:time(120 sec) as c%03 
+WHERE b%02.in1=c%03.in1
+
+SELECT b%02.im0, b%02.dn0, b%02.in1, c%03.im0, c%03.du0, c%03.in1 
+FROM $B#02(dn0<=$B.dn0#02).win:time(120 sec) as b%02, 
+$C#03(du0<=$C.du0#03).win:time(180 sec) as c%03 
+WHERE b%02.in1=c%03.in1
+
+SELECT b%02.im0, b%02.du0, b%02.in1, c%03.im0, c%03.iu1, c%03.in1 
+FROM $B#02(du0>$B.du0#02).win:time(180 sec) as b%02, 
+$C#03(iu1>=$C.iu1#03).win:time(60 sec) as c%03
+WHERE b%02.in1=c%03.in1
+
+#C-D
+SELECT c%03.im0, c%03.iu1, c%03.in2, d%04.im0, d%04.in1, d%04.in2 
+FROM $C#03(iu1>=$C.iu1#03).win:time(60 sec) as c%03, 
+$D#04(in1<$D.in1#03).win:time(60 sec) as d%04 
+WHERE c%03.in2=d%04.in2
+
+SELECT c%03.im0, c%03.in0, c%03.in2, d%04.im0, d%04.iu0, d%04.in2
+FROM $C#03(in0<$C.in0#03).win:time(120 sec) as c%03, 
+$D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04 
+WHERE c%03.in2=d%04.in2
+
+SELECT c%03.im0, c%03.du0, c%03.in2, d%04.im0, d%04.dn0, d%04.in2 
+FROM $C#03(du0<=$C.du0#03).win:time(180 sec) as c%03, 
+$D#04(dn0>$D.dn0#04).win:time(180 sec) as d%04 
+WHERE c%03.in2=d%04.in2
+
+SELECT c%03.im0, c%03.iu1, c%03.in2, d%04.im0, d%04.iu0, d%04.in2
+FROM $C#03(iu1>=$C.iu1#03).win:time(60 sec) as c%03, 
+$D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04 
+WHERE c%03.in2=d%04.in2
+
+SELECT c%03.im0, c%03.in0, c%03.in2, d%04.im0, d%04.dn0, d%04.in2 
+FROM $C#03(in0<$C.in0#03).win:time(120 sec) as c%03, 
+$D#04(dn0>$D.dn0#04).win:time(180 sec) as d%04 
+WHERE c%03.in2=d%04.in2
+
+SELECT c%03.im0, c%03.du0, c%03.in2, d%04.im0, d%04.in1, d%04.in2 
+FROM $C#03(du0<=$C.du0#03).win:time(180 sec) as c%03, 
+$D#04(in1<$D.in1#03).win:time(60 sec) as d%04 
+WHERE c%03.in2=d%04.in2
+
+#D-E
+SELECT d%04.im0, d%04.in1, d%04.in3, e%05.im0, e%05.in2, e%05.in3 
+FROM $D#04(in1<$D.in1#04).win:time(60 sec) as d%04, 
+$E#05(in2<$E.in2#05).win:time(60 sec) as e%05
+WHERE d%04.in3=e%05.in3
+
+SELECT d%04.im0, d%04.iu0, d%04.in3, e%05.im0, e%05.iu1, e%05.in3
+FROM $D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04, 
+$E#05(iu1<=$E.iu1#05).win:time(120 sec) as e%05 
+WHERE d%04.in3=e%05.in3
+
+SELECT d%04.im0, d%04.dn0, d%04.in3, e%05.im0, e%05.in0, e%05.in3
+FROM $D#04(dn0>$D.dn0#04).win:time(180 sec) as d%04, 
+$E#05(in0<$E.in0#05).win:time(180 sec) as e%05
+WHERE d%04.in3=e%05.in3
+
+SELECT d%04.im0, d%04.in1, d%04.in3, e%05.im0, e%05.iu1, e%05.in3
+FROM $D#04(in1<$D.in1#04).win:time(60 sec) as d%04, 
+$E#05(iu1<=$E.iu1#05).win:time(120 sec) as e%05 
+WHERE d%04.in3=e%05.in3
+
+SELECT d%04.im0, d%04.iu0, d%04.in3, e%05.im0, e%05.in0, e%05.in3
+FROM $D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04, 
+$E#05(in0<$E.in0#05).win:time(180 sec) as e%05 
+WHERE d%04.in3=e%05.in3
+
+SELECT d%04.im0, d%04.dn0, d%04.in3, e%05.im0, e%05.in2, e%05.in3 
+FROM $D#04(dn0>$D.dn0#04).win:time(180 sec) as d%04, 
+$E#05(in2<$E.in2#05).win:time(60 sec) as e%05
+WHERE d%04.in3=e%05.in3
+
+#A-B-C
+SELECT a%01.im0, a%01.in1, a%01.in0, b%02.im0, b%02.iu0, b%02.in0, b%02.in1,
+c%03.im0, c%03.in0, c%03.in1 
+FROM $A#01(in1>$A.in1#01).win:time(60 sec) as a%01, 
+$B#02(iu0>$B.iu0#02).win:time(60 sec) as b%02, 
+$C#03(in0<$C.in0#03).win:time(120 sec) as c%03 
+WHERE a%01.in0=b%02.in0 and b%02.in1=c%03.in1
+
+SELECT a%01.im0, a%01.in1, a%01.in0, b%02.im0, b%02.dn0, b%02.in0, b%02.in1,
+c%03.im0, c%03.du0, c%03.in1  
+FROM $A#01(in1>$A.in1#01).win:time(60 sec) as a%01, 
+$B#02(dn0<=$B.dn0#02).win:time(120 sec) as b%02, 
+$C#03(du0<=$C.du0#03).win:time(180 sec) as c%03  
+WHERE a%01.in0=b%02.in0 and b%02.in1=c%03.in1
+
+SELECT a%01.im0, a%01.in2, a%01.in0, b%02.im0, b%02.du0, b%02.in0, b%02.in1,
+c%03.im0, c%03.in0, c%03.in1  
+FROM $A#01(in2<$A.in2#01).win:time(120 sec) as a%01, 
+$B#02(du0>$B.du0#02).win:time(180 sec) as b%02, 
+$C#03(in0<$C.in0#03).win:time(120 sec) as c%03  
+WHERE a%01.in0=b%02.in0 and b%02.in1=c%03.in1
+
+SELECT a%01.im0, a%01.iu0, a%01.in0, b%02.im0, b%02.iu0, b%02.in0, b%02.in1,
+c%03.im0, c%03.du0, c%03.in1 
+FROM $A#01(iu0<=$A.iu0#01).win:time(180 sec) as a%01, 
+$B#02(iu0>$B.iu0#02).win:time(60 sec) as b%02, 
+$C#03(du0<=$C.du0#03).win:time(180 sec) as c%03  
+WHERE a%01.in0=b%02.in0 and b%02.in1=c%03.in1
+
+#B-C-D
+SELECT b%02.im0, b%02.iu0, b%02.in1, c%03.im0, c%03.iu1, c%03.in1, c%03.in2, 
+d%04.im0, d%04.dn0, d%04.in2  
+FROM $B#02(iu0>$B.iu0#02).win:time(60 sec) as b%02, 
+$C#03(iu1>=$C.iu1#03).win:time(60 sec) as c%03, 
+$D#04(dn0>$D.dn0#04).win:time(180 sec) as d%04 
+WHERE b%02.in1=c%03.in1 and c%03.in2=d%04.in2
+
+SELECT b%02.im0, b%02.dn0, b%02.in1, c%03.im0, c%03.iu1, c%03.in1, c%03.in2, 
+d%04.im0, d%04.iu0, d%04.in2
+FROM $B#02(dn0<=$B.dn0#02).win:time(120 sec) as b%02, 
+$C#03(iu1>=$C.iu1#03).win:time(60 sec) as c%03, 
+$D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04 
+WHERE b%02.in1=c%03.in1 and c%03.in2=d%04.in2
+
+SELECT b%02.im0, b%02.dn0, b%02.in1, c%03.im0, c%03.du0, c%03.in1, c%03.in2, 
+d%04.im0, d%04.dn0, d%04.in2  
+FROM $B#02(dn0<=$B.dn0#02).win:time(120 sec) as b%02, 
+$C#03(du0<=$C.du0#03).win:time(180 sec) as c%03, 
+$D#04(dn0>$D.dn0#04).win:time(180 sec) as d%04  
+WHERE b%02.in1=c%03.in1 and c%03.in2=d%04.in2
+
+SELECT b%02.im0, b%02.du0, b%02.in1, c%03.im0, c%03.du0, c%03.in1, c%03.in2, 
+d%04.im0, d%04.in1, d%04.in2  
+FROM $B#02(du0>$B.du0#02).win:time(180 sec) as b%02, 
+$C#03(du0<=$C.du0#03).win:time(180 sec) as c%03, 
+$D#04(in1<$D.in1#03).win:time(60 sec) as d%04  
+WHERE b%02.in1=c%03.in1 and c%03.in2=d%04.in2
+
+#C-D-E
+SELECT c%03.im0, c%03.iu1, c%03.in1, c%03.in2, d%04.im0, d%04.dn0, d%04.in3, 
+e%05.im0, e%05.in2, e%05.in3 
+FROM $C#03(iu1>=$C.iu1#03).win:time(60 sec) as c%03, 
+$D#04(dn0>$D.dn0#04).win:time(180 sec) as d%04, 
+$E#05(in2<$E.in2#05).win:time(60 sec) as e%05
+WHERE c%03.in2=d%04.in2 and d%04.in3=e%05.in3
+
+SELECT c%03.im0, c%03.in0, c%03.in2, d%04.im0, d%04.iu0, d%04.in2, d%04.in3, 
+e%05.im0, e%05.in0, e%05.in3
+FROM $C#03(in0<$C.in0#03).win:time(120 sec) as c%03, 
+$D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04, 
+$E#05(in0<$E.in0#05).win:time(180 sec) as e%05 
+WHERE c%03.in2=d%04.in2 and d%04.in3=e%05.in3
+
+SELECT c%03.im0, c%03.du0, c%03.in2, d%04.im0, d%04.in1, d%04.in2, d%04.in3, 
+e%05.im0, e%05.in2, e%05.in3  
+FROM $C#03(du0<=$C.du0#03).win:time(180 sec) as c%03, 
+$D#04(in1<$D.in1#03).win:time(60 sec) as d%04, 
+$E#05(in2<$E.in2#05).win:time(60 sec) as e%05 
+WHERE c%03.in2=d%04.in2 and d%04.in3=e%05.in3
+
+SELECT c%03.im0, c%03.du0, c%03.in2, d%04.im0, d%04.iu0, d%04.in2, d%04.in3, 
+e%05.im0, e%05.iu1, e%05.in3
+FROM $C#03(du0<=$C.du0#03).win:time(180 sec) as c%03, 
+$D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04, 
+$E#05(iu1<=$E.iu1#05).win:time(120 sec) as e%05 
+WHERE c%03.in2=d%04.in2 and d%04.in3=e%05.in3
+
+#A-B-C-D
+SELECT a%01.im0, a%01.in1, a%01.in0, b%02.im0, b%02.iu0, b%02.in0, b%02.in1, 
+c%03.im0, c%03.iu1, c%03.in1, c%03.in2, d%04.im0, d%04.in1, d%04.in2  
+FROM $A#01(in1>$A.in1#01).win:time(60 sec) as a%01, 
+$B#02(iu0>$B.iu0#02).win:time(60 sec) as b%02, 
+$C#03(iu1>=$C.iu1#03).win:time(60 sec) as c%03, 
+$D#04(in1<$D.in1#03).win:time(60 sec) as d%04  
+WHERE a%01.in0=b%02.in0 and b%02.in1=c%03.in1 and c%03.in2=d%04.in2
+
+SELECT a%01.im0, a%01.in1, a%01.in0, b%02.im0, b%02.dn0, b%02.in0, b%02.in1, 
+c%03.im0, c%03.iu1, c%03.in1, c%03.in2, d%04.im0, d%04.iu0, d%04.in2 
+FROM $A#01(in1>$A.in1#01).win:time(60 sec) as a%01, 
+$B#02(dn0<=$B.dn0#02).win:time(120 sec) as b%02,
+$C#03(iu1>=$C.iu1#03).win:time(60 sec) as c%03, 
+$D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04  
+WHERE a%01.in0=b%02.in0 and b%02.in1=c%03.in1 and c%03.in2=d%04.in2
+
+SELECT a%01.im0, a%01.in2, a%01.in0, b%02.im0, b%02.dn0, b%02.in0, b%02.in1, 
+c%03.im0, c%03.in0, c%03.in1, c%03.in2, d%04.im0, d%04.dn0, d%04.in2 
+FROM $A#01(in2<$A.in2#01).win:time(120 sec) as a%01, 
+$B#02(dn0<=$B.dn0#02).win:time(120 sec) as b%02, 
+$C#03(in0<$C.in0#03).win:time(120 sec) as c%03, 
+$D#04(dn0>$D.dn0#04).win:time(180 sec) as d%04 
+WHERE a%01.in0=b%02.in0 and b%02.in1=c%03.in1 and c%03.in2=d%04.in2
+
+SELECT a%01.im0, a%01.in2, a%01.in0, b%02.im0, b%02.du0, b%02.in0, b%02.in1, 
+c%03.im0, c%03.du0, c%03.in1, c%03.in2, d%04.im0, d%04.in1, d%04.in2  
+FROM $A#01(in2<$A.in2#01).win:time(120 sec) as a%01, 
+$B#02(du0>$B.du0#02).win:time(180 sec) as b%02, 
+$C#03(du0<=$C.du0#03).win:time(180 sec) as c%03, 
+$D#04(in1<$D.in1#03).win:time(60 sec) as d%04  
+WHERE a%01.in0=b%02.in0 and b%02.in1=c%03.in1 and c%03.in2=d%04.in2
+
+SELECT a%01.im0, a%01.iu0, a%01.in0, b%02.im0, b%02.iu0, b%02.in0, b%02.in1, 
+c%03.im0, c%03.in0, c%03.in1, c%03.in2, d%04.im0, d%04.iu0, d%04.in2 
+FROM $A#01(iu0<=$A.iu0#01).win:time(180 sec) as a%01, 
+$B#02(iu0>$B.iu0#02).win:time(60 sec) as b%02, 
+$C#03(in0<$C.in0#03).win:time(120 sec) as c%03, 
+$D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04 
+WHERE a%01.in0=b%02.in0 and b%02.in1=c%03.in1 and c%03.in2=d%04.in2
+
+#B-C-D-E
+SELECT b%02.im0, b%02.iu0, b%02.in1, c%03.im0, c%03.iu1, c%03.in1, c%03.in2, 
+d%04.im0, d%04.dn0, d%04.in2, d%04.in3, e%05.im0, e%05.in2, e%05.in3  
+FROM $B#02(iu0>$B.iu0#02).win:time(60 sec) as b%02, 
+$C#03(iu1>=$C.iu1#03).win:time(60 sec) as c%03, 
+$D#04(dn0>$D.dn0#04).win:time(180 sec) as d%04, 
+$E#05(in2<$E.in2#05).win:time(60 sec) as e%05
+WHERE b%02.in1=c%03.in1 and c%03.in2=d%04.in2 and d%04.in3=e%05.in3
+
+SELECT b%02.im0, b%02.du0, b%02.in1, c%03.im0, c%03.iu1, c%03.in1, c%03.in2, 
+d%04.im0, d%04.iu0, d%04.in2, d%04.in3, e%05.im0, e%05.iu1, e%05.in3 
+FROM $B#02(du0>$B.du0#02).win:time(180 sec) as b%02, 
+$C#03(iu1>=$C.iu1#03).win:time(60 sec) as c%03, 
+$D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04, 
+$E#05(iu1<=$E.iu1#05).win:time(120 sec) as e%05 
+WHERE b%02.in1=c%03.in1 and c%03.in2=d%04.in2 and d%04.in3=e%05.in3
+
+SELECT b%02.im0, b%02.dn0, b%02.in1, c%03.im0, c%03.in0, c%03.in1, c%03.in2, 
+d%04.im0, d%04.iu0, d%04.in2, d%04.in3, e%05.im0, e%05.iu1, e%05.in3 
+FROM $B#02(dn0<=$B.dn0#02).win:time(120 sec) as b%02, 
+$C#03(in0<$C.in0#03).win:time(120 sec) as c%03, 
+$D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04, 
+$E#05(iu1<=$E.iu1#05).win:time(120 sec) as e%05 
+WHERE b%02.in1=c%03.in1 and c%03.in2=d%04.in2 and d%04.in3=e%05.in3
+
+SELECT b%02.im0, b%02.dn0, b%02.in1, c%03.im0, c%03.du0, c%03.in1, c%03.in2, 
+d%04.im0, d%04.in1, d%04.in2, d%04.in3, e%05.im0, e%05.in2, e%05.in3  
+FROM $B#02(dn0<=$B.dn0#02).win:time(120 sec) as b%02, 
+$C#03(du0<=$C.du0#03).win:time(180 sec) as c%03, 
+$D#04(in1<$D.in1#04).win:time(60 sec) as d%04, 
+$E#05(in2<$E.in2#05).win:time(60 sec) as e%05 
+WHERE b%02.in1=c%03.in1 and c%03.in2=d%04.in2 and d%04.in3=e%05.in3
+
+SELECT b%02.im0, b%02.dn0, b%02.in1, c%03.im0, c%03.du0, c%03.in1, c%03.in2, 
+d%04.im0, d%04.iu0, d%04.in2, d%04.in3, e%05.im0, e%05.iu1, e%05.in3  
+FROM $B#02(dn0<=$B.dn0#02).win:time(120 sec) as b%02, 
+$C#03(du0<=$C.du0#03).win:time(180 sec) as c%03, 
+$D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04, 
+$E#05(iu1<=$E.iu1#05).win:time(120 sec) as e%05  
+WHERE b%02.in1=c%03.in1 and c%03.in2=d%04.in2 and d%04.in3=e%05.in3
+
+SELECT b%02.im0, b%02.iu0, b%02.in1, c%03.im0, c%03.iu1, c%03.in1, c%03.in2, 
+d%04.im0, d%04.iu0, d%04.in2, d%04.in3, e%05.im0, e%05.iu1, e%05.in3 
+FROM $B#02(iu0>$B.iu0#02).win:time(60 sec) as b%02, 
+$C#03(iu1>=$C.iu1#03).win:time(60 sec) as c%03, 
+$D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04, 
+$E#05(iu1<=$E.iu1#05).win:time(120 sec) as e%05 
+WHERE b%02.in1=c%03.in1 and c%03.in2=d%04.in2 and d%04.in3=e%05.in3
+
+SELECT b%02.im0, b%02.iu0, b%02.in1, c%03.im0, c%03.in0, c%03.in1, c%03.in2, 
+d%04.im0, d%04.iu0, d%04.in2, d%04.in3, e%05.im0, e%05.in0, e%05.in3 
+FROM $B#02(iu0>$B.iu0#02).win:time(60 sec) as b%02, 
+$C#03(in0<$C.in0#03).win:time(120 sec) as c%03, 
+$D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04, 
+$E#05(in0<$E.in0#05).win:time(180 sec) as e%05  
+WHERE b%02.in1=c%03.in1 and c%03.in2=d%04.in2 and d%04.in3=e%05.in3
+
+#A-B-C-D-E
+SELECT a%01.im0, a%01.in1, a%01.in0, b%02.im0, b%02.dn0, b%02.in0, b%02.in1,
+c%03.im0, c%03.in0, c%03.in1, c%03.in2, 
+d%04.im0, d%04.in1, d%04.in2, d%04.in3, e%05.im0, e%05.iu1, e%05.in3 
+FROM $A#01(in1>$A.in1#01).win:time(60 sec) as a%01, 
+$B#02(dn0<=$B.dn0#02).win:time(120 sec) as b%02, 
+$C#03(in0<$C.in0#03).win:time(120 sec) as c%03,  
+$D#04(in1<$D.in1#04).win:time(60 sec) as d%04, 
+$E#05(iu1<=$E.iu1#05).win:time(120 sec) as e%05 
+WHERE a%01.in0=b%02.in0 and b%02.in1=c%03.in1 and c%03.in2=d%04.in2 and d%04.in3=e%05.in3
+
+SELECT a%01.im0, a%01.iu0, a%01.in0, b%02.im0, b%02.iu0, b%02.in0, b%02.in1, 
+c%03.im0, c%03.in0, c%03.in1, c%03.in2, d%04.im0, d%04.in1, d%04.in2, d%04.in3, e%05.im0, e%05.in2, e%05.in3  
+FROM $A#01(iu0<=$A.iu0#01).win:time(180 sec) as a%01, 
+$B#02(iu0>$B.iu0#02).win:time(60 sec) as b%02, 
+$C#03(in0<$C.in0#03).win:time(120 sec) as c%03, 
+$D#04(in1<$D.in1#04).win:time(60 sec) as d%04, 
+$E#05(in2<$E.in2#05).win:time(60 sec) as e%05 
+WHERE a%01.in0=b%02.in0 and b%02.in1=c%03.in1 and c%03.in2=d%04.in2 and d%04.in3=e%05.in3
+
+SELECT a%01.im0, a%01.in2, a%01.in0, b%02.im0, b%02.du0, b%02.in0, b%02.in1, 
+c%03.im0, c%03.in0, c%03.in2, c%03.in1, 
+d%04.im0, d%04.iu0, d%04.in2, d%04.in3, e%05.im0, e%05.iu1, e%05.in3 
+FROM $A#01(in2<$A.in2#01).win:time(120 sec) as a%01, 
+$B#02(du0>$B.du0#02).win:time(180 sec) as b%02, 
+$C#03(in0<$C.in0#03).win:time(120 sec) as c%03, 
+$D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04, 
+$E#05(iu1<=$E.iu1#05).win:time(120 sec) as e%05   
+WHERE a%01.in0=b%02.in0 and b%02.in1=c%03.in1 and c%03.in2=d%04.in2 and d%04.in3=e%05.in3
+
+SELECT a%01.im0, a%01.in2, a%01.in0, b%02.im0, b%02.dn0, b%02.in1, b%02.in0, 
+c%03.im0, c%03.iu1, c%03.in1, c%03.in2, 
+d%04.im0, d%04.iu0, d%04.in2, d%04.in3, e%05.im0, e%05.in0, e%05.in3
+FROM $A#01(in2<$A.in2#01).win:time(120 sec) as a%01, 
+$B#02(dn0<=$B.dn0#02).win:time(120 sec) as b%02, 
+$C#03(iu1>=$C.iu1#03).win:time(60 sec) as c%03, 
+$D#04(iu0>$D.iu0#04).win:time(120 sec) as d%04, 
+$E#05(in0<$E.in0#05).win:time(180 sec) as e%05   
+WHERE a%01.in0=b%02.in0 and b%02.in1=c%03.in1 and c%03.in2=d%04.in2 and d%04.in3=e%05.in3
+
+SELECT a%01.im0, a%01.in1, a%01.in0, b%02.im0, b%02.du0, b%02.in0, b%02.in1, 
+c%03.im0, c%03.du0, c%03.in1, c%03.in2, 
+d%04.im0, d%04.in1, d%04.in2, d%04.in3, e%05.im0, e%05.iu1, e%05.in3 
+FROM $A#01(in1>$A.in1#01).win:time(60 sec) as a%01, 
+$B#02(du0>$B.du0#02).win:time(180 sec) as b%02, 
+$C#03(du0<=$C.du0#03).win:time(180 sec) as c%03, 
+$D#04(in1<$D.in1#04).win:time(60 sec) as d%04, 
+$E#05(iu1<=$E.iu1#05).win:time(120 sec) as e%05  
+WHERE a%01.in0=b%02.in0 and b%02.in1=c%03.in1 and c%03.in2=d%04.in2 and d%04.in3=e%05.in3

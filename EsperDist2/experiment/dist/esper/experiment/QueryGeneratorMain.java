@@ -3,6 +3,7 @@ package dist.esper.experiment;
 import java.util.*;
 
 import dist.esper.experiment.QueryGenerator.IntPair;
+import dist.esper.experiment.util.MultiLineFileWriter;
 import dist.esper.external.event.EventInstanceGenerator;
 
 public class QueryGeneratorMain {
@@ -11,10 +12,18 @@ public class QueryGeneratorMain {
 		try {
 			qg.readTemplatesFromFile("query/templates.txt");
 			buildEvents(qg);
-			List<IntPair> pairList=new ArrayList<IntPair>();
-			pairList.add(new IntPair(2,2));
-			List<String> queryList=qg.generateQuries(pairList);
-			System.out.println(queryList.toString());
+			
+			IntPair[] pairs={
+				new IntPair(1,20),
+				new IntPair(2,10),
+				new IntPair(3,5),
+				new IntPair(4,2),
+				new IntPair(5,1),
+			};
+			
+			List<String> queryList=qg.generateQuries(Arrays.asList(pairs));
+			//System.out.println(queryList.toString());
+			MultiLineFileWriter.writeToFile("query/quries.txt", queryList);
 		}
 		catch (Exception e) {
 			e.printStackTrace();			
@@ -34,19 +43,19 @@ public class QueryGeneratorMain {
 		qg.addEventPrototype("D", eventGenD.getFieldGeneratorMap());
 		qg.addEventPrototype("E", eventGenE.getFieldGeneratorMap());
 		
-		qg.addEventName("A", "Ax");
-		qg.addEventName("A", "Ay");
+		qg.addEventName("A", "AJ");
+		qg.addEventName("A", "AK");
 		
-		qg.addEventName("B", "Bx");
-		qg.addEventName("B", "By");
+		qg.addEventName("B", "BJ");
+		qg.addEventName("B", "BK");
 		
-		qg.addEventName("C", "Cx");
-		qg.addEventName("C", "Cy");
+		qg.addEventName("C", "CJ");
+		qg.addEventName("C", "CK");
 		
-		qg.addEventName("D", "Dx");
-		qg.addEventName("D", "Dy");
+		qg.addEventName("D", "DJ");
+		qg.addEventName("D", "DK");
 		
-		qg.addEventName("E", "Ex");
-		qg.addEventName("E", "Ey");
+		qg.addEventName("E", "EJ");
+		qg.addEventName("E", "EK");
 	}
 }

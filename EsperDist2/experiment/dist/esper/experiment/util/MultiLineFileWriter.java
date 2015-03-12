@@ -23,7 +23,7 @@ public class MultiLineFileWriter {
 		StringBuilder sb=new StringBuilder();
 		while((line=br.readLine())!=null){
 			line=line.trim();
-			if(line.length()>0){
+			if(line.length()>0 && !line.startsWith("#")){
 				sb.append(line);
 				sb.append(" \n");
 			}
@@ -42,10 +42,11 @@ public class MultiLineFileWriter {
 		return strList;
 	}
 	
-	public static void writeToFile(List<String> strList, String filePath) throws Exception{		
+	public static void writeToFile(String filePath, List<String> strList) throws Exception{		
 		BufferedWriter bw=new BufferedWriter(new FileWriter(filePath));
 		for(String str: strList){
 			bw.write(str);
+			bw.write('\n');
 			bw.write('\n');
 		}
 		bw.close();

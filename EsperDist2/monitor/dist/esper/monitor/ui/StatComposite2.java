@@ -1,10 +1,5 @@
 package dist.esper.monitor.ui;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
@@ -14,36 +9,18 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.AxisLocation;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.labels.StandardCategorySeriesLabelGenerator;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.time.Millisecond;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.experimental.chart.swt.ChartComposite;
-import org.jfree.ui.GradientPaintTransformType;
-import org.jfree.ui.StandardGradientPaintTransformer;
 
 import dist.esper.core.cost.WorkerStat;
 import dist.esper.core.id.WorkerId;
+import dist.esper.core.util.NumberFormatter;
 import dist.esper.io.GlobalStat;
 import dist.esper.monitor.ui.data.WorkerStatData;
-import static dist.esper.core.util.ServiceManager.format;
 
 public class StatComposite2 extends AbstractMonitorComposite{
 	ScrolledComposite sc;
@@ -207,9 +184,9 @@ public class StatComposite2 extends AbstractMonitorComposite{
 				ws=gs.getProcWorkerStatMap().get(workerId);
 			}
 			addWorkerMetaTableItem("type",ws.isGateway()?"gateway":"processing");
-			addWorkerMetaTableItem("total mem",format((ws.getMemFree()+ws.getMemUsed())/1e6)+" MB");
+			addWorkerMetaTableItem("total mem",NumberFormatter.format((ws.getMemFree()+ws.getMemUsed())/1e6)+" MB");
 			addWorkerMetaTableItem("cpu cores",ws.getCpuCoreCount());
-			addWorkerMetaTableItem("cpu hz",format(ws.getCpuHZ()/1e9)+" GHz");
+			addWorkerMetaTableItem("cpu hz",NumberFormatter.format(ws.getCpuHZ()/1e9)+" GHz");
 			addWorkerMetaTableItem("process-threads", ws.getProcThreadCount());
 			addWorkerMetaTableItem("publish-threads", ws.getPubThreadCount());
 			
