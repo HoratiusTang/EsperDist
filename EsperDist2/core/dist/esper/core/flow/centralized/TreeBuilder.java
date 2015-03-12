@@ -95,6 +95,7 @@ public class TreeBuilder {
 	private void buildBottomUp(Node[] c){
 		if(c.length==1){
 			RootNode root=new RootNode(c[0]);
+			root.setEplId(eplId);
 			addNewTree(root);
 			return;
 		}
@@ -115,9 +116,32 @@ public class TreeBuilder {
 	
 	private void addNewTree(RootNode rootNode){
 		List<AbstractBooleanExpression> joinExprList=CollectionUtils.shallowClone(this.whereConjunctList);
+		rootNode=(RootNode)cloneJoinNodeWithoutJoinExpressionsBottomUp(rootNode);
 		attachExpressionsAndResultElementsToNodeBottomUp(rootNode, joinExprList);
 		Tree tree=new Tree(eplId, epl, rootNode);
 		treeList.add(tree);
+	}
+	
+	private Node cloneJoinNodeWithoutJoinExpressionsBottomUp(Node node){
+		if(node instanceof RootNode){
+			RootNode rn=(RootNode)node;
+			Node newChild=cloneJoinNodeWithoutJoinExpressionsBottomUp(rn.getChild());
+			rn.setChild(newChild);
+			return rn;
+		}
+		else if(node instanceof JoinNode){
+			JoinNode jn=(JoinNode)node;
+			JoinNode newJoin=new JoinNode();
+			newJoin.setEplId(eplId);
+			for(Node child: jn.getChildList()){
+				Node newChild=cloneJoinNodeWithoutJoinExpressionsBottomUp(child);
+				newJoin.addChild(newChild);
+			}
+			return newJoin;
+		}
+		else{//FilterNode or PatternNode
+			return node;
+		}
 	}
 	
 	/**
@@ -169,6 +193,7 @@ public class TreeBuilder {
 	
 	private JoinNode newJoinNodeWithoutJoinExpressions(Node left, Node right){
 		JoinNode joinNode=new JoinNode(left, right);
+		joinNode.setEplId(eplId);
 		return joinNode;
 	}
 	

@@ -34,7 +34,8 @@ import dist.esper.util.ThreadUtil;
 
 public class Coordinator {
 	static Logger2 log=Logger2.getLogger(Coordinator.class);
-	public static final double GATEWAY_WORKER_RATIO_MIN=1.0d/3.0d;	
+	public static final double GATEWAY_WORKER_RATIO_MIN=1.0d/3.0d;
+	static int CENTRALIZED_TREE_PRUNE_COUNT=5;
 	
 	public String id;
 	LinkManager linkManager;
@@ -180,6 +181,9 @@ public class Coordinator {
 	public long executeEPL(String epl) throws Exception{
 		long eplId=eplUID.getAndIncrement();
 		List<Tree> treeList=centralizedTreeBuilder.generateTree(eplId, epl);
+		if(treeList.size()>CENTRALIZED_TREE_PRUNE_COUNT){
+			treeList=treeList.subList(0, CENTRALIZED_TREE_PRUNE_COUNT);
+		}
 		List<StreamFlow> sfList=new ArrayList<StreamFlow>(treeList.size());
 		List<DeltaResourceUsage> druList=new ArrayList<DeltaResourceUsage>();		
 		for(Tree tree: treeList){

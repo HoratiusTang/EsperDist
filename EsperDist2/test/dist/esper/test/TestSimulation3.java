@@ -100,7 +100,7 @@ public class TestSimulation3 {
 
 		int i=0;
 		try {
-			for(i=0; i<10;i++){
+			for(i=0; i<queryList.size();i++){
 				String query=queryList.get(i);
 				coord.executeEPL(query);
 				sleep(5000);
