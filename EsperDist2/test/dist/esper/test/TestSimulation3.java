@@ -87,7 +87,7 @@ public class TestSimulation3 {
 	public void run() throws Exception{
 		String queriesFilePath="query/queries.txt";
 		List<String> queryList=MultiLineFileWriter.readFromFile(queriesFilePath);
-		System.out.format("read %d queries from %s\n", queryList.size(), queriesFilePath);
+		log.info("read %d queries from %s", queryList.size(), queriesFilePath);
 		
 		coord.start(false);
 		for(Spout spout: spoutList){

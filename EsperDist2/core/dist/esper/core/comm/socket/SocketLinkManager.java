@@ -9,14 +9,17 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.esotericsoftware.kryonet.*;
 
+import dist.esper.core.CoordinatorMain;
 import dist.esper.core.comm.Link;
 import dist.esper.core.comm.LinkManager;
 import dist.esper.core.comm.Link.Listener;
 import dist.esper.core.id.WorkerId;
 import dist.esper.core.util.ServiceManager;
 import dist.esper.io.KryoClassRegister;
+import dist.esper.util.Logger2;
 
 public class SocketLinkManager extends LinkManager {
+	static Logger2 log=Logger2.getLogger(SocketLinkManager.class);
 	public int writeBufferSize=4096000;
 	public int objectBufferSize=2048000;
 	protected Server server=null;
@@ -39,9 +42,8 @@ public class SocketLinkManager extends LinkManager {
 			server.start();
 			server.bind(myId.getPort());
 		}
-		catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("fatal error occured, will exit.");
+		catch (IOException ex) {
+			log.getLogger().fatal("fatal error occured, will exit.", ex);
 			System.exit(0);
 		}
 	}

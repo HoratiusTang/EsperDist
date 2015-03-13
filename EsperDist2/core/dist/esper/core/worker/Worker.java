@@ -3,6 +3,8 @@ package dist.esper.core.worker;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.espertech.esper.client.EPAdministrator;
 import com.espertech.esper.client.EPServiceProvider;
@@ -58,6 +60,8 @@ public class Worker {
 
 	WorkerStatReportor coordReportor;
 	
+	ReentrantReadWriteLock instancesLock=new ReentrantReadWriteLock();
+	
 	public static EventOrPropertySpecComparator epsComparator=new EventOrPropertySpecComparator();
 	
 	class CoordinatorLinkHandler implements Link.Listener{
@@ -77,7 +81,7 @@ public class Worker {
 			workerLinkList.add(link);
 			link.addListener(this, StartSubscribeMessage.class.getSimpleName());
 			link.addListener(this, ResumeSubscribeMessage.class.getSimpleName());
-			log.info("%s accept link(%s) from %s", id, link.getLinkId(), link.getTargetId().getId());
+			log.info("Worker %s accept link(%s) from %s", id, link.getLinkId(), link.getTargetId().getId());
 		}
 		@Override public void connected(Link link) {}
 		@Override public void disconnected(Link link) {
@@ -156,21 +160,33 @@ public class Worker {
 	
 	public void handleWorkerMessage(Link link, Object obj){
 		if(obj instanceof StartSubscribeMessage){
-			StartSubscribeMessage subMsg=(StartSubscribeMessage)obj;
-			Instance instance=insMap.get(subMsg.getStreamName());
+			StartSubscribeMessage subMsg=(StartSubscribeMessage)obj;			
+			Instance instance=getInstanceByStreamName(subMsg.getStreamName());			
 			if(instance==null){
-				System.out.print("");
+				log.error("instance is null, name is %s", subMsg.getStreamName());
+				return;
 			}
 			instance.createPublisher(link, subMsg.getStreamName(),
 					subMsg.getSelectElementNameList());
 			workerStatCollector.updateWorkerStat(Worker.this);
 		}
 		else if(obj instanceof ResumeSubscribeMessage){
-			ResumeSubscribeMessage resubMsg=(ResumeSubscribeMessage)obj;
-			Instance instance=insMap.get(resubMsg.getStreamName());
+			ResumeSubscribeMessage resubMsg=(ResumeSubscribeMessage)obj;			
+			Instance instance=getInstanceByStreamName(resubMsg.getStreamName());			
 			instance.modifyPublisher(link, resubMsg.getStreamName(),						
 					resubMsg.getSelectElementNameList());
 		}
+	}
+	
+	private Instance getInstanceByStreamName(String streamName){
+		Instance ins=null;
+		while(ins==null){
+			instancesLock.readLock().lock();
+			ins=insMap.get(streamName);
+			instancesLock.readLock().unlock();
+			try{Thread.sleep(1000);}catch(Exception ex){}
+		}
+		return ins;
 	}
 
 	public void handleCoordinatorMessage(Object obj){
@@ -225,6 +241,7 @@ public class Worker {
 	}
 	
 	public void handleNewStreamContainer(StreamContainer sc){
+		instancesLock.writeLock().lock();
 		Instance instance=null;
 		if(sc instanceof RootStreamContainer){
 			handleRootStreamContainer((RootStreamContainer)sc);			
@@ -255,6 +272,7 @@ public class Worker {
 		
 		instance.init();
 		instance.start();
+		instancesLock.writeLock().unlock();
 	}
 	
 	public void handleFilterDelayedStreamContainer(FilterDelayedStreamContainer fcsc){

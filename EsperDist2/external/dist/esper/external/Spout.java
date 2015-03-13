@@ -39,7 +39,7 @@ public class Spout {
 			ServiceManager.getInstance(id).registerWorkerId(link.getTargetId());			
 			workerLinkMap.put(link.getTargetId().getId(), link);
 			link.addListener(linkHandler, StartSubscribeMessage.class.getSimpleName());
-			log.info("%s accept link(%d) from %s", id, link.getLinkId(), link.getTargetId().getId());
+			log.info("Spout %s accept link(%d) from %s", id, link.getLinkId(), link.getTargetId().getId());
 		}
 	}
 	
@@ -69,7 +69,7 @@ public class Spout {
 	class PublishRunner implements Runnable{
 		@Override
 		public void run() {
-			log.info("%s is running, sending %s", id, event.getName());
+			log.info("Spout %s is running, sending %s", id, event.getName());
 			while(true){
 				try {
 					Object[] objs=new Object[batchCount];

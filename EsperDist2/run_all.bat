@@ -1,12 +1,12 @@
 @echo off
-start run_coordinator.bat -this.id Coordinator -this.port 7123
+start run_coordinator.bat -this.id Coordinator -this.port 7123 -qf ./query/queries.txt
 
 ping 0.0.0.0 -n 2 > nul
-start run_worker.bat -this.id Worker1 -this.port 9001
-start run_worker.bat -this.id Worker2 -this.port 9002
-start run_worker.bat -this.id Worker3 -this.port 9003
-start run_worker.bat -this.id Worker4 -this.port 9004
-start run_worker.bat -this.id Worker5 -this.port 9005
+start run_worker.bat -this.id Worker1 -this.port 9001 -lqr true
+start run_worker.bat -this.id Worker2 -this.port 9002 -lqr false
+start run_worker.bat -this.id Worker3 -this.port 9003 -lqr false
+start run_worker.bat -this.id Worker4 -this.port 9004 -lqr false
+start run_worker.bat -this.id Worker5 -this.port 9005 -lqr false
 
 ping 0.0.0.0 -n 2 > nul
 start run_spout.bat -this.id Spout01 -this.port 10001 -event.category A -event.name AJ

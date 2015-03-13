@@ -88,7 +88,7 @@ public class Coordinator {
 		public void newReceivedLink(Link link) {
 			//workerLinkMap.put(link.getTargetMeta().getId(), link);
 			link.addListener(this);
-			log.info("%s accept link(%s) from %s", id, link.getLinkId(), link.getTargetId().getId());
+			log.info("Coordinator %s accept link(%s) from %s", id, link.getLinkId(), link.getTargetId().getId());
 		}
 
 		@Override

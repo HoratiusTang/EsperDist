@@ -14,5 +14,6 @@ public class Options {
 	public static String EVENT_CATEGORY="event.category";
 	public static String EVENT_NAME="event.name";
 	
+	public static String QUERY_FILE="qf";
 	public static String LOG_QUERY_RESULT="lqr";//"true" or "false"
 }

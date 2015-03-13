@@ -40,10 +40,10 @@ import dist.esper.util.*;
 
 public class Processor implements ISubscriberObserver{
 	static Logger2 log;
-	static Logger2 outputLog;
+	static Logger2 queryResultLog;
 	static{
 		log=Logger2.getLogger(Processor.class);
-		outputLog=AsyncLogger2.getAsyncLogger(Processor.EPListener.class, Level.DEBUG, "log/output.txt", false, "%d{MM-dd HH:mm:ss} %p %m%n");		
+		queryResultLog=AsyncLogger2.getAsyncLogger(Processor.EPListener.class, Level.DEBUG, "log/output.txt", false, "%d{MM-dd HH:mm:ss} %p %m%n");		
 	}
 	
 	String workerId;
@@ -79,6 +79,7 @@ public class Processor implements ISubscriberObserver{
 		this.id=UID.getAndIncrement();
 		String logQueryResultStr=ServiceManager.getConfig().get(Options.LOG_QUERY_RESULT);
 		try{isLogQueryResult=Boolean.valueOf(logQueryResultStr);}catch(Exception ex){}
+		log.info("Worker %s will log query result: %s", workerId, ""+isLogQueryResult);
 	}
 
 	public void init(){
@@ -108,8 +109,12 @@ public class Processor implements ISubscriberObserver{
 		if(epStatement!=null && !epStatement.isDestroyed()){
 			epStatement.destroy();
 		}
-		log.info("** start %s(id=%d)(eplId=%d)", this.streamContainer.getClass().getSimpleName(),
-				this.streamContainer.getId(), this.streamContainer.getEplId());
+		log.info("Worker %s start Processor for %s(id=%s)(name=%s)(eplId=%d)", 
+				workerId,
+				this.streamContainer.getClass().getSimpleName(),
+				this.streamContainer.getId(), 
+				this.streamContainer.getUniqueName(),
+				this.streamContainer.getEplId());
 		try{
 			epStatement=epService.getEPAdministrator().createEPL(epl);
 			epStatement.addListener(epListener);
@@ -463,7 +468,7 @@ public class Processor implements ISubscriberObserver{
 					SelectClauseExpressionElement se=stream.getResultElementList().get(j);
 					reds[j]=new ResultElementData(se.toString(), event.get(se.getUniqueName()));
 				}
-				outputLog.debug("eplId:%d, output: %s", stream.getEplId(), Arrays.asList(reds).toString());
+				queryResultLog.debug("eplId:%d, output: %s", stream.getEplId(), Arrays.asList(reds).toString());
 			}
 		}		
 	}
@@ -477,8 +482,7 @@ public class Processor implements ISubscriberObserver{
 		public String toString(){
 			return first+":"+second;
 		}
-	}
-	
+	}	
 	
 	class EPListener implements UpdateListener{
 		@Override
@@ -489,7 +493,13 @@ public class Processor implements ISubscriberObserver{
 			}
 			instanceStat.updateProcessorOutputCount(newEvents.length);
 			if(state!=State.RUNNING){
-				System.err.format("** processor receives %s EventBeans in EPListener, but is not in RUNNING STATE.\n", newEvents.length);
+				log.warn(" Worker %s Processor for %s(id=%s)(name=%s)(eplId=%d) receives %d EventBeans in EPListener, but is not in RUNNING STATE.\n", 
+						workerId, 
+						streamContainer.getClass().getSimpleName(),
+						streamContainer.getId(),
+						streamContainer.getUniqueName(),
+						streamContainer.getEplId(),
+						newEvents.length);
 				return;
 			}
 			if(isLogQueryResult && (streamContainer instanceof RootStreamContainer)){

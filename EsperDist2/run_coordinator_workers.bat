@@ -1,5 +1,5 @@
 @echo off
-start run_coordinator.bat -this.id Coordinator -this.port 7123
+start run_coordinator.bat -this.id Coordinator -this.port 7123 -qf ./query/queries.txt
 
 ping 0.0.0.0 -n 3 > nul
 start run_worker.bat -this.id Worker1 -this.port 9001
