@@ -488,12 +488,16 @@ public class CostEvaluator {
 					List<DeltaResourceUsage> childDRUList0=searchPlan((DerivedStream)jsl.getUpStream(0), ws.id);//the best one for parentId=ws.id
 					List<DeltaResourceUsage> childDRUList1=searchPlan((DerivedStream)jsl.getUpStream(1), ws.id);//the best one for parentId=ws.id
 					for(int i=0; i<childDRUList0.size(); i++){
+						DeltaResourceUsage childDRU0=childDRUList0.get(i); 
 						for(int j=0; j<childDRUList1.size(); j++){
-							DeltaResourceUsage joinDRU=new DeltaResourceUsage(ws, CandidateContainerType.JOIN_NEW, jsl);
-							joinDRU.addChild(childDRUList0.get(i));
-							joinDRU.addChild(childDRUList1.get(j));
-							//FIXME: add all now
-							druList.add(joinDRU);
+							DeltaResourceUsage childDRU1=childDRUList1.get(j);
+							if(childDRU0.getWorkerId().equals(ws.id) || 
+									childDRU1.getWorkerId().equals(ws.id)){
+								DeltaResourceUsage joinDRU=new DeltaResourceUsage(ws, CandidateContainerType.JOIN_NEW, jsl);
+								joinDRU.addChild(childDRU0);
+								joinDRU.addChild(childDRU1);
+								druList.add(joinDRU);
+							}
 						}
 					}
 				}
