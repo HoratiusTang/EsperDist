@@ -130,6 +130,9 @@ public class BooleanExpressionComparisonResult implements Serializable{
 			if(pair.getState().getId()>state.getId()){
 				state=pair.getState();
 			}
+			else if(pair.getState()==State.NONE){
+				return State.NONE;
+			}
 		}
 		if(state==State.SURPLUS){
 			state=State.IMPLYING;

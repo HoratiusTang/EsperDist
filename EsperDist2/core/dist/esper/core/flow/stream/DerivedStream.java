@@ -38,13 +38,15 @@ public abstract class DerivedStream extends Stream {
 	public static EventOrPropertySpecComparator epsComparator=new EventOrPropertySpecComparator();	
 	transient List<ContainerAndMapAndBoolComparisonResult> directReusableCMCRList=new ArrayList<ContainerAndMapAndBoolComparisonResult>();
 	transient List<ContainerAndMapAndBoolComparisonResult> indirectReusableCMCRList=new ArrayList<ContainerAndMapAndBoolComparisonResult>();
+	transient List<ContainerAndMapAndBoolComparisonResult> equalChildrenCMCRList=new ArrayList<ContainerAndMapAndBoolComparisonResult>();
 	transient ContainerAndMapAndBoolComparisonResult finalReusingCMCR=null;
-	long windowTimeUS=0;
+	public static final long UNCONCERNED_WINDOW_TIME=-1;
+	long windowTimeUS=UNCONCERNED_WINDOW_TIME;
 	
 	public abstract ViewSpecification[] getViewSpecs();
 	
 	public DerivedStream() {
-		super();
+		super();		
 	}
 
 	public String getWindowTimeViewSpecString(){
@@ -62,14 +64,28 @@ public abstract class DerivedStream extends Stream {
 	public ContainerAndMapAndBoolComparisonResult getFinalReusingContainerMapComparisonResult() {
 		return finalReusingCMCR;
 	}
-
-	public List<ContainerAndMapAndBoolComparisonResult> getDirectReusableContainerMapComparisonResultList() {
-		return directReusableCMCRList;
-	}
-
+	
 	public void setFinalReusingContainerMapComparisonResult(ContainerAndMapAndBoolComparisonResult finalCMCR) {
 		this.finalReusingCMCR = finalCMCR;
 	}
+	
+	public List<ContainerAndMapAndBoolComparisonResult> getEqualChildrenContainerMapComparisonResultList() {
+		return equalChildrenCMCRList;
+	}	
+
+	public void addEqualChildrenContainerMapComparisonResult(ContainerAndMapAndBoolComparisonResult equalChildrenCMCR) {
+		if(!this.equalChildrenCMCRList.contains(equalChildrenCMCR)){
+			this.equalChildrenCMCRList.add(equalChildrenCMCR);
+		}
+	}
+
+	public void addEqualChildrenContainerMapComparisonResult(DerivedStreamContainer pcl, Map<EventAlias,EventAlias> eaMap, BooleanExpressionComparisonResult cr) {
+		addEqualChildrenContainerMapComparisonResult(new ContainerAndMapAndBoolComparisonResult(pcl, eaMap, cr));
+	}
+
+	public List<ContainerAndMapAndBoolComparisonResult> getDirectReusableContainerMapComparisonResultList() {
+		return directReusableCMCRList;
+	}	
 
 	public void addDirectReusableContainerMapComparisonResult(ContainerAndMapAndBoolComparisonResult reusableCMCR) {
 		if(!this.directReusableCMCRList.contains(reusableCMCR)){
@@ -278,6 +294,15 @@ public abstract class DerivedStream extends Stream {
 
 	public void setFinalReusingCMCR(ContainerAndMapAndBoolComparisonResult finalCMCR) {
 		this.finalReusingCMCR = finalCMCR;
+	}
+
+	public List<ContainerAndMapAndBoolComparisonResult> getEqualChildrenCMCRList() {
+		return equalChildrenCMCRList;
+	}
+
+	public void setEqualChildrenCMCRList(
+			List<ContainerAndMapAndBoolComparisonResult> equalChildrenCMCRList) {
+		this.equalChildrenCMCRList = equalChildrenCMCRList;
 	}
 	
 }

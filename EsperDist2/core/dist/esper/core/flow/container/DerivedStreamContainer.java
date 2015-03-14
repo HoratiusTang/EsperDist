@@ -42,8 +42,8 @@ public abstract class DerivedStreamContainer extends StreamContainer {
 	
 	public transient static ExpressionComparator exprComp=new ExpressionComparator();
 
-	
-	long windowTimeUS;
+	public static final long UNCONCERNED_WINDOW_TIME=-1;
+	long windowTimeUS=UNCONCERNED_WINDOW_TIME;
 	public abstract ViewSpecification[] getViewSpecs();
 	public abstract Stream[] getUpStreams();
 	public abstract AbstractBooleanExpression getOwnCondition();

@@ -123,6 +123,9 @@ public class StreamReviewer {
 //					FilterStreamLocation parentEplfsl=(FilterStreamLocation)fsc.getStreamLocationByEplId(parentContainerEplId);
 //					parentContainerMap.put(parentEplfsl.getEventSpec().getEventAlias(), fsl.getEventSpec().getEventAlias());
 				}
+				else{
+					fsl.addEqualChildrenContainerMapComparisonResult(fsc, fscToFslMap, cr);//RawStream is the equal child
+				}
 			}
 		}
 		if(cr==null){
@@ -312,7 +315,35 @@ public class StreamReviewer {
 					}
 				}
 			}
+			if(jscChildCount==jsc.getUpContainerCount()){//EQUIVALENT or IMPLYING
+				BooleanExpressionComparisonResult jslChildrenCr=new BooleanExpressionComparisonResult();
+				for(int i=0; i<jslChildCrs.length; i++){
+					jslChildrenCr.addChildResult(jslChildCrs[i]);
+				}
+				boolean childrenWinTimeCompResult=StreamAndContainerWindowTimeComparator
+						.checkWindowTimeEqualRecursively(jsl.getUpStreamList(), jsc.getUpContainerList());				
+				if(childrenWinTimeCompResult){				
+					exprComp.setEventAliasMap(jscToJslMap);
+					cr=beComp.compareConjunctionLists(jsl.getJoinExprList(), jsc.getJoinExprList(), 0);					
+					State ownState=cr.getOwnState();
+					State childrenState=jslChildrenCr.getChildrenState();
+					if(ownState==State.EQUIVALENT && childrenState==State.EQUIVALENT){
+						cr.addChildResult(jslChildrenCr);
+						jsl.addDirectReusableContainerMapComparisonResult(jsc, jscToJslMap, cr);
+					}
+					else if((ownState==State.IMPLYING && childrenState!=State.NONE) ||
+							(childrenState==State.IMPLYING && ownState!=State.NONE)){
+						cr.addChildResult(jslChildrenCr);
+						jsl.addIndirectReusableContainerMapComparisonResult(jsc, jscToJslMap, cr);
+					}					
+					else if(childrenState==State.EQUIVALENT){
+						cr.addChildResult(jslChildrenCr);
+						jsl.addEqualChildrenContainerMapComparisonResult(jsc, jscToJslMap, cr);
+					}
+				}
+			}
 			
+			/**
 			if(jscChildCount==jsc.getUpContainerCount()){
 				exprComp.setEventAliasMap(jscToJslMap);
 				cr=beComp.compareConjunctionLists(jsl.getJoinExprList(), jsc.getJoinExprList(), 0);
@@ -330,7 +361,7 @@ public class StreamReviewer {
 						check(jsl.getUpStream(jscChildFlag[j]), jsc.getUpContainer(j), parentContainerEplId, parentContainerMap);
 					}
 				}
-			}
+			}*/
 		}
 		if(cr==null){
 			cr=BooleanExpressionComparisonResultNone.getInstance();
@@ -433,6 +464,45 @@ public class StreamReviewer {
 				}
 			}
 		}
+	}
+	
+	static class StreamAndContainerWindowTimeComparator{
+		private static boolean checkWindowTimeEqualRecursively(DerivedStream ds, DerivedStreamContainer dsc){
+			if(ds instanceof JoinStream){
+				JoinStream js=(JoinStream)ds;
+				JoinStreamContainer jsc=(JoinStreamContainer)dsc;
+				boolean childrenResult=checkWindowTimeEqualRecursively(js.getUpStreamList(), jsc.getUpContainerList());
+				if(childrenResult){// && js.getWindowTimeUS()==jsc.getWindowTimeUS()){
+					return true;
+				}
+				return false;
+			}
+			else if(ds instanceof FilterStream){
+				return ds.getWindowTimeUS()==dsc.getWindowTimeUS();
+			}
+			else{
+				throw new RuntimeException("not implemented yet");
+			}
+		}
+		
+		public static boolean checkWindowTimeEqualRecursively(
+				List<Stream> sList, List<StreamContainer> scList){
+			for(int i=0;i<sList.size();i++){
+				DerivedStream ds=(DerivedStream)sList.get(i);
+				for(int j=0;j<scList.size();j++){
+					DerivedStreamContainer dsc=(DerivedStreamContainer)scList.get(j);
+					if(ds.getDirectOrIndirectReusableContainerMapBoolComparisonResult(dsc)!=null){
+						if(checkWindowTimeEqualRecursively(ds, dsc)){
+							break;
+						}
+					}
+					else{
+						return false;
+					}
+				}
+			}
+			return true;
+		}	
 	}
 	
 	static class StreamAndContainer extends Tuple2D<DerivedStream,DerivedStreamContainer>{

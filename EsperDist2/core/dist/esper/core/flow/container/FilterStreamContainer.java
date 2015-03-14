@@ -63,6 +63,11 @@ public class FilterStreamContainer extends BaseStreamContainer{
 	public void setFilterExpr(AbstractBooleanExpression filterExpr) {
 		this.filterExpr = filterExpr;
 	}
+	
+//	@Override
+//	public String getWindowTimeViewSpecString(){
+//		return String.format(".win:time(%d msec)", 60*1000);
+//	}
 
 	@Override
 	public Stream getUpStreamByEventName(

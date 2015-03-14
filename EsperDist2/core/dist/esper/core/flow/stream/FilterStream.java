@@ -53,6 +53,11 @@ public class FilterStream extends BaseStream{
 		this.rawStream = rawStream;
 	}
 	
+//	@Override
+//	public String getWindowTimeViewSpecString(){
+//		return String.format(".win:time(%d msec)", 60*1000);
+//	}
+	
 	@Override
 	public void toStringBuilder(StringBuilder sw, int indent) {
 		StreamStringlizer.toStringBuilder(this, sw, indent);

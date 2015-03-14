@@ -18,7 +18,7 @@ import dist.esper.util.MultiValueMap;
 
 public class CostEvaluator {
 	public static int INDIRECT_REUSE_MAX_COUNT=3;
-	public static int NEW_MAX_COUNT=3;
+	public static int NEW_MAX_COUNT=2;
 	public Map<String, WorkerStat> procWorkerStatMap=new ConcurrentSkipListMap<String, WorkerStat>();
 	public Map<String, WorkerStat> gateWorkerStatMap=new ConcurrentSkipListMap<String, WorkerStat>();
 	public Map<String, WorkerStat> allWorkerStatMap=new ConcurrentSkipListMap<String, WorkerStat>();
@@ -328,50 +328,26 @@ public class CostEvaluator {
 		return null;
 	}
 	
-	private static List<WorkerStat> getIndirectReuseLimitedWorkerStatList(
+	/**
+	private static Collection<String> getIndirectReuseLimitedWorkerStatList(
 			DerivedStream ds, String parentWorkerId, 
 			Map<String, WorkerStat> workerStatMap){
-		List<WorkerStat> wsList=new ArrayList<WorkerStat>(INDIRECT_REUSE_MAX_COUNT+1);
-		if(parentWorkerId!=null && 
-				!ds.hasDirectResuableContainerOnWorker(parentWorkerId) && 
-				workerStatMap.get(parentWorkerId)!=null){
-			wsList.add(workerStatMap.get(parentWorkerId));
-		}
-		//random choose
-		int n=workerStatMap.size();
-		int m=INDIRECT_REUSE_MAX_COUNT;
-		for(WorkerStat ws: workerStatMap.values()){
-			if(!ws.getId().equals(parentWorkerId) && !ds.hasDirectResuableContainerOnWorker(ws.getId())){
-				if(Math.random() < (double)m/(double)n){
-					wsList.add(ws);
-					m--;
-				}
-				if(m<=0)
-					break;
-			}
-			n--;
-			if(n<=0)
-				break;
-		}
-		return wsList;
-	}
-	
-	private static List<WorkerStat> getNewLimitedWorkerStatList(
-			DerivedStream ds, String parentWorkerId, 
-			Map<String, WorkerStat> workerStatMap){
-		List<WorkerStat> wsList=new ArrayList<WorkerStat>(NEW_MAX_COUNT+1);
+		Set<String> workerIdSet=new TreeSet<String>();
 		if(parentWorkerId!=null && 
 				!ds.hasDirectOrIndirectReusableContainerOnWorker(parentWorkerId) && 
 				workerStatMap.get(parentWorkerId)!=null){
-			wsList.add(workerStatMap.get(parentWorkerId));
+			workerIdSet.add(parentWorkerId);
+		}
+		for(ContainerAndMapAndBoolComparisonResult cmcr: ds.getEqualChildrenContainerMapComparisonResultList()){
+			workerIdSet.add(cmcr.getFirst().getWorkerId().getId());
 		}
 		//random choose
 		int n=workerStatMap.size();
 		int m=NEW_MAX_COUNT;
-		for(WorkerStat ws: workerStatMap.values()){
-			if(!ws.getId().equals(parentWorkerId) && !ds.hasDirectOrIndirectReusableContainerOnWorker(ws.getId())){
+		for(String workerId: workerStatMap.keySet()){
+			if(!workerIdSet.contains(workerId) && !ds.hasDirectOrIndirectReusableContainerOnWorker(workerId)){
 				if(Math.random() < (double)m/(double)n){
-					wsList.add(ws);
+					workerIdSet.add(workerId);
 					m--;
 				}
 				if(m<=0)
@@ -381,7 +357,39 @@ public class CostEvaluator {
 			if(n<=0)
 				break;
 		}
-		return wsList;
+		return workerIdSet;
+	}
+	*/
+	
+	private static Collection<String> getNewLimitedWorkerStatList(
+			DerivedStream ds, String parentWorkerId, 
+			Map<String, WorkerStat> workerStatMap){
+		Set<String> workerIdSet=new TreeSet<String>();
+		if(parentWorkerId!=null && 
+				!ds.hasDirectOrIndirectReusableContainerOnWorker(parentWorkerId) && 
+				workerStatMap.get(parentWorkerId)!=null){
+			workerIdSet.add(parentWorkerId);
+		}
+		for(ContainerAndMapAndBoolComparisonResult cmcr: ds.getEqualChildrenContainerMapComparisonResultList()){
+			workerIdSet.add(cmcr.getFirst().getWorkerId().getId());
+		}
+		//random choose
+		int n=workerStatMap.size();
+		int m=NEW_MAX_COUNT;
+		for(String workerId: workerStatMap.keySet()){
+			if(!workerIdSet.contains(workerId) && !ds.hasDirectOrIndirectReusableContainerOnWorker(workerId)){
+				if(Math.random() < (double)m/(double)n){
+					workerIdSet.add(workerId);
+					m--;
+				}
+				if(m<=0)
+					break;
+			}
+			n--;
+			if(n<=0)
+				break;
+		}
+		return workerIdSet;
 	}
 	
 	public List<DeltaResourceUsage> searchFilterPlan(FilterStream fsl, String parentWorkerId){
@@ -404,17 +412,29 @@ public class CostEvaluator {
 				}
 				else{
 					agentDRUs[i]=computeReusableDeltaResourceUsageRecursively(fsl, cmcr);
+					String[] workerIds=new String[]{agentDRUs[i].getWorkerId(), parentWorkerId};
+					if(agentDRUs[i].getWorkerId().equals(parentWorkerId)){
+						workerIds=new String[]{parentWorkerId};
+					}
+					for(String workerId: workerIds){
+						DeltaResourceUsage filterCompDRU=new DeltaResourceUsage(procWorkerStatMap.get(workerId), CandidateContainerType.FILTER_INDIRECT_REUSE, fsl, null);//container is set below
+						filterCompDRU.addChild(agentDRUs[i]);
+						filterCompDRU.setContainer(fsl.getIndirectReusableContainerMapComparisonResultList().get(i).getFirst());
+						filterCompDRU.setEventAliasMap(fsl.getIndirectReusableContainerMapComparisonResultList().get(i).getSecond());
+						filterCompDRU.setCompResult(fsl.getIndirectReusableContainerMapComparisonResultList().get(i).getThird());						
+						druList.add(filterCompDRU);
+					}
 				}
 			}
-			List<WorkerStat> wsList=getIndirectReuseLimitedWorkerStatList(fsl, parentWorkerId, procWorkerStatMap);
-			for(WorkerStat ws: wsList){
-			//for(WorkerStat ws: this.procWorkerStatMap.values()){
-				if(!fsl.hasDirectResuableContainerOnWorker(ws.id)){
+			/**
+			Collection<String> workerIdList=getIndirectReuseLimitedWorkerStatList(fsl, parentWorkerId, procWorkerStatMap);
+			for(String workerId: workerIdList){			
+				if(!fsl.hasDirectResuableContainerOnWorker(workerId)){
 					for(int i=0; i<agentDRUs.length; i++){
 						if(agentDRUs[i]==null){
 							continue;
 						}
-						DeltaResourceUsage filterCompDRU=new DeltaResourceUsage(ws, CandidateContainerType.FILTER_INDIRECT_REUSE, fsl, null);//container is set below
+						DeltaResourceUsage filterCompDRU=new DeltaResourceUsage(procWorkerStatMap.get(workerId), CandidateContainerType.FILTER_INDIRECT_REUSE, fsl, null);//container is set below
 						filterCompDRU.addChild(agentDRUs[i]);
 						filterCompDRU.setContainer(fsl.getIndirectReusableContainerMapComparisonResultList().get(i).getFirst());
 						filterCompDRU.setEventAliasMap(fsl.getIndirectReusableContainerMapComparisonResultList().get(i).getSecond());
@@ -423,14 +443,13 @@ public class CostEvaluator {
 						druList.add(filterCompDRU);
 					}
 				}
-			}
+			}*/
 		}
 //		else{
-			List<WorkerStat> wsList=getNewLimitedWorkerStatList(fsl, parentWorkerId, procWorkerStatMap);
-			for(WorkerStat ws: wsList){
-			//for(WorkerStat ws: this.procWorkerStatMap.values()){
-				if(!fsl.hasDirectOrIndirectReusableContainerOnWorker(ws.id)){
-					DeltaResourceUsage filterDRU=new DeltaResourceUsage(ws, CandidateContainerType.FILTER_NEW, fsl, null);
+			Collection<String> workerIdList=getNewLimitedWorkerStatList(fsl, parentWorkerId, procWorkerStatMap);
+			for(String workerId: workerIdList){				
+				if(!fsl.hasDirectOrIndirectReusableContainerOnWorker(workerId)){
+					DeltaResourceUsage filterDRU=new DeltaResourceUsage(procWorkerStatMap.get(workerId), CandidateContainerType.FILTER_NEW, fsl, null);
 					//FIXME: add all now
 					druList.add(filterDRU);
 				}
@@ -459,17 +478,29 @@ public class CostEvaluator {
 				}
 				else{
 					agentDRUs[i]=computeReusableDeltaResourceUsageRecursively(jsl, cmcr);//JOIN_REUSE
+					String[] workerIds=new String[]{agentDRUs[i].getWorkerId(), parentWorkerId};
+					if(agentDRUs[i].getWorkerId().equals(parentWorkerId)){
+						workerIds=new String[]{parentWorkerId};
+					}
+					for(String workerId: workerIds){
+						DeltaResourceUsage joinCompDRU=new DeltaResourceUsage(procWorkerStatMap.get(workerId), CandidateContainerType.JOIN_INDIRECT_REUSE, jsl, null);
+						joinCompDRU.setContainer(agentDRUs[i].getContainer());
+						joinCompDRU.addChild(agentDRUs[i]);
+						joinCompDRU.setEventAliasMap(jsl.getIndirectReusableContainerMapComparisonResultList().get(i).getSecond());
+						joinCompDRU.setCompResult(jsl.getIndirectReusableContainerMapComparisonResultList().get(i).getThird());
+						druList.add(joinCompDRU);
+					}
 				}
 			}
-			List<WorkerStat> wsList=getIndirectReuseLimitedWorkerStatList(jsl, parentWorkerId, procWorkerStatMap);
-			//for(WorkerStat ws: this.procWorkerStatMap.values()){
-			for(WorkerStat ws: wsList){
-				if(!jsl.hasDirectResuableContainerOnWorker(ws.id)){
+			/**
+			Collection<String> workerIdList=getIndirectReuseLimitedWorkerStatList(jsl, parentWorkerId, procWorkerStatMap);			
+			for(String workerId: workerIdList){
+				if(!jsl.hasDirectResuableContainerOnWorker(workerId)){
 					for(int i=0; i<agentDRUs.length; i++){
 						if(agentDRUs[i]==null){
 							continue;
 						}
-						DeltaResourceUsage joinCompDRU=new DeltaResourceUsage(ws, CandidateContainerType.JOIN_INDIRECT_REUSE, jsl, null);
+						DeltaResourceUsage joinCompDRU=new DeltaResourceUsage(procWorkerStatMap.get(workerId), CandidateContainerType.JOIN_INDIRECT_REUSE, jsl, null);
 						joinCompDRU.setContainer(agentDRUs[i].getContainer());
 						joinCompDRU.addChild(agentDRUs[i]);
 						joinCompDRU.setEventAliasMap(jsl.getIndirectReusableContainerMapComparisonResultList().get(i).getSecond());
@@ -478,22 +509,22 @@ public class CostEvaluator {
 						druList.add(joinCompDRU);
 					}
 				}
-			}			
+			}
+			*/		
 		}
 //		else{
-			List<WorkerStat> wsList=getNewLimitedWorkerStatList(jsl, parentWorkerId, procWorkerStatMap);
-			for(WorkerStat ws: wsList){
-			//for(WorkerStat ws: this.procWorkerStatMap.values()){
-				if(!jsl.hasDirectOrIndirectReusableContainerOnWorker(ws.id)){
-					List<DeltaResourceUsage> childDRUList0=searchPlan((DerivedStream)jsl.getUpStream(0), ws.id);//the best one for parentId=ws.id
-					List<DeltaResourceUsage> childDRUList1=searchPlan((DerivedStream)jsl.getUpStream(1), ws.id);//the best one for parentId=ws.id
+			Collection<String> workerIdList=getNewLimitedWorkerStatList(jsl, parentWorkerId, procWorkerStatMap);
+			for(String workerId: workerIdList){			
+				if(!jsl.hasDirectOrIndirectReusableContainerOnWorker(workerId)){
+					List<DeltaResourceUsage> childDRUList0=searchPlan((DerivedStream)jsl.getUpStream(0), workerId);//the best one for parentId=ws.id
+					List<DeltaResourceUsage> childDRUList1=searchPlan((DerivedStream)jsl.getUpStream(1), workerId);//the best one for parentId=ws.id
 					for(int i=0; i<childDRUList0.size(); i++){
 						DeltaResourceUsage childDRU0=childDRUList0.get(i); 
 						for(int j=0; j<childDRUList1.size(); j++){
 							DeltaResourceUsage childDRU1=childDRUList1.get(j);
-							if(childDRU0.getWorkerId().equals(ws.id) || 
-									childDRU1.getWorkerId().equals(ws.id)){
-								DeltaResourceUsage joinDRU=new DeltaResourceUsage(ws, CandidateContainerType.JOIN_NEW, jsl);
+							if(childDRU0.getWorkerId().equals(workerId) || 
+									childDRU1.getWorkerId().equals(workerId)){
+								DeltaResourceUsage joinDRU=new DeltaResourceUsage(procWorkerStatMap.get(workerId), CandidateContainerType.JOIN_NEW, jsl);
 								joinDRU.addChild(childDRU0);
 								joinDRU.addChild(childDRU1);
 								druList.add(joinDRU);
@@ -518,13 +549,12 @@ public class CostEvaluator {
 			}			
 		}
 //		else{
-			List<WorkerStat> wsList=getNewLimitedWorkerStatList(rsl, null, gateWorkerStatMap);
-			for(WorkerStat ws: wsList){
-			//for(WorkerStat ws: this.gateWorkerStatMap.values()){
-				if(!rsl.hasDirectResuableContainerOnWorker(ws.id)){
-					List<DeltaResourceUsage> childDRUs=searchPlan((DerivedStream)rsl.getUpStream(), ws.id);//the best one for parentId=ws.id
+			Collection<String> workerIdList=getNewLimitedWorkerStatList(rsl, null, gateWorkerStatMap);
+			for(String workerId: workerIdList){
+				if(!rsl.hasDirectResuableContainerOnWorker(workerId)){
+					List<DeltaResourceUsage> childDRUs=searchPlan((DerivedStream)rsl.getUpStream(), workerId);//the best one for parentId=ws.id
 					for(int i=0; i<childDRUs.size(); i++){
-						DeltaResourceUsage rootDRU=new DeltaResourceUsage(ws, CandidateContainerType.ROOT_NEW, rsl);
+						DeltaResourceUsage rootDRU=new DeltaResourceUsage(gateWorkerStatMap.get(workerId), CandidateContainerType.ROOT_NEW, rsl);
 						rootDRU.addChild(childDRUs.get(i));
 						//FIXME: add all now
 						druList.add(rootDRU);
