@@ -64,28 +64,28 @@ public class StreamReviewer {
 	public BooleanExpressionComparisonResult check(Stream sl, StreamContainer sc, long parentContainerEplId,
 			Map<EventAlias, EventAlias> parentContainerMap){
 		if((sl instanceof FilterStream) && (sc instanceof FilterDelayedStreamContainer)){
-			return checkFslAndFcslc((FilterStream)sl, (FilterDelayedStreamContainer)sc, parentContainerEplId, parentContainerMap);
+			return checkFsAndFdsc((FilterStream)sl, (FilterDelayedStreamContainer)sc, parentContainerEplId, parentContainerMap);
 		}
 		else if((sl instanceof FilterStream) && (sc instanceof FilterStreamContainer)){
-			return checkFslAndFslc((FilterStream)sl, (FilterStreamContainer)sc, parentContainerEplId, parentContainerMap);
+			return checkFsAndFsc((FilterStream)sl, (FilterStreamContainer)sc, parentContainerEplId, parentContainerMap);
 		}
 		else if((sl instanceof JoinStream) && (sc instanceof JoinDelayedStreamContainer)){
-			return checkJslAndJcslc((JoinStream)sl, (JoinDelayedStreamContainer)sc, parentContainerEplId, parentContainerMap);
+			return checkJsAndJdsc((JoinStream)sl, (JoinDelayedStreamContainer)sc, parentContainerEplId, parentContainerMap);
 		}
 		else if((sl instanceof JoinStream) && (sc instanceof JoinStreamContainer)){
-			return checkJslAndJslc((JoinStream)sl, (JoinStreamContainer)sc, parentContainerEplId, parentContainerMap);
+			return checkJsAndJsc((JoinStream)sl, (JoinStreamContainer)sc, parentContainerEplId, parentContainerMap);
 		}
 		else if((sl instanceof PatternStream) && (sc instanceof PatternStreamContainer)){
-			return checkPslAndPslc((PatternStream)sl, (PatternStreamContainer)sc, parentContainerEplId, parentContainerMap);
+			return checkPsAndPsc((PatternStream)sl, (PatternStreamContainer)sc, parentContainerEplId, parentContainerMap);
 		}
 		else if((sl instanceof RootStream) && (sc instanceof RootStreamContainer)){
-			return checkRslAndRslc((RootStream)sl, (RootStreamContainer)sc, parentContainerEplId, parentContainerMap);
+			return checkRsAndRsc((RootStream)sl, (RootStreamContainer)sc, parentContainerEplId, parentContainerMap);
 		}
 		return null;//indicate can't be direct or indirect reused
 	}
 	
 	//fsl.eplId=4, fsc.eplId=2, parent.eplId=1
-	public BooleanExpressionComparisonResult checkFslAndFslc(FilterStream fsl, FilterStreamContainer fsc, long parentContainerEplId,
+	public BooleanExpressionComparisonResult checkFsAndFsc(FilterStream fsl, FilterStreamContainer fsc, long parentContainerEplId,
 			Map<EventAlias, EventAlias> parentContainerMap){
 		BooleanExpressionComparisonResult cr=this.getBoolComparisonResult(fsl, fsc);
 		if(cr!=null){
@@ -141,7 +141,7 @@ public class StreamReviewer {
 		}
 		return condList;
 	}
-	public BooleanExpressionComparisonResult checkFslAndFcslc(FilterStream fsl, FilterDelayedStreamContainer fcsc, long parentContainerEplId,
+	public BooleanExpressionComparisonResult checkFsAndFdsc(FilterStream fsl, FilterDelayedStreamContainer fcsc, long parentContainerEplId,
 			Map<EventAlias, EventAlias> parentContainerMap){
 		BooleanExpressionComparisonResult cr=this.getBoolComparisonResult(fsl, fcsc);
 		if(cr!=null){
@@ -199,7 +199,7 @@ public class StreamReviewer {
 		return cr;
 	}
 	
-	public BooleanExpressionComparisonResult checkJslAndJcslc(JoinStream jsl, JoinDelayedStreamContainer jcsc, long parentContainerEplId,
+	public BooleanExpressionComparisonResult checkJsAndJdsc(JoinStream jsl, JoinDelayedStreamContainer jcsc, long parentContainerEplId,
 			Map<EventAlias, EventAlias> parentContainerMap){
 		BooleanExpressionComparisonResult cr=this.getBoolComparisonResult(jsl, jcsc);
 		
@@ -264,7 +264,7 @@ public class StreamReviewer {
 		return cr;
 	}
 	
-	public BooleanExpressionComparisonResult checkJslAndJslc(JoinStream jsl, JoinStreamContainer jsc, long parentContainerEplId,
+	public BooleanExpressionComparisonResult checkJsAndJsc(JoinStream jsl, JoinStreamContainer jsc, long parentContainerEplId,
 			Map<EventAlias, EventAlias> parentContainerMap){
 		BooleanExpressionComparisonResult cr=this.getBoolComparisonResult(jsl, jsc);
 		if(cr!=null){
@@ -339,7 +339,7 @@ public class StreamReviewer {
 		return cr;
 	}
 	
-	public BooleanExpressionComparisonResult checkRslAndRslc(RootStream rsl, RootStreamContainer rsc, long parentContainerEplId,
+	public BooleanExpressionComparisonResult checkRsAndRsc(RootStream rsl, RootStreamContainer rsc, long parentContainerEplId,
 			Map<EventAlias, EventAlias> parentContainerMap){
 		assert(rsc.getEplId()==parentContainerEplId);
 		BooleanExpressionComparisonResult cr=this.getBoolComparisonResult(rsl, rsc);
@@ -369,7 +369,7 @@ public class StreamReviewer {
 		return cr;
 	}
 	
-	public BooleanExpressionComparisonResult checkPslAndPslc(PatternStream psl, PatternStreamContainer psc, long parentContainerEplId,
+	public BooleanExpressionComparisonResult checkPsAndPsc(PatternStream psl, PatternStreamContainer psc, long parentContainerEplId,
 			Map<EventAlias, EventAlias> parentContainerMap){
 		throw new RuntimeException("not implemented yet");
 	}
@@ -389,7 +389,7 @@ public class StreamReviewer {
 			RootStream rs=(RootStream)sl;
 			for(RootStreamContainer rsc: this.existedRscList){
 				Map<EventAlias, EventAlias> rscToRslMap=new HashMap<EventAlias, EventAlias>(4);
-				this.checkRslAndRslc(rs, rsc, rsc.getEplId(), rscToRslMap);
+				this.checkRsAndRsc(rs, rsc, rsc.getEplId(), rscToRslMap);
 			}
 			checkIndividual(rs.getUpStream());
 		}
@@ -399,10 +399,10 @@ public class StreamReviewer {
 				if(this.getBoolComparisonResult(jsl, jsc)==null){
 					Map<EventAlias, EventAlias> jscMap=new HashMap<EventAlias, EventAlias>(4);
 					if(jsc instanceof JoinDelayedStreamContainer){
-						this.checkJslAndJcslc(jsl, (JoinDelayedStreamContainer)jsc, jsc.getEplId(), jscMap);
+						this.checkJsAndJdsc(jsl, (JoinDelayedStreamContainer)jsc, jsc.getEplId(), jscMap);
 					}
 					else{
-						this.checkJslAndJslc(jsl, jsc, jsc.getEplId(), jscMap);
+						this.checkJsAndJsc(jsl, jsc, jsc.getEplId(), jscMap);
 					}
 				}
 			}
@@ -416,10 +416,10 @@ public class StreamReviewer {
 				if(this.getBoolComparisonResult(fsl, fsc)==null){
 					Map<EventAlias, EventAlias> fscMap=new HashMap<EventAlias, EventAlias>(4);
 					if(fsc instanceof FilterDelayedStreamContainer){
-						this.checkFslAndFcslc(fsl, (FilterDelayedStreamContainer)fsc, fsc.getEplId(), fscMap);
+						this.checkFsAndFdsc(fsl, (FilterDelayedStreamContainer)fsc, fsc.getEplId(), fscMap);
 					}
 					else{
-						this.checkFslAndFslc(fsl, fsc, fsc.getEplId(), fscMap);
+						this.checkFsAndFsc(fsl, fsc, fsc.getEplId(), fscMap);
 					}
 				}
 			}
@@ -429,7 +429,7 @@ public class StreamReviewer {
 			for(PatternStreamContainer psc: existedPscList){//FIXME
 				if(this.getBoolComparisonResult(psl, psc)==null){
 					Map<EventAlias, EventAlias> pscMap=new HashMap<EventAlias, EventAlias>(4);
-					this.checkPslAndPslc(psl, psc, psc.getEplId(), pscMap);
+					this.checkPsAndPsc(psl, psc, psc.getEplId(), pscMap);
 				}
 			}
 		}
