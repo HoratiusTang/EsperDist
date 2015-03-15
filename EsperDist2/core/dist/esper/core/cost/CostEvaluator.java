@@ -307,7 +307,7 @@ public class CostEvaluator {
 	public int chooseBestIndex(List<DeltaResourceUsage> druList){
 		CostMetrics[] cms=new CostMetrics[druList.size()];
 		for(int i=0;i<druList.size();i++){
-			druList.get(i).compute();
+			druList.get(i).compute(null);
 			cms[i]=computeCostMetrics(druList.get(i));
 			cms[i].setIndex(i);
 		}

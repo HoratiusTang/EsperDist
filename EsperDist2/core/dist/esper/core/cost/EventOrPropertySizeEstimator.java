@@ -1,6 +1,7 @@
 package dist.esper.core.cost;
 
 import java.util.List;
+import java.util.Set;
 
 import dist.esper.epl.expr.EventIndexedSpecification;
 import dist.esper.epl.expr.EventOrPropertySpecification;
@@ -8,10 +9,13 @@ import dist.esper.epl.expr.EventPropertyIndexedSpecification;
 import dist.esper.epl.expr.EventPropertySpecification;
 import dist.esper.epl.expr.EventSpecification;
 import dist.esper.epl.expr.SelectClauseExpressionElement;
+import dist.esper.epl.expr.util.EventOrPropertySpecReferenceDumper;
 import dist.esper.event.Event;
 import dist.esper.event.EventProperty;
 
 public class EventOrPropertySizeEstimator {
+	public static int AVG_SELECT_ELELEMENT_NAME_LENGTH=8; 
+	public static int SERIALIZATION_ADDITION_SIZE=2;
 	RawStats rawStats;
 	
 	public EventOrPropertySizeEstimator(RawStats rawStats) {
@@ -74,6 +78,15 @@ public class EventOrPropertySizeEstimator {
 				int seSize=computeSizeOfEventOrPropertySpecification((EventOrPropertySpecification)se.getSelectExpr());
 				totalSize += seSize;
 			}
+			else{
+				Set<EventOrPropertySpecification> epsSet=EventOrPropertySpecReferenceDumper.dump(se.getSelectExpr());
+				for(EventOrPropertySpecification eps: epsSet){
+					int seSize=computeSizeOfEventOrPropertySpecification(eps);
+					totalSize += seSize;
+					break;//only 1 iteration
+				}
+			}
+			totalSize += SERIALIZATION_ADDITION_SIZE; 
 		}
 		return totalSize;
 	}
@@ -87,7 +100,7 @@ public class EventOrPropertySizeEstimator {
 		return totalSize;
 	}
 	
-	public int computeSizeOfEventOrPropertySpecification(EventOrPropertySpecification eps){		
+	private int computeSizeOfEventOrPropertySpecification(EventOrPropertySpecification eps){		
 		if(eps instanceof EventPropertySpecification){
 			if(eps instanceof EventPropertyIndexedSpecification){
 				EventPropertyIndexedSpecification epis=(EventPropertyIndexedSpecification)eps;

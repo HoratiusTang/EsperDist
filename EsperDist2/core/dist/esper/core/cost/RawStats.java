@@ -92,11 +92,11 @@ public class RawStats {
 			Object cpnType=prop.getComponentType();
 			int cpnSize=sizeOfComponentType(cpnType);
 			ArrayPropertyStat aps=(ArrayPropertyStat)ps;
-			return (int)(aps.getAvgLength() * (double)cpnSize);
+			return (int)(aps.getAvgLength() * (double)cpnSize)+1;
 		}
 		else if(prop.isString()){
 			StringPropertyStat sps=(StringPropertyStat)ps;
-			return (int)(sps.getAvgLength() * (double)(Character.SIZE >> 3));
+			return (int)(sps.getAvgLength() * (double)(Character.SIZE >> 3))+1;
 		}
 		else{
 			return sizeOfComponentType(prop.getType());

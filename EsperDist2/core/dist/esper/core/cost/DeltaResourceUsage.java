@@ -42,13 +42,12 @@ public class DeltaResourceUsage{
 	
 	public double deltaMemoryBytes;//bytes=sum(child.deltaOutputBytesSize)
 	public double deltaProcTimeUS;//us per s
-	public double deltaOutputBytesPerEvent;
+	private double deltaOutputBytesPerEvent;
+	private double deltaMemoryBytesPerEvent;
 	public double deltaOutputTimeUS;//us per s
 	public List<SelectClauseExpressionElement> ereList;
 	List<EventOrPropertySpecification> parentExtraCEPSList=Collections.emptyList();
 	public List<DeltaResourceUsage> childList=new ArrayList<DeltaResourceUsage>(2);
-	//private CostMetrics costMetrics;
-	//public static Comparator<DeltaResourceUsage> comparator=new DefaultComparator();
 	
 	public String getWorkerId(){
 		return workerStat.id;
@@ -83,39 +82,18 @@ public class DeltaResourceUsage{
 		descList.add(this);
 	}
 	
-//	public CostMetrics getCostMetrics(){
-//		CostMetrics cm=new CostMetrics();
-//		computeCostMetricsRecursively(cm);
-//		return cm;
-//	}
-	
-//	public void computeCostMetricsRecursively(CostMetrics cm){
-//		cm.addDeltaCPUTimeUS(this.deltaProcTimeUS);
-//		cm.addDeltaMemoryBytes(this.deltaMemoryBytes);
-//		for(DeltaResourceUsage childDRU: childList){
-//			childDRU.computeCostMetricsRecursively(cm);
-//			if(!this.getWorkerId().equals(childDRU.getWorkerId())){
-//				cm.addDeltaOutputTimeUS(childDRU.deltaOutputTimeUS);
-//			}
-//		}
-//	}
-	
 	public boolean containsInputRawStream(String workerId, RawStream rsl){
 		Set<RawStream> rawSet=workerInputRawStreamsMap.get(workerId);
-		if(rawSet!=null){
-			if(rawSet.contains(rsl)){
-				return true;
-			}
+		if(rawSet!=null && rawSet.contains(rsl)){
+			return true;			
 		}
 		return false;
 	}
 	
 	public boolean containsInputDerivedStreamContainer(String workerId, DerivedStreamContainer psc){
-		Set<DerivedStreamContainer> rawSet=workerInputContainersMap.get(workerId);
-		if(rawSet!=null){
-			if(rawSet.contains(psc)){
-				return true;
-			}
+		Set<DerivedStreamContainer> dscSet=workerInputContainersMap.get(workerId);
+		if(dscSet!=null && dscSet.contains(psc)){
+			return true;
 		}
 		return false;
 	}	
@@ -124,46 +102,61 @@ public class DeltaResourceUsage{
 		return type;
 	}
 	
-	public void compute(){
+	public void compute(String parentWorkerId){
 		if(type==CandidateContainerType.ROOT_REUSE){
 			this.computeRootReuse();
 		}
 		else if(type==CandidateContainerType.JOIN_DIRECT_REUSE){
-			this.computeJoinReuse();
+			this.computeJoinReuse(parentWorkerId);
 		}
 		else if(type==CandidateContainerType.FILTER_DIRECT_REUSE){
-			this.computeFilterReuse();
+			this.computeFilterReuse(parentWorkerId);
 		}
 		else if(type==CandidateContainerType.JOIN_INDIRECT_REUSE ||
 				type==CandidateContainerType.FILTER_INDIRECT_REUSE){
-			this.computeFilterOrJoinIndirectReuse();
+			this.computeFilterOrJoinIndirectReuse(parentWorkerId);
 		}
 		else if(type==CandidateContainerType.ROOT_NEW){
-			this.computeRootNew();
+			this.computeRootNew(parentWorkerId);
 		}
 		else if(type==CandidateContainerType.JOIN_NEW){
-			this.computeJoinNew();
+			this.computeJoinNew(parentWorkerId);
 		}
 		else if(type==CandidateContainerType.FILTER_NEW){
-			this.computeFilterNew();
+			this.computeFilterNew(parentWorkerId);
 		}
 	}
-	
-	public void compute(List<EventOrPropertySpecification> parentExtraCEPSList){
-		this.parentExtraCEPSList=parentExtraCEPSList;
-		compute();
+	private int additionalNameSizes(int n){
+		return n*EventOrPropertySizeEstimator.AVG_SELECT_ELELEMENT_NAME_LENGTH;
 	}
-	public void computeFilterReuse(){
+	private int additionalMemorySizeWhenOutputPerEvent(){
+		return 500;
+	}
+	
+	public void compute(String parentWorkerId, List<EventOrPropertySpecification> parentExtraCEPSList){
+		this.parentExtraCEPSList=parentExtraCEPSList;
+		compute(parentWorkerId);
+	}
+	public void computeFilterReuse(String parentWorkerId){
 		deltaProcTimeUS = 0.0d;
 		ereList=getExtraResultElementList(stream, container, eaMap);
 		deltaOutputBytesPerEvent = sizeEstimator.computeSelectElementsByteSize(ereList);
-		deltaOutputTimeUS = (double)deltaOutputBytesPerEvent * stream.getRate() / workerStat.getSendByteRateUS();
-		deltaMemoryBytes = (double)deltaOutputBytesPerEvent * stream.getRate();
+		if(this.getWorkerId().equals(parentWorkerId)){//send in memory
+			deltaOutputTimeUS = 0;
+			deltaMemoryBytes = type.getFixedDeltaMemUsage();
+		}
+		else{//send via socket
+			deltaOutputTimeUS = (double)deltaOutputBytesPerEvent * stream.getRate() / workerStat.getSendByteRateUS()
+								+ workerStat.getSendBaseTimeUS();
+			deltaMemoryBytes = (double)deltaOutputBytesPerEvent * stream.getRate()
+								+ additionalNameSizes(ereList.size())
+								+ type.getFixedDeltaMemUsage();
+		}
 	}
 	
-	public void computeJoinReuse(){
+	public void computeJoinReuse(String parentWorkerId){
 		for(DeltaResourceUsage childDRU: childList){
-			childDRU.compute();
+			childDRU.compute(this.getWorkerId());
 		}
 		deltaProcTimeUS=0.0;
 		ereList=getExtraResultElementList(stream, container, eaMap);
@@ -178,7 +171,7 @@ public class DeltaResourceUsage{
 	
 	public void computeRootReuse(){
 		DeltaResourceUsage childDRU=this.childList.get(0);
-		childDRU.compute();
+		childDRU.compute(this.getWorkerId());
 		
 		deltaProcTimeUS = 0.0d;
 		ereList=getExtraResultElementList(stream, container, eaMap);
@@ -187,7 +180,7 @@ public class DeltaResourceUsage{
 		deltaMemoryBytes = (double)deltaOutputBytesPerEvent * stream.getRate();
 	}
 	
-	public void computeFilterOrJoinIndirectReuse(){
+	public void computeFilterOrJoinIndirectReuse(String parentWorkerId){
 		if(containsInputDerivedStreamContainer(this.workerStat.id, container)){
 			ereList=getExtraResultElementList(stream, container, eaMap);
 		}
@@ -208,10 +201,10 @@ public class DeltaResourceUsage{
 		
 		long outputIntervalUS = ServiceManager.getInstance(this.getWorkerId()).getOutputIntervalUS();
 		deltaMemoryBytes = memoryBytesPerEvent * stream.getRate() * outputIntervalUS; //already consider localization, see above
-		this.childList.get(0).compute(extraCEPSList2);
+		this.childList.get(0).compute(this.getWorkerId(), extraCEPSList2);
 	}
 	
-	public void computeFilterNew(){
+	public void computeFilterNew(String parentWorkerId){
 		ereList=stream.getResultElementList();
 		deltaOutputBytesPerEvent = sizeEstimator.computeSelectElementsByteSize(ereList);		
 		int comparisonCount=((FilterStream)stream).getFilterExpr().getComparisonExpressionCount();
@@ -227,9 +220,9 @@ public class DeltaResourceUsage{
 		deltaOutputTimeUS = (double)deltaOutputBytesPerEvent * stream.getRate() / workerStat.getSendByteRateUS() + workerStat.sendBaseTimeUS;
 	}
 	
-	public void computeJoinNew(){
+	public void computeJoinNew(String parentWorkerId){
 		for(DeltaResourceUsage childDRU: childList){
-			childDRU.compute();
+			childDRU.compute(this.getWorkerId());
 		}
 		
 		ereList=stream.getResultElementList();
@@ -259,9 +252,9 @@ public class DeltaResourceUsage{
 		deltaOutputTimeUS = (double)deltaOutputBytesPerEvent * stream.getRate() / workerStat.getSendByteRateUS() + workerStat.sendBaseTimeUS;
 	}
 	
-	public void computeRootNew(){
+	public void computeRootNew(String parentWorkerId){
 		DeltaResourceUsage childDRU=this.childList.get(0);
-		childDRU.compute();
+		childDRU.compute(this.getWorkerId());
 		
 		ereList=stream.getResultElementList();
 		deltaOutputBytesPerEvent = sizeEstimator.computeSelectElementsByteSize(ereList);
@@ -512,23 +505,30 @@ public class DeltaResourceUsage{
 	}
 	
 	public static enum CandidateContainerType{
-		FILTER_NEW("filter_new"),
-		FILTER_DIRECT_REUSE("filter_direct_reuse"),		
-		FILTER_INDIRECT_REUSE("filter_indirect_reuse"),
-		JOIN_NEW("join_new"),
-		JOIN_DIRECT_REUSE("join_direct_reuse"),
-		JOIN_INDIRECT_REUSE("join_indirect_reuse"),
-		PATTERN("pattern"),
-		ROOT_NEW("root_new"),
-		ROOT_REUSE("root_reuse");
+		FILTER_NEW("filter_new", 100*1000),
+		FILTER_DIRECT_REUSE("filter_direct_reuse", 5*1000),		
+		FILTER_INDIRECT_REUSE("filter_indirect_reuse", 100*1000),
+		JOIN_NEW("join_new", 500*1000),
+		JOIN_DIRECT_REUSE("join_direct_reuse", 8*1000),
+		JOIN_INDIRECT_REUSE("join_indirect_reuse", 100*1000),
+		PATTERN("pattern", 1000*1000),
+		ROOT_NEW("root_new", 100*1000),
+		ROOT_REUSE("root_reuse", 5*1000);
 		
 		String str;
-		CandidateContainerType(String str){
+		int fixedDeltaMemUsage;//bytes
+		CandidateContainerType(String str, int fixedDeltaMemUsage){
 			this.str=str;
 		}
 		@Override
 		public String toString(){
 			return str;
+		}
+		public int getFixedDeltaMemUsage() {
+			return fixedDeltaMemUsage;
+		}
+		public void setFixedDeltaMemUsage(int fixedDeltaMemUsage) {
+			this.fixedDeltaMemUsage = fixedDeltaMemUsage;
 		}
 	}
 }
