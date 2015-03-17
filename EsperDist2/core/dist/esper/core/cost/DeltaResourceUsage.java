@@ -50,6 +50,7 @@ public class DeltaResourceUsage{
 	public List<SelectClauseExpressionElement> extraInputElementList;
 	List<EventOrPropertySpecification> parentExtraConditionEPSList=Collections.emptyList();
 	public List<DeltaResourceUsage> childList=new ArrayList<DeltaResourceUsage>(2);
+	private CachedDeltaResouceResultManager cachedDeltaResouceResultManager=new CachedDeltaResouceResultManager();
 	
 	public String getWorkerId(){
 		return workerStat.id;
@@ -108,6 +109,13 @@ public class DeltaResourceUsage{
 	}
 	
 	public void compute(String parentWorkerId){
+		if(cachedDeltaResouceResultManager.dumpDeltaResouceResult(parentWorkerId)){
+			for(DeltaResourceUsage childDRU: childList){
+				childDRU.compute(this.getWorkerId());
+			}
+			return;
+		}
+		
 		if(type==CandidateContainerType.ROOT_REUSE){
 			this.computeRootReuse();
 		}
@@ -124,7 +132,7 @@ public class DeltaResourceUsage{
 			this.computeFilterIndirectReuse(parentWorkerId);
 		}
 		else if(type==CandidateContainerType.ROOT_NEW){
-			this.computeRootNew(parentWorkerId);
+			this.computeRootNew();
 		}
 		else if(type==CandidateContainerType.JOIN_NEW){
 			this.computeJoinNew(parentWorkerId);
@@ -132,6 +140,7 @@ public class DeltaResourceUsage{
 		else if(type==CandidateContainerType.FILTER_NEW){
 			this.computeFilterNew(parentWorkerId);
 		}
+		cachedDeltaResouceResultManager.storeDeltaResouceResult(parentWorkerId);
 	}
 	
 	private int additionalMemorySizeWhenNewOutputPerEvent(int numSelectElement){
@@ -274,7 +283,7 @@ public class DeltaResourceUsage{
 						rateSec[0] * rateSec[1] * (winTimeUS[0] + winTimeUS[1]) / 1e6;
 	}
 	
-	public void computeRootNew(String parentWorkerId){
+	public void computeRootNew(){
 		double outputIntervalSec = ServiceManager.getInstance(this.getWorkerId()).getOutputIntervalUS()/1e6;
 		DeltaResourceUsage childDRU=this.childList.get(0);
 		childDRU.compute(this.getWorkerId());
@@ -646,6 +655,80 @@ public class DeltaResourceUsage{
 
 	public static void setSizeEstimator(EventOrPropertySizeEstimator sizeEstimator) {
 		DeltaResourceUsage.sizeEstimator = sizeEstimator;
+	}
+	class CachedDeltaResouceResultManager{
+		CachedResouceResult sameWorkerWithParentResult=null;
+		CachedResouceResult diffWorkerWithParentResult=null;
+		public void storeDeltaResouceResult(String parentWorkerId){
+			if(getWorkerId().equals(parentWorkerId)){
+				if(sameWorkerWithParentResult==null){
+					sameWorkerWithParentResult=new CachedResouceResult();
+				}
+				sameWorkerWithParentResult.setResouceResult(deltaMemoryBytes, deltaProcTimeUS, 
+						deltaOutputBytesPerEvent, deltaOutputTimeUS);
+			}
+			else{
+				if(diffWorkerWithParentResult==null){
+					diffWorkerWithParentResult=new CachedResouceResult();
+				}
+				diffWorkerWithParentResult.setResouceResult(deltaMemoryBytes, deltaProcTimeUS, 
+						deltaOutputBytesPerEvent, deltaOutputTimeUS);
+			}
+		}
+		
+		public boolean dumpDeltaResouceResult(String parentWorkerId){
+			if(getWorkerId().equals(parentWorkerId)){
+				if(sameWorkerWithParentResult!=null){
+					deltaMemoryBytes = sameWorkerWithParentResult.deltaMemoryBytes;
+					deltaProcTimeUS = sameWorkerWithParentResult.deltaProcTimeUS;
+					deltaOutputBytesPerEvent = sameWorkerWithParentResult.deltaOutputBytesPerEvent;
+					deltaOutputTimeUS = sameWorkerWithParentResult.deltaOutputTimeUS;
+					return true;
+				}
+			}
+			else{
+				if(diffWorkerWithParentResult!=null){
+					deltaMemoryBytes = diffWorkerWithParentResult.deltaMemoryBytes;
+					deltaProcTimeUS = diffWorkerWithParentResult.deltaProcTimeUS;
+					deltaOutputBytesPerEvent = diffWorkerWithParentResult.deltaOutputBytesPerEvent;
+					deltaOutputTimeUS = diffWorkerWithParentResult.deltaOutputTimeUS;
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		@Override
+		public String toString(){
+			return String.format("WorkerId(%s)[%s], Others[%s]", getWorkerId(), 
+					sameWorkerWithParentResult==null?"null":sameWorkerWithParentResult.toString(),
+					diffWorkerWithParentResult==null?"null":diffWorkerWithParentResult.toString());
+		}
+	}
+	static class CachedResouceResult{
+		double deltaMemoryBytes;
+		double deltaProcTimeUS;
+		double deltaOutputBytesPerEvent;		
+		double deltaOutputTimeUS;
+		public CachedResouceResult(){}
+		public CachedResouceResult(double deltaMemoryBytes, double deltaProcTimeUS,
+				double deltaOutputBytesPerEvent, double deltaOutputTimeUS) {
+			super();
+			this.setResouceResult(deltaMemoryBytes, deltaProcTimeUS, 
+					deltaOutputBytesPerEvent, deltaOutputTimeUS);
+		}
+		public void setResouceResult(double deltaMemoryBytes, double deltaProcTimeUS,
+				double deltaOutputBytesPerEvent, double deltaOutputTimeUS) {
+			this.deltaMemoryBytes = deltaMemoryBytes;
+			this.deltaProcTimeUS = deltaProcTimeUS;
+			this.deltaOutputBytesPerEvent = deltaOutputBytesPerEvent;
+			this.deltaOutputTimeUS = deltaOutputTimeUS;
+		}
+		@Override
+		public String toString(){
+			return String.format("CachedResouceResult: deltaMemoryBytes=%.2f, deltaProcTimeUS=%.2f, deltaOutputBytesPerEvent=%.2f, deltaOutputTimeUS=%.2f, ",
+					deltaMemoryBytes, deltaProcTimeUS, deltaOutputBytesPerEvent, deltaOutputBytesPerEvent);
+		}
 	}
 	
 	public static enum CandidateContainerType{
