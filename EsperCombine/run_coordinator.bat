@@ -1,2 +1,2 @@
-java -ea -classpath .\bin;.\lib\*;.\lib\commons\*;.\lib\kryonet\*;.\lib\sigar-bin\lib\*;.\lib\esper-5.0.0\esper\*;.\lib\esper-5.0.0\esperio-amqp\*;.\lib\esper-5.0.0\esperio-http\*;.\lib\esper-5.0.0\esper-springjms\*;.\lib\esper-5.0.0\esperio-stax\* combine.esper.core.CoordinatorMain %*
+java -ea -classpath .\bin;.\lib\*;..\EsperDist2\lib\*;..\EsperDist2\lib\commons\*;..\EsperDist2\lib\kryonet\*;..\EsperDist2\lib\sigar-bin\lib\*;..\EsperDist2\lib\esper-5.0.0\esper\*;..\EsperDist2\lib\esper-5.0.0\esperio-amqp\*;..\EsperDist2\lib\esper-5.0.0\esperio-http\*;..\EsperDist2\lib\esper-5.0.0\esper-springjms\*;..\EsperDist2\lib\esper-5.0.0\esperio-stax\*;..\EsperDist2\lib\util\* combine.esper.core.CoordinatorMain %*
 pause

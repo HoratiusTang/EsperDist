@@ -3,7 +3,7 @@ package combine.esper.core;
 import dist.esper.core.id.WorkerId;
 import dist.esper.core.util.Options;
 import dist.esper.core.util.ServiceManager;
-import dist.esper.core.worker.Worker;
+import combine.esper.core.worker.Worker;
 import dist.esper.io.KryoClassRegister;
 import dist.esper.util.Logger2;
 
@@ -21,10 +21,10 @@ public class WorkerMain {
 			worker.start();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			log.getLogger().fatal("fatal error ocurr", e);
 		}
 		finally{
-			log.info("Worker %s terminated");
+			log.info("Worker %s terminated", thisId);
 		}
 	}
 	
@@ -35,7 +35,7 @@ public class WorkerMain {
 		int thisPort=Integer.parseInt(ServiceManager.getConfig().get(Options.THIS_PORT));		
 		WorkerId myId=new WorkerId(thisId, thisIp, thisPort);
 		
-		System.out.println("construct WorkerId: "+myId.toString());
+		log.info("construct WorkerId: "+myId.toString());
 		ServiceManager.getInstance(thisId).registerWorkerId(myId);
 		
 		return thisId;

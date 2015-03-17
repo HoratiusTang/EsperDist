@@ -10,6 +10,7 @@ import dist.esper.core.id.WorkerId;
 import dist.esper.core.util.ServiceManager;
 
 import dist.esper.event.Event;
+import dist.esper.experiment.EventGeneratorFactory;
 import dist.esper.external.Spout;
 import dist.esper.external.event.EventInstanceGenerator;
 import dist.esper.external.event.FieldGenerator;
@@ -74,13 +75,21 @@ public class TestSimulation2 {
 	}
 	
 	private void genEventInstanceGenerators(){
+		/**
 		String[] eventNames={"A","B","C","D"};
 		for(String eventName: eventNames){
 			EventInstanceGenerator eventGen=genEventInstanceGenerator(eventName);
 			eventGenList.add(eventGen);
+		}*/
+		String[] eventNames={"A","B","C","D"};
+		for(String eventName: eventNames){
+			EventInstanceGenerator eventGen=
+					EventGeneratorFactory.
+					genEventInstanceGenerator(eventName.substring(0,1), eventName);//let eventName[0] be categoryName
+			eventGenList.add(eventGen);
 		}
 	}
-	
+	/*
 	private static EventInstanceGenerator genEventInstanceGenerator(String eventName){
 		Event e=new Event(eventName);
 		e.addProperty("id", Integer.class);
@@ -101,6 +110,7 @@ public class TestSimulation2 {
 		EventInstanceGenerator eventGen=new EventInstanceGenerator(e, fgMap);
 		return eventGen;
 	}
+	*/
 	
 	public void run(){
 		coord.start(false);
@@ -115,40 +125,44 @@ public class TestSimulation2 {
 		String epl20=null, epl21=null, epl22=null, epl23=null, epl24=null, epl25=null, epl26=null, epl27=null, epl28=null, epl29=null;
 		String epl30=null, epl31=null, epl32=null, epl33=null, epl34=null, epl35=null, epl36=null, epl37=null, epl38=null, epl39=null;
 		String epl40=null, epl41=null, epl42=null, epl43=null, epl44=null, epl45=null, epl46=null, epl47=null, epl48=null, epl49=null;
-		epl00="select b00.id, b00.name from B(id>3 or price>6.0).win:time(5 sec) as b00";
-		epl01="select b01.id, b01.price from B(id>3).win:time(5 sec) as b01";
-		epl02="select b02.id, b02.clientIds from B(id>=3).win:time(5 sec) as b02";
-		epl03="select b03.id, b03.clientIds, b03.time from B(id>=3).win:time(5 sec) as b03";
-		epl04="select b04.id, b04.time from B(id>=5 and price>5.0).win:time(5 sec) as b04 where b04.time>10";
-		epl05="select b05.id, b05.time from B(price>6.0 and id>5).win:time(5 sec) as b05";
-		epl06="select b06.id, b06.clientIds, b06.time from B(id>=4).win:time(5 sec) as b06";
+//		epl00="select b00.id, b00.name from B(id>3 or price>6.0).win:time(5 sec) as b00";
+//		epl01="select b01.id, b01.price from B(id>3).win:time(5 sec) as b01";
+//		epl02="select b02.id, b02.clientIds from B(id>=3).win:time(5 sec) as b02";
+//		epl03="select b03.id, b03.clientIds, b03.time from B(id>=3).win:time(5 sec) as b03";
+//		epl04="select b04.id, b04.time from B(id>=5 and price>5.0).win:time(5 sec) as b04 where b04.time>10";
+//		epl05="select b05.id, b05.time from B(price>6.0 and id>5).win:time(5 sec) as b05";
+//		epl06="select b06.id, b06.clientIds, b06.time from B(id>=4).win:time(5 sec) as b06";
+//		
+//		epl10="select a00.id, a00.name from A(id>6).win:time(5 sec) as a00";
+//		epl11="select a01.id, a01.time, a01.price from A(id>5).win:time(5 sec) as a01";
+//		epl12="select a02.id, a02.price, a02.clientIds from A(id>5 and time>5).win:time(5 sec) as a02";
+//		
+//		epl20="select a20.id, a20.clientIds, b20.id, b20.name, b20.clientIds " +
+//				"from A(id>5).win:time(6 sec) as a20, B(id>3).win:time(5 sec) as b20 where a20.id=b20.id";
+//		epl21="select a21.id, a21.clientIds, b21.id, b21.name, b21.clientIds " +
+//				"from A(id>6 or price>10).win:time(6 sec) as a21, B(id>3).win:time(5 sec) as b21 where a21.id=b21.id";
+//		epl22="select a22.id, a22.clientIds, b22.id, b22.name, b22.price " +
+//				"from A(id>6).win:time(6 sec) as a22, B(id>7).win:time(5 sec) as b22 where a22.id=b22.id";
+//		epl23="select a23.id, a23.clientIds, b23.id, b23.name, b23.time " +
+//				"from A(id>6).win:time(6 sec) as a23, B(id>7).win:time(5 sec) as b23 where a23.id=b23.id";
+//		epl24="select a24.id, a24.clientIds, b24.id, b24.name, b24.time " +
+//				"from A(id>6).win:time(6 sec) as a24, B(id>7).win:time(5 sec) as b24 where a24.id=b24.id and a24.name=b24.name";
+//		
+//		epl30="select a30.id, a30.clientIds, b30.id, b30.name, b30.clientIds, c30.price " +
+//				"from A(id>5).win:time(6 sec) as a30, B(id>3).win:time(5 sec) as b30, C(id>=6).win:time(5 sec) as c30 " +
+//				"where a30.id=b30.id and b30.price>c30.price";
+//		
+//		epl31="select a31.id, a31.clientIds, a31, b31.id, b31.name, b31.clientIds, c31.price " +
+//				"from A(id>5).win:time(6 sec) as a31, B(id>3).win:time(5 sec) as b31, C(id>=6).win:time(5 sec) as c31 " +
+//				"where a31.id=b31.id and b31.price>c31.price";
+//		
+//		epl40="select a40.id, a40.clientIds, b40.id, b40.name, b40.clientIds, c40.price " +
+//				"from A(id>5).win:time(6 sec) as a40, B(id>3).win:time(5 sec) as b40, C(id>=6).win:time(5 sec) as c40, A(id>=6).win:time(5 sec) as a40_2 " +
+//				"where a40.id=b40.id and b40.price>c40.price and a40_2.time=a40.time";
 		
-		epl10="select a00.id, a00.name from A(id>6).win:time(5 sec) as a00";
-		epl11="select a01.id, a01.time, a01.price from A(id>5).win:time(5 sec) as a01";
-		epl12="select a02.id, a02.price, a02.clientIds from A(id>5 and time>5).win:time(5 sec) as a02";
-		
-		epl20="select a20.id, a20.clientIds, b20.id, b20.name, b20.clientIds " +
-				"from A(id>5).win:time(6 sec) as a20, B(id>3).win:time(5 sec) as b20 where a20.id=b20.id";
-		epl21="select a21.id, a21.clientIds, b21.id, b21.name, b21.clientIds " +
-				"from A(id>6 or price>10).win:time(6 sec) as a21, B(id>3).win:time(5 sec) as b21 where a21.id=b21.id";
-		epl22="select a22.id, a22.clientIds, b22.id, b22.name, b22.price " +
-				"from A(id>6).win:time(6 sec) as a22, B(id>7).win:time(5 sec) as b22 where a22.id=b22.id";
-		epl23="select a23.id, a23.clientIds, b23.id, b23.name, b23.time " +
-				"from A(id>6).win:time(6 sec) as a23, B(id>7).win:time(5 sec) as b23 where a23.id=b23.id";
-		epl24="select a24.id, a24.clientIds, b24.id, b24.name, b24.time " +
-				"from A(id>6).win:time(6 sec) as a24, B(id>7).win:time(5 sec) as b24 where a24.id=b24.id and a24.name=b24.name";
-		
-		epl30="select a30.id, a30.clientIds, b30.id, b30.name, b30.clientIds, c30.price " +
-				"from A(id>5).win:time(6 sec) as a30, B(id>3).win:time(5 sec) as b30, C(id>=6).win:time(5 sec) as c30 " +
-				"where a30.id=b30.id and b30.price>c30.price";
-		
-		epl31="select a31.id, a31.clientIds, a31, b31.id, b31.name, b31.clientIds, c31.price " +
-				"from A(id>5).win:time(6 sec) as a31, B(id>3).win:time(5 sec) as b31, C(id>=6).win:time(5 sec) as c31 " +
-				"where a31.id=b31.id and b31.price>c31.price";
-		
-		epl40="select a40.id, a40.clientIds, b40.id, b40.name, b40.clientIds, c40.price " +
-				"from A(id>5).win:time(6 sec) as a40, B(id>3).win:time(5 sec) as b40, C(id>=6).win:time(5 sec) as c40, A(id>=6).win:time(5 sec) as a40_2 " +
-				"where a40.id=b40.id and b40.price>c40.price and a40_2.time=a40.time";
+		epl30="SELECT a00000001.im0, a00000001.in0, a00000001.in1, a00000001.du0, b00000002.im0, b00000002.iu0, b00000002.in1, b00000002.du0 "+ 
+				"FROM A(in0>0).win:time(30 sec) as a00000001, B(iu0>0).win:time(30 sec) as b00000002 "+
+				"WHERE a00000001.in0=b00000002.in0";
 		
 		Pair[] eplPairs=new Pair[]{
 				new Pair(00,epl00),
@@ -199,8 +213,8 @@ public class TestSimulation2 {
 		//eplPairs=new Pair[]{new Pair(23,epl23), new Pair(22,epl22)};
 		//eplPairs=new Pair[]{eplPairs[02], eplPairs[20]};
 //		eplPairs=new Pair[]{new Pair(22,epl22)};
-		eplPairs=new Pair[]{new Pair(01,epl01), new Pair(11,epl11), new Pair(20,epl20), new Pair(22,epl22), new Pair(30, epl30)};
-//		eplPairs=new Pair[]{new Pair(30,epl30)};
+//		eplPairs=new Pair[]{new Pair(01,epl01), new Pair(11,epl11), new Pair(20,epl20), new Pair(22,epl22), new Pair(30, epl30)};
+		eplPairs=new Pair[]{new Pair(30,epl30)};
 //		eplPairs=new Pair[]{new Pair(31,epl31)};
 //		eplPairs=new Pair[]{new Pair(40,epl40)};
 //		eplPairs=new Pair[]{new Pair(01,epl01), new Pair(02,epl01)};

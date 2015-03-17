@@ -97,6 +97,7 @@ public class Worker {
 	public void handleCoordinatorMessage(Object obj){
 		if(obj instanceof NewInstanceMessage){
 			NewInstanceMessage nim=(NewInstanceMessage)obj;
+			log.info("Worker %s received epl %d: %s", id, nim.getEplId(), nim.getEpl());
 			startNewInstance(nim.getEplId(), nim.getEpl(), nim.getRawStreamList());
 		}
 	}
@@ -113,10 +114,12 @@ public class Worker {
 				this.procScheduler, eplId, epl);
 		try {
 			ins.init();
-		} catch (Exception e) {
-			e.printStackTrace();
+			ins.start();
 		}
-		ins.start();		
+		catch (Exception e) {
+			log.getLogger().error(
+					String.format("error ocurr when initialize/start instance for epl %d: %s", eplId, epl),	e);
+		}
 	}
 	
 	@Override

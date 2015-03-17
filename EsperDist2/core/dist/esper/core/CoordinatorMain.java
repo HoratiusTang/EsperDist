@@ -23,7 +23,7 @@ public class CoordinatorMain{
 			coord.start();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			log.getLogger().fatal("fatal error ocurr", e);
 		}
 		finally{
 			log.info("Coordinator terminated");

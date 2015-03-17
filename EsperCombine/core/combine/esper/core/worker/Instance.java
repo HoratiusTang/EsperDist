@@ -99,26 +99,21 @@ public class Instance implements ISubscriberObserver{
 		return rsMap.values();
 	}
 	
-	public void start(){
+	public void start() throws Exception{
 		StringBuilder sb=new StringBuilder();
 		if(epStatement!=null && !epStatement.isDestroyed()){
 			epStatement.destroy();
 		}
-		//System.out.format("** start %s(id=%d)(eqlId=%d)\n", );
-		try{
-			epl=epl.trim();
-			if(epl.endsWith(";")){
-				epl=epl.substring(0, epl.length()-1);
-			}
-			this.epl = epl + String.format(" output every %d msec", 
-					ServiceManager.getInstance(workerId).getOutputIntervalUS()/1000);
-			System.out.format("Worker %s will start epl: %s\n", this.workerId, epl);
-			epStatement=epService.getEPAdministrator().createEPL(epl);
-			epStatement.addListener(epListener);
+		
+		epl=epl.trim();
+		if(epl.endsWith(";")){
+			epl=epl.substring(0, epl.length()-1);
 		}
-		catch(Exception ex){
-			ex.printStackTrace();
-		}
+		this.epl = epl + String.format(" output every %d msec", 
+				ServiceManager.getInstance(workerId).getOutputIntervalUS()/1000);
+		log.info("Worker %s will start instance for epl %d: %s\n", this.workerId, eplId, epl);
+		epStatement=epService.getEPAdministrator().createEPL(epl);
+		epStatement.addListener(epListener);
 		
 		for(Subscriber sub: subList){
 			sub.start();

@@ -152,9 +152,10 @@ public class Coordinator {
 	
 	public long executeEPL(String epl) throws Exception{
 		long eplId=eplUID.getAndIncrement();
-		WorkerId wm=workerAssignStrategy.nextWorkerId();
-		Link link=workerLinkMap.get(wm.getId());
+		WorkerId w=workerAssignStrategy.nextWorkerId();
+		Link link=workerLinkMap.get(w.getId());
 		NewInstanceMessage nim=new NewInstanceMessage(eplId, epl, this.rawStreamList);
+		log.info("Coordinator send epl %d to %s: %s", eplId, w.getId(), epl);
 		link.send(nim);
 		
 		return eplId;

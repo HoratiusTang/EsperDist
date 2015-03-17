@@ -19,7 +19,7 @@ public class WorkerMain {
 			worker.start();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			log.getLogger().fatal("fatal error ocurr", e);
 		}
 		finally{
 			log.info("Worker %s terminated", thisId);
@@ -33,7 +33,7 @@ public class WorkerMain {
 		int thisPort=Integer.parseInt(ServiceManager.getConfig().get(Options.THIS_PORT));		
 		WorkerId myId=new WorkerId(thisId, thisIp, thisPort);
 		
-		System.out.println("construct WorkerId: "+myId.toString());
+		log.info("construct WorkerId: "+myId.toString());
 		ServiceManager.getInstance(thisId).registerWorkerId(myId);
 		
 		return thisId;
