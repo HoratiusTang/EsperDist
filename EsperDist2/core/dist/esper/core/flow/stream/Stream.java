@@ -32,7 +32,7 @@ public abstract class Stream implements Serializable {
 	WorkerId workerId;
 	List<SelectClauseExpressionElement> resultElementList=new ArrayList<SelectClauseExpressionElement>(4);
 	protected long id;
-	double rate;//us
+	double rate;//per second
 	
 	public Stream() {
 		super();

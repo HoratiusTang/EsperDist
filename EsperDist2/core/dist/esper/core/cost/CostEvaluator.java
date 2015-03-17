@@ -417,12 +417,15 @@ public class CostEvaluator {
 						workerIds=new String[]{parentWorkerId};
 					}
 					for(String workerId: workerIds){
-						DeltaResourceUsage filterCompDRU=new DeltaResourceUsage(procWorkerStatMap.get(workerId), CandidateContainerType.FILTER_INDIRECT_REUSE, fsl, null);//container is set below
-						filterCompDRU.addChild(agentDRUs[i]);
-						filterCompDRU.setContainer(fsl.getIndirectReusableContainerMapComparisonResultList().get(i).getFirst());
-						filterCompDRU.setEventAliasMap(fsl.getIndirectReusableContainerMapComparisonResultList().get(i).getSecond());
-						filterCompDRU.setCompResult(fsl.getIndirectReusableContainerMapComparisonResultList().get(i).getThird());						
-						druList.add(filterCompDRU);
+						if(procWorkerStatMap.get(workerId)!=null){//parent might be root
+							DeltaResourceUsage filterCompDRU=new DeltaResourceUsage(procWorkerStatMap.get(workerId), CandidateContainerType.FILTER_INDIRECT_REUSE, fsl, null, null);//container is set below
+							filterCompDRU.addChild(agentDRUs[i]);
+							filterCompDRU.setContainer(cmcr.getFirst());
+							filterCompDRU.setContainerStat(containerStatMap.get(cmcr.getFirst().getUniqueName()));						
+							filterCompDRU.setEventAliasMap(cmcr.getSecond());
+							filterCompDRU.setCompResult(cmcr.getThird());						
+							druList.add(filterCompDRU);
+						}
 					}
 				}
 			}
@@ -449,7 +452,7 @@ public class CostEvaluator {
 			Collection<String> workerIdList=getNewLimitedWorkerStatList(fsl, parentWorkerId, procWorkerStatMap);
 			for(String workerId: workerIdList){				
 				if(!fsl.hasDirectOrIndirectReusableContainerOnWorker(workerId)){
-					DeltaResourceUsage filterDRU=new DeltaResourceUsage(procWorkerStatMap.get(workerId), CandidateContainerType.FILTER_NEW, fsl, null);
+					DeltaResourceUsage filterDRU=new DeltaResourceUsage(procWorkerStatMap.get(workerId), CandidateContainerType.FILTER_NEW, fsl, null, null);
 					//FIXME: add all now
 					druList.add(filterDRU);
 				}
@@ -483,12 +486,15 @@ public class CostEvaluator {
 						workerIds=new String[]{parentWorkerId};
 					}
 					for(String workerId: workerIds){
-						DeltaResourceUsage joinCompDRU=new DeltaResourceUsage(procWorkerStatMap.get(workerId), CandidateContainerType.JOIN_INDIRECT_REUSE, jsl, null);
-						joinCompDRU.setContainer(agentDRUs[i].getContainer());
-						joinCompDRU.addChild(agentDRUs[i]);
-						joinCompDRU.setEventAliasMap(jsl.getIndirectReusableContainerMapComparisonResultList().get(i).getSecond());
-						joinCompDRU.setCompResult(jsl.getIndirectReusableContainerMapComparisonResultList().get(i).getThird());
-						druList.add(joinCompDRU);
+						if(procWorkerStatMap.get(workerId)!=null){//parent might be root
+							DeltaResourceUsage joinCompDRU=new DeltaResourceUsage(procWorkerStatMap.get(workerId), CandidateContainerType.JOIN_INDIRECT_REUSE, jsl, null, null);
+							joinCompDRU.addChild(agentDRUs[i]);
+							joinCompDRU.setContainer(agentDRUs[i].getContainer());
+							joinCompDRU.setContainerStat(containerStatMap.get(agentDRUs[i].getContainer().getUniqueName()));
+							joinCompDRU.setEventAliasMap(cmcr.getSecond());
+							joinCompDRU.setCompResult(cmcr.getThird());
+							druList.add(joinCompDRU);
+						}
 					}
 				}
 			}
@@ -591,6 +597,7 @@ public class CostEvaluator {
 				type, 
 				psl, 
 				cmcr.getFirst(),
+				containerStatMap.get(cmcr.getFirst().getUniqueName()),
 				cmcr.getSecond(),
 				cmcr.getThird());//FIXME
 		return dur;

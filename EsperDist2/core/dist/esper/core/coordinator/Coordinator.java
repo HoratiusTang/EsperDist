@@ -194,7 +194,7 @@ public class Coordinator {
 			DeltaResourceUsage dru=this.computeBestDeltaResourceUsage(sf);
 			druList.add(dru);
 		}		
-		int index=costEval.chooseBestIndex(druList);		
+		int index=costEval.chooseBestIndex(druList);
 		StreamContainerFlow sct=streamContainerFlowBuilder.buildStreamContainerFlow(sfList.get(index), druList.get(index));
 		this.submit(sct);
 		return eplId;

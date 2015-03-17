@@ -80,13 +80,11 @@ public class EventOrPropertySizeEstimator {
 			}
 			else{
 				Set<EventOrPropertySpecification> epsSet=EventOrPropertySpecReferenceDumper.dump(se.getSelectExpr());
-				for(EventOrPropertySpecification eps: epsSet){
-					int seSize=computeSizeOfEventOrPropertySpecification(eps);
-					totalSize += seSize;
-					break;//only 1 iteration
-				}
+				EventOrPropertySpecification eps=epsSet.iterator().next();//only one
+				int seSize=computeSizeOfEventOrPropertySpecification(eps);
+				totalSize += seSize;
 			}
-			totalSize += SERIALIZATION_ADDITION_SIZE; 
+			totalSize += SERIALIZATION_ADDITION_SIZE + AVG_SELECT_ELELEMENT_NAME_LENGTH; 
 		}
 		return totalSize;
 	}

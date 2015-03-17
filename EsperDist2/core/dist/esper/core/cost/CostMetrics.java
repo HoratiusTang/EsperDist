@@ -199,6 +199,31 @@ public class CostMetrics {
 			double cpu2=b.deltaCPUTimeUS * Math.sqrt(b.cpuTimeUSVariance);
 			double mem2=b.deltaMemoryBytes * Math.sqrt(b.memoryBytesVariance);
 			
+			double outAvg=(out1+out2)/2;
+			double cpuAvg=(cpu1+cpu2)/2;
+			double memAvg=(mem1+mem2)/2;
+			
+			outAvg=(outAvg==0)?Double.MIN_NORMAL:outAvg;
+			cpuAvg=(cpuAvg==0)?Double.MIN_NORMAL:cpuAvg;
+			memAvg=(memAvg==0)?Double.MIN_NORMAL:memAvg;
+			
+			double outR1=out1/outAvg;
+			double outR2=out2/outAvg;			
+			double cpuR1=cpu1/cpuAvg;
+			double cpuR2=cpu2/cpuAvg;
+			double memR1=mem1/memAvg;
+			double memR2=mem2/memAvg;
+			
+			double v1= outR1 * outR1 + cpuR1 * cpuR1 + memR1 * memR1;
+			double v2= outR2 * outR2 + cpuR2 * cpuR2 + memR2 * memR2;
+			
+			if(v1>v2){
+				return 1;
+			}
+			else if(v1<v2){
+				return -1;
+			}
+			/**
 			if(out1!=out2){
 				return out1>out2?1:-1;
 			}
@@ -207,7 +232,7 @@ public class CostMetrics {
 			}
 			else if(mem1!=mem2){
 				return mem1>mem2?1:-1;
-			}
+			}*/
 			return 0;
 		}
 	}

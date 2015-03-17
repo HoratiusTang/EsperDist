@@ -487,19 +487,24 @@ public class StreamReviewer {
 		
 		public static boolean checkWindowTimeEqualRecursively(
 				List<Stream> sList, List<StreamContainer> scList){
+			int[] scToSmIndecies=new int[scList.size()];
+			Arrays.fill(scToSmIndecies, -1);
 			for(int i=0;i<sList.size();i++){
 				DerivedStream ds=(DerivedStream)sList.get(i);
 				for(int j=0;j<scList.size();j++){
+					if(scToSmIndecies[j]>=0) continue;
 					DerivedStreamContainer dsc=(DerivedStreamContainer)scList.get(j);
 					if(ds.getDirectOrIndirectReusableContainerMapBoolComparisonResult(dsc)!=null){
 						if(checkWindowTimeEqualRecursively(ds, dsc)){
+							scToSmIndecies[j]=i;
 							break;
 						}
 					}
-					else{
-						return false;
-					}
 				}
+			}
+			for(int j=0;j<scToSmIndecies.length;j++){
+				if(scToSmIndecies[j]<0)
+					return false;
 			}
 			return true;
 		}	
