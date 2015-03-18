@@ -8,8 +8,8 @@ public class Options {
 	public static String COORDINATOR_IP="coordinator.ip";
 	public static String COORDINATOR_PORT="coordinator.port";
 	
-	public static String WORKER_NUMBER_OF_PROCESS_THREAD="worker.nprct";
-	public static String WORKER_NUMBER_OF_PUBLISH_THREAD="worker.npubt";
+	public static String WORKER_NUMBER_OF_PROCESS_THREADS="worker.nprct";
+	public static String WORKER_NUMBER_OF_PUBLISH_THREADS="worker.npubt";
 	
 	public static String THIS_ID="this.id";
 	public static String THIS_PORT="this.port";

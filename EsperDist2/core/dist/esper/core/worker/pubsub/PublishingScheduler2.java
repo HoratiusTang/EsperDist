@@ -4,7 +4,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import com.espertech.esper.client.EventBean;
 
+import dist.esper.util.Logger2;
+
 public class PublishingScheduler2 {
+	static Logger2 log=Logger2.getLogger(PublishingScheduler2.class);
 	String workerId;
 	boolean isSync=false;
 	ThreadPoolExecutor pool;
@@ -17,6 +20,7 @@ public class PublishingScheduler2 {
 		this.workerId = workerId;
 		this.numThreads = numThreads;
 		pool=(ThreadPoolExecutor)Executors.newFixedThreadPool(numThreads);
+		log.info("Worker %s start PublishingScheduler2 with numThreads=%d", workerId, numThreads);
 	}
 	
 	public int getQueueSize(){

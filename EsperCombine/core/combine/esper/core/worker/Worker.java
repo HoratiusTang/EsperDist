@@ -14,6 +14,7 @@ import dist.esper.core.comm.LinkManager;
 import dist.esper.core.flow.stream.RawStream;
 import dist.esper.core.flow.stream.Stream;
 import dist.esper.core.message.NewWorkerMessage;
+import dist.esper.core.util.Options;
 import dist.esper.core.util.ServiceManager;
 import dist.esper.core.worker.pubsub.ProcessingScheduler2;
 import dist.esper.epl.expr.util.EventOrPropertySpecComparator;
@@ -53,7 +54,8 @@ public class Worker {
 	
 	public void init(){
 		epService=EPServiceProviderManager.getProvider(id);
-		procScheduler=new ProcessingScheduler2(id, 3);
+		int numProcThread=(int)ServiceManager.getConfig().getLong(Options.WORKER_NUMBER_OF_PROCESS_THREADS,2);
+		procScheduler=new ProcessingScheduler2(id, numProcThread);
 		linkManager=ServiceManager.getInstance(id).getLinkManager();
 		linkManager.init();		
 		

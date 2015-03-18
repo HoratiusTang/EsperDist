@@ -20,6 +20,7 @@ import dist.esper.core.flow.container.*;
 import dist.esper.core.flow.stream.*;
 import dist.esper.core.id.WorkerId;
 import dist.esper.core.message.*;
+import dist.esper.core.util.Options;
 import dist.esper.core.util.ServiceManager;
 import dist.esper.core.worker.WorkerStatCollector2.*;
 import dist.esper.core.worker.pubsub.Instance;
@@ -103,8 +104,10 @@ public class Worker {
 	
 	public void init(){
 		epService=EPServiceProviderManager.getProvider(id);
-		procScheduler=new ProcessingScheduler2(id);
-		pubScheduler=new PublishingScheduler2(id);
+		int numProcThread=(int)ServiceManager.getConfig().getLong(Options.WORKER_NUMBER_OF_PROCESS_THREADS,2);
+		int numPubThread=(int)ServiceManager.getConfig().getLong(Options.WORKER_NUMBER_OF_PUBLISH_THREADS,1);
+		procScheduler=new ProcessingScheduler2(id, numProcThread);
+		pubScheduler=new PublishingScheduler2(id, numPubThread);
 		
 		linkManager=ServiceManager.getInstance(id).getLinkManager();
 		linkManager.init();

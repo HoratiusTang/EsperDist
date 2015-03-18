@@ -2,9 +2,11 @@ package dist.esper.core.worker.pubsub;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import dist.esper.util.Logger2;
 
 
 public class ProcessingScheduler2 {
+	static Logger2 log=Logger2.getLogger(ProcessingScheduler2.class);
 	String workerId;
 	boolean isSync=false;
 	ThreadPoolExecutor pool;
@@ -17,6 +19,7 @@ public class ProcessingScheduler2 {
 		this.workerId = workerId;
 		this.numThreads = numThreads;
 		pool=(ThreadPoolExecutor)Executors.newFixedThreadPool(numThreads);
+		log.info("Worker %s start ProcessingScheduler2 with numThreads=%d", workerId, numThreads);
 	}
 	public int getQueueSize(){
 		return pool.getQueue().size();

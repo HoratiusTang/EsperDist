@@ -23,7 +23,7 @@ public class Config {
 		
 		log.info("parse cmd options: "+cmdConfig.toString());
 		
-		String confFilePath=cmdConfig.get(Options.CONFIG_FILE_PATH);
+		String confFilePath=this.get(Options.CONFIG_FILE_PATH);
 		fileConfig=new PropertiesConfiguration();
 		fileConfig.load(confFilePath);
 	}
@@ -32,14 +32,16 @@ public class Config {
 		context.put(Options.CONFIG_FILE_PATH, "./conf/config.properties");
 		context.put(Options.LOG4J_CONF_PATH, "./conf/log4j.properties");
 		context.put(Options.LOG_QUERY_RESULT, "false");
-		context.put(Options.WORKER_NUMBER_OF_PROCESS_THREAD, "2");
-		context.put(Options.WORKER_NUMBER_OF_PUBLISH_THREAD, "2");
+		context.put(Options.WORKER_NUMBER_OF_PROCESS_THREADS, "2");
+		context.put(Options.WORKER_NUMBER_OF_PUBLISH_THREADS, "1");
 	}
 	
 	public String get(String key){
 		String value=cmdConfig.get(key);
 		if(value==null){
-			value=(String)fileConfig.getProperty(key);
+			if(fileConfig!=null){
+				value=(String)fileConfig.getProperty(key);
+			}
 			if(value==null){
 				value=defualtConfig.get(key);
 			}
@@ -47,17 +49,31 @@ public class Config {
 		return value;
 	}
 	
-	public int getInt(String key, int defaultInt){
+	public long getLong(String key, long defaultLong){
 		String v=get(key);
 		if(v==null){
-			return defaultInt;
+			return defaultLong;
 		}
 		try{
-			int n=Integer.parseInt(v);
+			long n=Long.parseLong(v);
 			return n;
 		}
 		catch(Exception ex){
-			return defaultInt;
+			return defaultLong;
+		}
+	}
+	
+	public double getDouble(String key, int defaultDouble){
+		String v=get(key);
+		if(v==null){
+			return defaultDouble;
+		}
+		try{
+			double d=Double.parseDouble(v);
+			return d;
+		}
+		catch(Exception ex){
+			return defaultDouble;
 		}
 	}
 	
