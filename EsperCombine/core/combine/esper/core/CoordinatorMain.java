@@ -18,6 +18,7 @@ public class CoordinatorMain{
 			ServiceManager.initConfig(args);
 			ServiceManager.setSimulation(false);
 			KryoClassRegister.addPackageName("combine.esper.core.message");
+			KryoClassRegister.addPackageName("combine.esper.core.cost");
 			coordId=ServiceManager.getCoordinatorId();
 			coord=new Coordinator(coordId);
 			coord.init();

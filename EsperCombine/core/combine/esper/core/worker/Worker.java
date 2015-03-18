@@ -12,7 +12,6 @@ import combine.esper.core.message.NewInstanceMessage;
 import dist.esper.core.comm.Link;
 import dist.esper.core.comm.LinkManager;
 import dist.esper.core.flow.stream.RawStream;
-import dist.esper.core.flow.stream.Stream;
 import dist.esper.core.message.NewWorkerMessage;
 import dist.esper.core.util.Options;
 import dist.esper.core.util.ServiceManager;
@@ -22,7 +21,6 @@ import dist.esper.event.Event;
 import dist.esper.event.EventProperty;
 import dist.esper.util.Logger2;
 
-
 public class Worker {
 	static Logger2 log=Logger2.getLogger(Worker.class);
 	public String id;
@@ -30,10 +28,12 @@ public class Worker {
 	public LinkManager linkManager;
 	public EPServiceProvider epService;
 	//MappedEventRegistry eventRegistry=null;
-	public Map<String,Stream> slMap=new HashMap<String,Stream>();
+	//public Map<String,Stream> slMap=new HashMap<String,Stream>();
 	public Map<String,Instance> insMap=new HashMap<String,Instance>();
 	public CoordinatorLinkHandler coordLinkHandler=new CoordinatorLinkHandler();	
-	ProcessingScheduler2 procScheduler;	
+	ProcessingScheduler2 procScheduler;
+	WorkerStatCollector workerStatCollector;
+	WorkerStatReportor workerStatReportor;
 
 	public static EventOrPropertySpecComparator epsComparator=new EventOrPropertySpecComparator();
 	
@@ -59,19 +59,23 @@ public class Worker {
 		linkManager=ServiceManager.getInstance(id).getLinkManager();
 		linkManager.init();		
 		
+		workerStatCollector=new WorkerStatCollector(this, procScheduler);
+		
 		coordLink=linkManager.connect(ServiceManager.getCoordinatorWorkerId());
 		coordLink.addListener(coordLinkHandler);
 		coordLink.send(new NewWorkerMessage());
+		
+		workerStatReportor=new WorkerStatReportor(this);
 	}
 	public void start(){
 		start(true);
 	}
 	public void start(boolean sync){
 		if(sync){		
-			//coordReportor.run();
+			workerStatReportor.run();
 		}
 		else{
-			//new Thread(coordReportor).start();
+			new Thread(workerStatReportor).start();
 		}
 		log.info("Worker %s is running...", this.id);
 	}

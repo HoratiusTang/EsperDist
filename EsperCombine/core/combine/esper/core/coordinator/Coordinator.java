@@ -1,21 +1,21 @@
 package combine.esper.core.coordinator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.log4j.Level;
+
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 
-import combine.esper.core.WorkerMain;
 import combine.esper.core.message.NewInstanceMessage;
 
 import dist.esper.core.comm.Link;
 import dist.esper.core.comm.LinkManager;
-import dist.esper.core.cost.WorkerStat;
+import combine.esper.core.cost.WorkerStat;
 import dist.esper.core.flow.stream.RawStream;
 import dist.esper.core.flow.stream.Stream;
 import dist.esper.core.id.WorkerId;
@@ -28,11 +28,16 @@ import dist.esper.core.message.SubmitEplResponse;
 import dist.esper.core.util.ServiceManager;
 import dist.esper.event.Event;
 import dist.esper.proxy.EPAdministratorImplProxy;
+import dist.esper.util.AsyncLogger2;
 import dist.esper.util.Logger2;
 
 public class Coordinator {
-	public static final double GATEWAY_WORKER_RATIO_MIN=1.0d/3.0d;
-	static Logger2 log=Logger2.getLogger(Coordinator.class);
+	static Logger2 log;
+	static Logger2 workerStatLog;
+	static{
+		log=Logger2.getLogger(Coordinator.class);
+		workerStatLog=AsyncLogger2.getAsyncLogger(Coordinator.class, Level.DEBUG, "log/workerstats.txt", false, "%d{MM-dd HH:mm:ss} %p %m%n");
+	}
 	
 	public String id;
 	LinkManager linkManager;
@@ -49,7 +54,7 @@ public class Coordinator {
 	AtomicLong eplUID=new AtomicLong(0L);
 	NewLinkHandler newLinkHandler=new NewLinkHandler();
 	List<WorkerId> procWorkerIdList=new ArrayList<WorkerId>(8);
-	List<WorkerId> gateWorkerIdList=new ArrayList<WorkerId>(4);	
+	//List<WorkerId> gateWorkerIdList=new ArrayList<WorkerId>(4);	
 	
 	//Map<String,String> rawSamplingWorkerMap=new HashMap<String,String>();
 	WorkerAssignmentStrategy workerAssignStrategy=new WorkerAssignmentStrategy();
@@ -80,6 +85,7 @@ public class Coordinator {
 	}
 	
 	public void handleReceiving(Link link, Object obj){
+		//log.info("%s received %s from Worker %s", id, obj.getClass().getSimpleName(), link.getTargetId().getId());
 		if(obj instanceof NewSpoutMessage){
 			NewSpoutMessage nsm=(NewSpoutMessage)obj;
 			WorkerId spoutId=link.getTargetId();
@@ -116,8 +122,15 @@ public class Coordinator {
 			link.send(serp);
 		}
 		else if(obj instanceof WorkerStat){
-			WorkerStat ws=(WorkerStat)obj;			
+			WorkerStat ws=(WorkerStat)obj;
+			logWorkerStat(ws);
 		}
+	}
+	private void logWorkerStat(WorkerStat ws){
+		workerStatLog.debug("WorkerId=%s, memUsed=%d, memFree=%d, cpuUsage=%.2f, " +
+				"procThreadCount=%d, instanceCount=%d",
+				ws.id, ws.memUsed, ws.memFree, ws.cpuUsage, 
+				ws.procThreadCount, ws.instanceCount);
 	}
 	
 	public Coordinator(String id){
@@ -174,27 +187,8 @@ public class Coordinator {
 		}
 		if(index>=0)
 			procWorkerIdList.set(index, newWM);
-		
-		for(int i=0;i<gateWorkerIdList.size();i++){
-			if(newWM.getId().equals(gateWorkerIdList.get(i).getId()))
-				index=i; break;
-		}
-		if(index>=0)
-			gateWorkerIdList.set(index, newWM);
-		
-		if(index<0){
-			/*determine processing-worker or gate-worker*/
-			if(gateWorkerIdList.size()==0 || 
-					(procWorkerIdList.size()>0 && 
-						(double)gateWorkerIdList.size()/(double)procWorkerIdList.size()<=GATEWAY_WORKER_RATIO_MIN)){
-				newWM.setGateway();
-				gateWorkerIdList.add(newWM);
-				Link link=workerLinkMap.get(newWM.getId());
-				GatewayRoleMessage grMsg=new GatewayRoleMessage(id, newWM.isGateway());
-				link.send(grMsg);
-			}
-			else
-				procWorkerIdList.add(newWM);			
+		else{
+			procWorkerIdList.add(newWM);			
 		}
 	}
 	

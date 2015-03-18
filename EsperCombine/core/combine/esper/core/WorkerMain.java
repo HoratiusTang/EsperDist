@@ -15,6 +15,7 @@ public class WorkerMain {
 			ServiceManager.initConfig(args);
 			ServiceManager.setSimulation(false);
 			KryoClassRegister.addPackageName("combine.esper.core.message");
+			KryoClassRegister.addPackageName("combine.esper.core.cost");
 			thisId=regist();
 			Worker worker=new Worker(thisId);
 			worker.init();
