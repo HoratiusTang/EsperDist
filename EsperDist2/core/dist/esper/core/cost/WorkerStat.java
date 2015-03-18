@@ -22,7 +22,7 @@ private static final long serialVersionUID = 6077447393633191724L;
 	//long intervalUS;//us
 	
 	public int localSubscriberCount=0;
-	public int remoteSubscriberCount=0;//sub的总数就是一定时间内期望到达的数量
+	public int remoteSubscriberCount=0;
 	public int localPublisherCount=0;
 	public int remotePublisherCount=0;
 	
@@ -53,13 +53,13 @@ private static final long serialVersionUID = 6077447393633191724L;
 	public double filterCondProcTimeUS=0;//us
 	public double joinCondProcTimeUS=0;
 	public int filterCount=0;
-	public int filterCompCount=0;
+	public int filterDelayedCount=0;
 	public int patternCount=0;
-	public int patternCompCount=0;
+	public int patternDelayedCount=0;
 	public int joinCount=0;
-	public int joinCompCount=0;
+	public int joinDelayedCount=0;
 	public int rootCount=0;
-	public int rawStatsCount=0;
+	//public int rawStatsCount=0;
 	public InstanceStat[] insStats=new InstanceStat[0];
 	public RawStreamStat[] rawStats=new RawStreamStat[0];
 	
@@ -135,19 +135,19 @@ private static final long serialVersionUID = 6077447393633191724L;
 		localPublisherCount=0;
 		remotePublisherCount=0;
 		filterCount=0;
-		filterCompCount=0;
+		filterDelayedCount=0;
 		patternCount=0;
-		patternCompCount=0;
+		patternDelayedCount=0;
 		joinCount=0;
-		joinCompCount=0;
+		joinDelayedCount=0;
 		rootCount=0;
-		rawStatsCount=rawSamplerCount;
+		//rawStatsCount=rawSamplerCount;
 		
 		if(insStats==null || insStats.length<instanceCount){
 			insStats=new InstanceStat[instanceCount];
 		}
-		if(rawStats==null || rawStats.length<rawStatsCount){
-			rawStats=new RawStreamStat[rawStatsCount];
+		if(rawStats==null || rawStats.length<rawSamplerCount){
+			rawStats=new RawStreamStat[rawSamplerCount];
 		}
 	}
 	public WorkerStat(){
@@ -184,8 +184,8 @@ private static final long serialVersionUID = 6077447393633191724L;
 	}
 	
 	public int getInstanceCount(){
-		return filterCount+filterCompCount+patternCount+
-				patternCompCount+joinCount+joinCompCount+rootCount;
+		return filterCount+filterDelayedCount+patternCount+
+				patternDelayedCount+joinCount+joinDelayedCount+rootCount;
 	}
 	
 	public double getSendByteRateUS() {
@@ -454,12 +454,12 @@ private static final long serialVersionUID = 6077447393633191724L;
 		this.filterCount = filterCount;
 	}
 
-	public int getFilterCompCount() {
-		return filterCompCount;
+	public int getFilterDelayedCount() {
+		return filterDelayedCount;
 	}
 
-	public void setFilterCompCount(int filterCompCount) {
-		this.filterCompCount = filterCompCount;
+	public void setFilterDelayedCount(int filterDelayedCount) {
+		this.filterDelayedCount = filterDelayedCount;
 	}
 
 	public int getPatternCount() {
@@ -470,12 +470,12 @@ private static final long serialVersionUID = 6077447393633191724L;
 		this.patternCount = patternCount;
 	}
 
-	public int getPatternCompCount() {
-		return patternCompCount;
+	public int getPatternDelayedCount() {
+		return patternDelayedCount;
 	}
 
-	public void setPatternCompCount(int patternCompCount) {
-		this.patternCompCount = patternCompCount;
+	public void setPatternDelayedCount(int patternDelayedCount) {
+		this.patternDelayedCount = patternDelayedCount;
 	}
 
 	public int getJoinCount() {
@@ -486,12 +486,12 @@ private static final long serialVersionUID = 6077447393633191724L;
 		this.joinCount = joinCount;
 	}
 
-	public int getJoinCompCount() {
-		return joinCompCount;
+	public int getJoinDelayedCount() {
+		return joinDelayedCount;
 	}
 
-	public void setJoinCompCount(int joinCompCount) {
-		this.joinCompCount = joinCompCount;
+	public void setJoinDelayedCount(int joinDelayedCount) {
+		this.joinDelayedCount = joinDelayedCount;
 	}
 
 	public int getRootCount() {
@@ -501,14 +501,22 @@ private static final long serialVersionUID = 6077447393633191724L;
 	public void setRootCount(int rootCount) {
 		this.rootCount = rootCount;
 	}
+	
+	public int getRawStreamSampleCount(){
+		if(this.rawStats!=null){
+			return rawStats.length;
+		}
+		return 0;
+	}
 
+	/**
 	public int getRawStatsCount() {
 		return rawStatsCount;
 	}
 
 	public void setRawStatsCount(int rawStatsCount) {
 		this.rawStatsCount = rawStatsCount;
-	}
+	}*/
 
 	public InstanceStat[] getInsStats() {
 		return insStats;

@@ -123,20 +123,16 @@ public class WorkerStatCollector2 {
 		if(psc instanceof RootStreamContainer)
 			workerStat.rootCount++;		
 		else if(psc instanceof JoinDelayedStreamContainer)
-			workerStat.joinCompCount++;		
+			workerStat.joinDelayedCount++;		
 		else if(psc instanceof JoinStreamContainer)
 			workerStat.joinCount++;		
 		else if(psc instanceof FilterDelayedStreamContainer)
-			workerStat.filterCompCount++;		
+			workerStat.filterDelayedCount++;		
 		else if(psc instanceof FilterStreamContainer)
 			workerStat.filterCount++;
 		else if(psc instanceof PatternStreamContainer)
 			workerStat.patternCount++;
-	}
-	
-	public void updateCPUAndMem(){
-		//TODO
-	}
+	}	
 	
 	public WorkerStat getCurrentWorkerStat(){
 		try {

@@ -27,6 +27,10 @@ public class PublishingScheduler2 {
 		return pool.getQueue().size();
 	}
 	
+	public int getNumberThreads(){
+		return numThreads;
+	}
+	
 	public Runnable newPublishingRunnable(EventBean[] newEvents, Publisher pub){
 		return new PublishingTask(newEvents, pub);
 	}

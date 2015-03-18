@@ -237,13 +237,13 @@ public class WorkerStatData{
 		subpubCountSet.setValue(ws.remotePublisherCount, REMOTE_PUB_COUNT, SUB_PUB_COUNT_CATEGORY);
 		
 		oprCountSet.setValue(ws.filterCount, FILTER_COUNT, OPR_COUNT_CATEGORY);
-		oprCountSet.setValue(ws.filterCompCount, FILTER_DELAYED_COUNT, OPR_COUNT_CATEGORY);
+		oprCountSet.setValue(ws.filterDelayedCount, FILTER_DELAYED_COUNT, OPR_COUNT_CATEGORY);
 		oprCountSet.setValue(ws.patternCount, PATTERN_COUNT, OPR_COUNT_CATEGORY);
-		oprCountSet.setValue(ws.patternCompCount, PATTERN_DELAYED_COUNT, OPR_COUNT_CATEGORY);
+		oprCountSet.setValue(ws.patternDelayedCount, PATTERN_DELAYED_COUNT, OPR_COUNT_CATEGORY);
 		oprCountSet.setValue(ws.joinCount, JOIN_COUNT, OPR_COUNT_CATEGORY);
-		oprCountSet.setValue(ws.joinCompCount, JOIN_DELAYED_COUNT, OPR_COUNT_CATEGORY);
+		oprCountSet.setValue(ws.joinDelayedCount, JOIN_DELAYED_COUNT, OPR_COUNT_CATEGORY);
 		oprCountSet.setValue(ws.rootCount, ROOT_COUNT, OPR_COUNT_CATEGORY);
-		oprCountSet.setValue(ws.rawStatsCount, RAW_STAT_COUNT, OPR_COUNT_CATEGORY);
+		oprCountSet.setValue(ws.getRawStreamSampleCount(), RAW_STAT_COUNT, OPR_COUNT_CATEGORY);
 		
 		timeSet.setValue(ws.filterCondProcTimeUS, FILTER_COND_PROC_TIME, TIME_CATEGORY);
 		timeSet.setValue(ws.joinCondProcTimeUS, JOIN_COND_PROC_TIME, TIME_CATEGORY);

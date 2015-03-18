@@ -21,9 +21,15 @@ public class ProcessingScheduler2 {
 		pool=(ThreadPoolExecutor)Executors.newFixedThreadPool(numThreads);
 		log.info("Worker %s start ProcessingScheduler2 with numThreads=%d", workerId, numThreads);
 	}
+	
 	public int getQueueSize(){
 		return pool.getQueue().size();
 	}
+	
+	public int getNumberThreads(){
+		return numThreads;
+	}
+	
 	public Runnable newProcessingRunnable(long subscriberId, String streamName, String[] elementNames, 
 			String internalEventTypeName, Object[] events, ISubscriberObserver proc){
 		return new ProcessingTask(subscriberId, streamName, elementNames, internalEventTypeName, events, proc);

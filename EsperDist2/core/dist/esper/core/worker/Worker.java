@@ -59,7 +59,7 @@ public class Worker {
 	ProcessingScheduler2 procScheduler;
 	PublishingScheduler2 pubScheduler;
 
-	WorkerStatReportor coordReportor;
+	WorkerStatReportor workerStatReportor;
 	
 	ReentrantReadWriteLock instancesLock=new ReentrantReadWriteLock();
 	
@@ -122,17 +122,17 @@ public class Worker {
 		rawSampler=new RawStreamSampler(linkManager);
 		rawSampler.start();
 
-		coordReportor=new WorkerStatReportor(this);
+		workerStatReportor=new WorkerStatReportor(this);
 	}
 	public void start(){
 		start(true);
 	}
 	public void start(boolean sync){
 		if(sync){		
-			coordReportor.run();
+			workerStatReportor.run();
 		}
 		else{
-			new Thread(coordReportor).start();
+			new Thread(workerStatReportor).start();
 		}
 		log.info("Worker %s is running...", this.id);
 	}

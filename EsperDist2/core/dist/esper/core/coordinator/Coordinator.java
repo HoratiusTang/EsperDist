@@ -5,6 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.log4j.Level;
+
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.soda.EPStatementObjectModel;
@@ -21,6 +23,7 @@ import dist.esper.core.flow.stream.DerivedStream.ContainerAndMapAndBoolCompariso
 import dist.esper.core.id.WorkerId;
 import dist.esper.core.message.*;
 import dist.esper.core.util.ServiceManager;
+import dist.esper.core.worker.pubsub.Processor;
 import dist.esper.epl.expr.*;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult;
 import dist.esper.epl.sementic.StatementSementicWrapper;
@@ -28,12 +31,18 @@ import dist.esper.epl.sementic.StatementVisitor;
 import dist.esper.event.Event;
 import dist.esper.io.GlobalStat;
 import dist.esper.proxy.EPAdministratorImplProxy;
+import dist.esper.util.AsyncLogger2;
 import dist.esper.util.CollectionUtils;
 import dist.esper.util.Logger2;
 import dist.esper.util.ThreadUtil;
 
 public class Coordinator {
-	static Logger2 log=Logger2.getLogger(Coordinator.class);
+	static Logger2 log;
+	static Logger2 workerStatLog;
+	static{
+		log=Logger2.getLogger(Coordinator.class);
+		workerStatLog=AsyncLogger2.getAsyncLogger(Coordinator.class, Level.DEBUG, "log/workerstats.txt", false, "%d{MM-dd HH:mm:ss} %p %m%n");
+	}
 	public static final double GATEWAY_WORKER_RATIO_MIN=1.0d/3.0d;
 	static int CENTRALIZED_TREE_PRUNE_COUNT=5;
 	
@@ -135,9 +144,31 @@ public class Coordinator {
 		}
 		else if(obj instanceof WorkerStat){
 			WorkerStat ws=(WorkerStat)obj;
-			//System.err.println(ws.toString());			
+			//System.err.println(ws.toString());
+			logWorkerStat(ws);
 			costEval.updateWorkerStat(ws);			
 		}
+	}
+	
+	private void logWorkerStat(WorkerStat ws){
+		workerStatLog.debug("WorkerId=%s, isGateway=%s, memUsed=%d, memFree=%d, " +
+				"bwUsageUs=%.2f, cpuUsage=%.2f, sendByteRateUS=%.2f, sendBaseTimeUS=%.2f, " +
+				"procThreadCount=%d, pubThreadCount=%d, localSubscriberCount=%d, " +
+				"remoteSubscriberCount=%d, localPublisherCount=%d, remotePublisherCount=%d" +
+				"filterCondProcTimeUS=%.2f, joinCondProcTimeUS=%.2f, " +
+				"filterCount=%d, filterDelayedCount=%d, " +
+				"joinCount=%d, joinDelayedCount=%d, " +
+				"rootCount=%d, rawStreamSampleCount=%d", 
+				ws.id, ws.isGateway, ws.memUsed, 
+				ws.memFree, ws.bwUsageUS, ws.cpuUsage,
+				ws.sendByteRateUS, ws.sendBaseTimeUS,
+				ws.procThreadCount, ws.pubThreadCount,
+				ws.localSubscriberCount, ws.remoteSubscriberCount,
+				ws.localPublisherCount, ws.remotePublisherCount,
+				ws.filterCondProcTimeUS, ws.joinCondProcTimeUS,
+				ws.filterCount, ws.filterDelayedCount,
+				ws.joinCount, ws.joinDelayedCount,
+				ws.rootCount, ws.getRawStreamSampleCount());
 	}
 	
 	public Coordinator(String id){
@@ -214,22 +245,27 @@ public class Coordinator {
 	
 	public void registerWorkerId(WorkerId newWM){
 		ServiceManager.getInstance(id).registerWorkerId(newWM);
-		int index=-1;
+		int index1=-1;
 		for(int i=0;i<procWorkerIdList.size();i++){
-			if(newWM.getId().equals(procWorkerIdList.get(i).getId()))
-				index=i; break;
+			if(newWM.getId().equals(procWorkerIdList.get(i).getId())){
+				index1=i;
+				break;
+			}
 		}
-		if(index>=0)
-			procWorkerIdList.set(index, newWM);
+		if(index1>=0)
+			procWorkerIdList.set(index1, newWM);
 		
+		int index2=-1;
 		for(int i=0;i<gateWorkerIdList.size();i++){
-			if(newWM.getId().equals(gateWorkerIdList.get(i).getId()))
-				index=i; break;
+			if(newWM.getId().equals(gateWorkerIdList.get(i).getId())){
+				index2=i;
+				break;
+			}
 		}
-		if(index>=0)
-			gateWorkerIdList.set(index, newWM);
+		if(index2>=0)
+			gateWorkerIdList.set(index2, newWM);
 		
-		if(index<0){
+		if(index1<0 && index2<0){
 			/*determine processing-worker or gate-worker*/
 			if(gateWorkerIdList.size()==0 || 
 					(procWorkerIdList.size()>0 && 

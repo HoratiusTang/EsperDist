@@ -10,7 +10,7 @@ class WorkerStatReportor implements Runnable{
 	Worker worker;
 	
 	public WorkerStatReportor(Worker worker){
-		this(worker, 4000, 200);
+		this(worker, 4000, 460);
 	}
 	public WorkerStatReportor(Worker worker, long sendIntervalMS, long updateStatIntervalMS) {
 		super();
@@ -24,13 +24,10 @@ class WorkerStatReportor implements Runnable{
 		long lastSendTimestampNS=System.nanoTime();
 		while(true){
 			ThreadUtil.sleep(updateStatIntervalMS);
-			worker.workerStatCollector.updateCPUAndMem();
+			//worker.workerStatCollector.updateCPUAndMem();
 			
 			long currentTimestampNS=System.nanoTime();
-			if( currentTimestampNS - lastSendTimestampNS > sendIntervalNS){
-				if(worker.id.equals("worker2")){
-					System.out.print("");
-				}
+			if( currentTimestampNS - lastSendTimestampNS > sendIntervalNS){				
 				WorkerStat ws=worker.workerStatCollector.getCurrentWorkerStat();
 				worker.coordLink.send(ws);
 				lastSendTimestampNS = currentTimestampNS;
