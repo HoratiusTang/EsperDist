@@ -5,8 +5,6 @@ import java.util.*;
 import dist.esper.epl.expr.*;
 import dist.esper.epl.expr.util.*;
 import dist.esper.epl.expr.util.EventOrPropertySpecComparator.EPSRelation;
-
-import dist.esper.util.CarryIncrementPermutation;
 import dist.esper.util.CollectionUtils;
 
 /**
