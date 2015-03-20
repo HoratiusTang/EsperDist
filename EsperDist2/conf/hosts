@@ -1,0 +1,15 @@
+127.0.0.1 loalhost
+172.16.0.79 esperdist-coordinator
+172.16.0.80 esperdist-worker1
+172.16.0.81 esperdist-worker2
+172.16.0.82 esperdist-worker3
+172.16.0.83 esperdist-spout1
+172.16.0.84 esperdist-spout2
+
+# The following lines are desirable for IPv6 capable hosts
+::1 ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
