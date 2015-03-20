@@ -1,1 +1,1 @@
-kill `ps -ef | grep esper | awk '{print $2}'
+kill `ps -ef | grep esper | awk '{print $2}'`
