@@ -5,9 +5,11 @@ import java.util.*;
 import dist.esper.core.flow.container.*;
 import dist.esper.epl.expr.*;
 import dist.esper.event.*;
+import dist.esper.util.Logger2;
 
 public class FilterStats {
-	public static double DEFAULT_SELECT_FACTOR=0.5;
+	static Logger2 log=Logger2.getLogger(FilterStats.class);
+	public static double DEFAULT_SELECT_FACTOR=0.2;
 	RawStats rawStats;
 	Map<String, PropertyValueIndex> pviMap=new HashMap<String, PropertyValueIndex>();//indexed by prop.fullName(), or uniqueName?
 	

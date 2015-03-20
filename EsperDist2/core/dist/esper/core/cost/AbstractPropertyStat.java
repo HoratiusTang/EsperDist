@@ -12,7 +12,8 @@ import dist.esper.util.Tuple2D;
 
 public abstract class AbstractPropertyStat<T> implements Serializable{	
 	private static final long serialVersionUID = 8601186477544588736L;
-	public transient static int DEFUALT_SAMPLE_SIZE=10;
+	public transient static int DEFUALT_SAMPLE_SIZE=20;
+	public transient static int DEFUALT_ARRAY_LENGTH=10;
 	public transient static double DEFAULT_PROBABILITY=0.05d;
 	public String propName;
 	public int currentSize=0;
@@ -217,18 +218,17 @@ public abstract class AbstractPropertyStat<T> implements Serializable{
 		}
 		
 		public double getAvgLength(){
-			int totalLength=0;
-			int count=0;
-			for(int length: sampleLengths){
-				if(length>=0){
-					totalLength += length;
-					count++;
-				}
+			if(currentSize<=0){
+				return DEFUALT_ARRAY_LENGTH;
 			}
-			if(count>0){
+			else{
+				int count=Math.min(currentSize,sampleLengths.length);
+				int totalLength=0;
+				for(int i=0; i<count; i++){
+					totalLength += sampleLengths[i];
+				}
 				return (double)totalLength/(double)count;
 			}
-			return 0.0;
 		}
 
 		@Override
@@ -269,11 +269,27 @@ public abstract class AbstractPropertyStat<T> implements Serializable{
 			super(propName, String.class);
 		}
 		public double getAvgLength(){
-			int totalLength=0;
-			for(String str: this.sampleValues){
-				totalLength += (str==null)?0:str.length();
+//			int totalLength=0;
+//			if(this.currentSize>0){
+//				for(String str: this.sampleValues){
+//					totalLength += (str==null)?0:str.length();
+//				}
+//				return (double)totalLength/this.currentSize;
+//			}
+//			else{
+//				return DEFUALT_ARRAY_LENGTH;
+//			}
+			if(currentSize<=0){
+				return DEFUALT_ARRAY_LENGTH;
 			}
-			return (double)totalLength/this.sampleValues.length;
+			else{
+				int count=Math.min(currentSize,sampleValues.length);
+				int totalLength=0;
+				for(int i=0; i<count; i++){
+					totalLength += sampleValues[i]==null?0:sampleValues[i].length();
+				}
+				return (double)totalLength/(double)count;
+			}
 		}		
 	}
 }

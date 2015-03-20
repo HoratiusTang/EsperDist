@@ -9,8 +9,11 @@ import dist.esper.core.flow.stream.RawStream;
 import dist.esper.epl.expr.OperatorTypeEnum;
 import dist.esper.epl.expr.Value;
 import dist.esper.event.*;
+import dist.esper.util.Logger2;
+import dist.esper.util.ThreadUtil;
 
 public class RawStats {
+	static Logger2 log=Logger2.getLogger(RawStats.class);
 	public static double DEFAULT_OUTPUT_RATE=10.0d;
 	Map<String, RawStreamStat> rawStreamStatMap=new ConcurrentHashMap<String, RawStreamStat>();//indexed by event name
 	
@@ -25,13 +28,24 @@ public class RawStats {
 	public void setRawStreamStatMap(Map<String, RawStreamStat> rawStreamStatMap) {
 		this.rawStreamStatMap = rawStreamStatMap;
 	}
+	
+	public RawStreamStat getRawStreamStatBlocked(String eventName){
+		RawStreamStat rss=rawStreamStatMap.get(eventName);
+		while(rss==null){
+			log.debug("wait to get RawStreamStat for Event "+eventName);
+			ThreadUtil.sleep(1000);
+			rss=rawStreamStatMap.get(eventName);
+		}
+		return rss;
+	}
 
 	public double getOutputRateSec(RawStream rsl){
 		return getOutputRateSec(rsl.getEvent());
 	}
 
 	public double getOutputRateSec(Event event){
-		RawStreamStat rsc=rawStreamStatMap.get(event.getName());
+		//RawStreamStat rsc=rawStreamStatMap.get(event.getName());
+		RawStreamStat rsc=getRawStreamStatBlocked(event.getName());
 		if(rsc==null){
 			return DEFAULT_OUTPUT_RATE;
 		}
@@ -39,7 +53,8 @@ public class RawStats {
 	}
 	
 	public int estimateEventSize(Event event){
-		RawStreamStat rsc=rawStreamStatMap.get(event.getName());
+		//RawStreamStat rsc=rawStreamStatMap.get(event.getName());
+		RawStreamStat rsc=getRawStreamStatBlocked(event.getName());
 		int eventSize=0;
 		for(EventProperty prop: event.getPropList()){
 			int propSize=estimateEventPropertySize(prop, rsc);
@@ -49,7 +64,8 @@ public class RawStats {
 	}
 	
 	public <T> List<T> getSampleValues(EventProperty prop){
-		RawStreamStat rsc=rawStreamStatMap.get(prop.getEvent().getName());
+		//RawStreamStat rsc=rawStreamStatMap.get(prop.getEvent().getName());
+		RawStreamStat rsc=getRawStreamStatBlocked(prop.getEvent().getName());
 		AbstractPropertyStat<?> ps=rsc.getPropertyStat(prop.getName());
 		if(ps instanceof ValuePropertyStat<?>){
 			return (List<T>)((ValuePropertyStat<?>)ps).getSampleValues();
@@ -58,7 +74,8 @@ public class RawStats {
 	}
 	
 	public double estimateAbsoluteSelectFactor(EventProperty prop, Value value, OperatorTypeEnum op){
-		RawStreamStat rsc=rawStreamStatMap.get(prop.getEvent().getName());
+		//RawStreamStat rsc=rawStreamStatMap.get(prop.getEvent().getName());
+		RawStreamStat rsc=getRawStreamStatBlocked(prop.getEvent().getName());
 		if(rsc==null){
 			return Double.NEGATIVE_INFINITY;
 		}
@@ -79,13 +96,15 @@ public class RawStats {
 	}
 	
 	public int estimateEventPropertySize(EventProperty prop){
-		RawStreamStat rsc=rawStreamStatMap.get(prop.getEvent().getName());
+		//RawStreamStat rsc=rawStreamStatMap.get(prop.getEvent().getName());
+		RawStreamStat rsc=getRawStreamStatBlocked(prop.getEvent().getName());
 		return estimateEventPropertySize(prop, rsc);
 	}
 	
 	public int estimateEventPropertySize(EventProperty prop, RawStreamStat rsc){
 		if(rsc==null){
-			rsc=rawStreamStatMap.get(prop.getEvent().getName());
+			//rsc=rawStreamStatMap.get(prop.getEvent().getName());
+			rsc=getRawStreamStatBlocked(prop.getEvent().getName());
 		}
 		AbstractPropertyStat<?> ps=rsc.propStatMap.get(prop.getName());
 		if(prop.isArray()){

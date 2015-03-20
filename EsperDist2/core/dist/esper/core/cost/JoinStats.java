@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import dist.esper.core.CoordinatorMain;
 import dist.esper.core.cost.SampleNumberJoinSimulator.JoinSimulator;
 import dist.esper.core.flow.container.*;
 import dist.esper.epl.expr.AbstractBooleanExpression;
@@ -11,9 +12,11 @@ import dist.esper.epl.expr.ComparisonExpression;
 import dist.esper.epl.expr.EventPropertySpecification;
 import dist.esper.epl.expr.OperatorTypeEnum;
 import dist.esper.event.EventProperty;
+import dist.esper.util.Logger2;
 import dist.esper.util.Tuple2D;
 
 public class JoinStats {
+	static Logger2 log=Logger2.getLogger(JoinStats.class);
 	FilterStats filterStats;
 	RawStats rawStats;
 	Map<PropertyComparisonPair, JoinComparison> jcsMap=new HashMap<PropertyComparisonPair, JoinComparison>();
@@ -119,7 +122,7 @@ public class JoinStats {
 			sf=js.estimateSelectFactor();
 		}
 		catch(Exception ex){
-			ex.printStackTrace();			
+			log.getLogger().error("error occur", ex);
 		}
 		return sf;
 	}
