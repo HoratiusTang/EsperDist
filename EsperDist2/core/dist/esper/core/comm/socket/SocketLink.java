@@ -24,6 +24,7 @@ public class SocketLink extends Link{
 	public SocketLink(WorkerId myId, WorkerId targetId, Connection conn) {
 		super(myId, targetId);
 		this.conn = conn;
+		this.conn.setTimeout(5*60*1000);
 		this.conn.addListener(kryonetListener);
 	}
 	
