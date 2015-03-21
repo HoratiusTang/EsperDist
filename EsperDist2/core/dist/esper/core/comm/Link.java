@@ -7,9 +7,12 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import dist.esper.core.comm.socket.SocketLink;
 import dist.esper.core.id.WorkerId;
+import dist.esper.util.Logger2;
 
 public abstract class Link {
+	static Logger2 log=Logger2.getLogger(Link.class);
 	public static final int LOCAL_TRANSMISSION=0;
 	protected long linkId=0;
 	protected WorkerId myId=null;
@@ -98,12 +101,22 @@ public abstract class Link {
 	
 	public void notifyReceived(Object obj){
 		for(Link.Listener ln: getOverallListenerList()){
-			ln.received(this, obj);
+			try{
+				ln.received(this, obj);
+			}
+			catch(Exception ex){
+				log.getLogger().error(String.format("error occur when notifyReceived(), link: %s", this.toString()), ex);
+			}
 		}
 		List<Listener> lnList=listenerListMap.get(obj.getClass().getSimpleName());
 		if(lnList!=null){
 			for(Link.Listener ln: lnList){
-				ln.received(this, obj);
+				try{
+					ln.received(this, obj);
+				}
+				catch(Exception ex){
+					log.getLogger().error(String.format("error occur when notifyReceived(), link: %s", this.toString()), ex);
+				}
 			}
 		}
 	}

@@ -128,8 +128,10 @@ public class SocketLink extends Link{
 		public void disconnected(Connection connection) {
 			if(connection==SocketLink.this.conn){
 				notifyDisconnnected();
-				log.error("connection disconnected: %s", SocketLink.this.toString());
-				tryReconnect(connection);
+				log.error("connection disconnected: %s, will try to reconnect", SocketLink.this.toString());
+				//tryReconnect(connection);//WRONG, can't be sync
+				ReconnectRunnable rr=new ReconnectRunnable(connection);
+				new Thread(rr).start();
 			}
 		}
 		public void received(Connection connection, Object obj) {
@@ -143,5 +145,18 @@ public class SocketLink extends Link{
 				notifyReceived(obj2);
 			}
 		}
+	}
+	class ReconnectRunnable implements Runnable{
+		Connection breakupConn;
+		
+		public ReconnectRunnable(Connection breakupConn) {
+			super();
+			this.breakupConn = breakupConn;
+		}
+
+		@Override
+		public void run() {			
+			tryReconnect(breakupConn);
+		}		
 	}
 }
