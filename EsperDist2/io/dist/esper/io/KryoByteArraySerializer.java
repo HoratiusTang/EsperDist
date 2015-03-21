@@ -7,7 +7,11 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
+import dist.esper.core.comm.socket.SocketLink;
+import dist.esper.util.Logger2;
+
 public class KryoByteArraySerializer{
+	static Logger2 log=Logger2.getLogger(KryoByteArraySerializer.class);
 	public static final int DEFAULT_BASE_SIZE=4096000;
 	int baseSize;
 	Kryo kryo=new Kryo();;
@@ -34,6 +38,8 @@ public class KryoByteArraySerializer{
 				break;
 			}
 			catch(IndexOutOfBoundsException ex){
+				log.getLogger().error(String.format("kryo bytes buffer size %d is not enough, try to extend length to %d", 
+						buffer.length, buffer.length+baseSize), ex);
 				buffer=new byte[buffer.length+baseSize];
 			}
 		}

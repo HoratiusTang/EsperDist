@@ -19,4 +19,7 @@ public class Options {
 	
 	public static String QUERY_FILE="qf";
 	public static String LOG_QUERY_RESULT="lqr";//"true" or "false"
+	
+	public static String KRYONET_WRITE_BUFFER_SIZE="kryonet.wbs";
+	public static String KRYONET_OBJECT_BUFFER_SIZE="kryonet.obs";
 }

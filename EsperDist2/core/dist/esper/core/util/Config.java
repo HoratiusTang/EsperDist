@@ -34,6 +34,8 @@ public class Config {
 		context.put(Options.LOG_QUERY_RESULT, "false");
 		context.put(Options.WORKER_NUMBER_OF_PROCESS_THREADS, "2");
 		context.put(Options.WORKER_NUMBER_OF_PUBLISH_THREADS, "1");
+		context.put(Options.KRYONET_WRITE_BUFFER_SIZE, "4096000");
+		context.put(Options.KRYONET_OBJECT_BUFFER_SIZE, "2048000");
 	}
 	
 	public String get(String key){

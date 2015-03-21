@@ -17,6 +17,8 @@ import dist.esper.core.comm.Link;
 import dist.esper.core.comm.Link.Listener;
 import dist.esper.core.id.WorkerId;
 import dist.esper.core.message.SubmitEplResponse;
+import dist.esper.core.util.Options;
+import dist.esper.core.util.ServiceManager;
 import dist.esper.io.KryoByteArraySerializer;
 import dist.esper.util.Logger2;
 
@@ -24,7 +26,7 @@ public class SocketLink extends Link{
 	static Logger2 log=Logger2.getLogger(SocketLink.class);
 	SocketLinkManager linkManager; 
 	Connection conn=null;
-	KryoByteArraySerializer bytesSer=new KryoByteArraySerializer();
+	KryoByteArraySerializer bytesSer;
 	KryonetListener kryonetListener=new KryonetListener();
 	ReentrantLock lock=new ReentrantLock();
 	Condition reconnectedCond=null;
@@ -34,6 +36,9 @@ public class SocketLink extends Link{
 		this.conn = conn;
 		this.conn.setTimeout(5*60*1000);
 		this.linkManager = linkManager;
+		int bufferSize=(int)ServiceManager.getConfig().getLong(Options.KRYONET_WRITE_BUFFER_SIZE, 
+				KryoByteArraySerializer.DEFAULT_BASE_SIZE);
+		bytesSer=new KryoByteArraySerializer(bufferSize);
 		this.conn.addListener(kryonetListener);
 	}
 	

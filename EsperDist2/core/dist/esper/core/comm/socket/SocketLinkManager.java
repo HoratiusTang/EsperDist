@@ -14,6 +14,7 @@ import dist.esper.core.comm.Link;
 import dist.esper.core.comm.LinkManager;
 import dist.esper.core.comm.Link.Listener;
 import dist.esper.core.id.WorkerId;
+import dist.esper.core.util.Options;
 import dist.esper.core.util.ServiceManager;
 import dist.esper.io.KryoClassRegister;
 import dist.esper.util.Logger2;
@@ -30,6 +31,8 @@ public class SocketLinkManager extends LinkManager {
 	
 	public SocketLinkManager(WorkerId myId) {
 		super(myId);
+		writeBufferSize=(int)ServiceManager.getConfig().getLong(Options.KRYONET_WRITE_BUFFER_SIZE, writeBufferSize);
+		objectBufferSize=(int)ServiceManager.getConfig().getLong(Options.KRYONET_OBJECT_BUFFER_SIZE, objectBufferSize);
 	}
 	
 	@Override
