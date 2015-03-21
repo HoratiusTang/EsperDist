@@ -81,7 +81,7 @@ public class SocketLink extends Link{
 	public void tryReconnect(Connection breakupConn){
 		log.debug("in SocketLink.tryReconnect(), before lock");
 		lock.lock();
-		log.debug("in SocketLink.tryReconnect(), before unlock");
+		log.debug("in SocketLink.tryReconnect(), after lock");
 		if(breakupConn!=this.conn){//check again
 			log.debug("in SocketLink.tryReconnect(), Connection is already update, before unlock");
 			lock.unlock();

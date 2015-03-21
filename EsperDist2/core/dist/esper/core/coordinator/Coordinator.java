@@ -23,7 +23,7 @@ import dist.esper.core.flow.stream.*;
 import dist.esper.core.flow.stream.DerivedStream.ContainerAndMapAndBoolComparisonResult;
 import dist.esper.core.id.WorkerId;
 import dist.esper.core.message.*;
-import dist.esper.core.util.ServiceManager;
+import dist.esper.core.util.*;
 import dist.esper.core.worker.pubsub.Processor;
 import dist.esper.epl.expr.*;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult;
@@ -82,6 +82,9 @@ public class Coordinator {
 	
 	CoordinatorStatReportor coordStatReportor;
 	ReentrantLock containerMapLock=new ReentrantLock();
+	
+	MessageHandlingScheduler messageHandlingScheduler;
+	MessageHandler messageHandler=new MessageHandler();
 
 	class NewLinkHandler implements LinkManager.NewLinkListener, Link.Listener{
 		@Override public void connected(Link link) {}
@@ -105,6 +108,14 @@ public class Coordinator {
 
 		@Override
 		public void received(Link link, Object obj) {
+			//handleReceiving(link, obj);
+			messageHandlingScheduler.submit(link, obj, messageHandler);
+		}
+	}
+	
+	class MessageHandler implements MessageHandlingScheduler.IMessageHandler{
+		@Override
+		public void handleMessage(Link link, Object obj) {
 			handleReceiving(link, obj);
 		}
 	}
@@ -192,6 +203,8 @@ public class Coordinator {
 		coordStatReportor=new CoordinatorStatReportor(this);
 		streamReviewer=new StreamReviewer(existedFscList, existedPscList,
 				existedJscList, existedRscList);
+		
+		messageHandlingScheduler=new MessageHandlingScheduler(id, 1);
 	}
 	
 	public void start(){
