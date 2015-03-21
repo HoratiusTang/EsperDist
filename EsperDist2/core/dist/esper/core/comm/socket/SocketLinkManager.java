@@ -79,7 +79,7 @@ public class SocketLinkManager extends LinkManager {
 				client.connect(100000, targetId.getIp(), targetId.getPort());
 				LinkEstablishedMessage lem=new LinkEstablishedMessage(myId);
 				client.sendTCP(lem);
-				link=new SocketLink(myId, targetId, client);
+				link=new SocketLink(myId, targetId, client, this);
 				sendLinkMap.put(targetId, link);
 			}
 			return link;
@@ -106,10 +106,23 @@ public class SocketLinkManager extends LinkManager {
 		public void disconnected(Connection connection) {
 		}
 		public void received(Connection connection, Object obj) {
-			if(obj instanceof LinkEstablishedMessage){
+			if(obj instanceof LinkReconnectMessage){
 				LinkEstablishedMessage lem=(LinkEstablishedMessage)obj;
 				WorkerId targetId=lem.getWorkerId();
-				SocketLink sockLink=new SocketLink(myId, targetId, connection);
+				SocketLink oldRecvLink=(SocketLink) recvLinkMap.get(targetId);
+				if(oldRecvLink!=null){
+					log.info("%s received LinkReconnectMessage from %s, and old SocketLink is found", myId, targetId);
+					oldRecvLink.setNewConnection(connection);
+					log.info("%s received LinkReconnectMessage from %s, and old SocketLink is assign new connection", myId, targetId);
+				}
+				else{
+					log.info("%s received LinkReconnectMessage from %s, but old SocketLink is not found", myId, targetId);
+				}
+			}
+			else if(obj instanceof LinkEstablishedMessage){
+				LinkEstablishedMessage lem=(LinkEstablishedMessage)obj;
+				WorkerId targetId=lem.getWorkerId();
+				SocketLink sockLink=new SocketLink(myId, targetId, connection, SocketLinkManager.this);
 				notifyNewReceivedLink(sockLink);
 			}
 		}
@@ -137,5 +150,9 @@ public class SocketLinkManager extends LinkManager {
 		public void setWorkerId(WorkerId workerId) {
 			this.workerId = workerId;
 		}
+	}
+	
+	public static class LinkReconnectMessage extends LinkEstablishedMessage{
+		private static final long serialVersionUID = -6617154542485799325L;		
 	}
 }
