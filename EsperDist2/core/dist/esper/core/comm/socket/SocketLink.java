@@ -124,7 +124,7 @@ public class SocketLink extends Link{
 			if(connection==SocketLink.this.conn){
 				notifyDisconnnected();
 				log.error("connection disconnected: %s", SocketLink.this.toString());
-				//tryReconnect(connection);
+				tryReconnect(connection);
 			}
 		}
 		public void received(Connection connection, Object obj) {
