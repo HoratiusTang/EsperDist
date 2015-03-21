@@ -150,7 +150,7 @@ public class StatComposite2 extends AbstractMonitorComposite{
 			rowHeaderComp.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 			
 			GridData gd=new GridData();
-			gd.minimumHeight=200;
+			gd.minimumHeight=220;
 			gd.minimumWidth=230;
 			gd.heightHint=gd.minimumHeight;
 			gd.widthHint=gd.minimumWidth;

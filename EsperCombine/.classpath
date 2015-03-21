@@ -31,7 +31,7 @@
 	<classpathentry kind="lib" path="../EsperDist2/lib/esper-5.0.0/esperio-stax/jaxen-1.1.1.jar"/>
 	<classpathentry kind="lib" path="../EsperDist2/lib/esper-5.0.0/esperio-stax/wstx-asl-3.2.9.jar"/>
 	<classpathentry kind="lib" path="../EsperDist2/lib/kryonet/asm-4.0.jar"/>
-	<classpathentry kind="lib" path="../EsperDist2/lib/kryonet/jsonbeans-0.2.jar"/>
+	<classpathentry kind="lib" path="../EsperDist2/lib/kryonet/jsonbeans-0.5.jar"/>
 	<classpathentry kind="lib" path="../EsperDist2/lib/kryonet/minlog-1.2.jar"/>
 	<classpathentry kind="lib" path="../EsperDist2/lib/kryonet/objenesis-1.2.jar"/>
 	<classpathentry kind="lib" path="../EsperDist2/lib/kryonet/reflectasm-1.07.jar"/>

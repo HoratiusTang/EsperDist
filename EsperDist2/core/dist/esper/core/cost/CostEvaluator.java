@@ -19,6 +19,7 @@ import dist.esper.epl.expr.util.BooleanExpressionComparisonResult.State;
 import dist.esper.util.IncludingExcludingPrincipleComputer;
 import dist.esper.util.Logger2;
 import dist.esper.util.MultiValueMap;
+import dist.esper.util.ThreadUtil;
 
 public class CostEvaluator {
 	static Logger2 log=Logger2.getLogger(CostEvaluator.class);
@@ -76,14 +77,17 @@ public class CostEvaluator {
 		DeltaResourceUsage.setWorkerInputRawStreamsMap(workerInputRawStreamsMap);
 	}
 	
-	public InstanceStat getContainerStat(String streamName){
-		InstanceStat insStat=containerStatMap.get(streamName);
+	public InstanceStat getContainerStat(String containerName){
+		InstanceStat insStat=containerStatMap.get(containerName);
 		try{
-			if(insStat==null)
-				throw new NullPointerException();
+			while(insStat==null){
+				log.debug("wait to get InstanceStat for StreamContainer "+containerName);
+				ThreadUtil.sleep(1000);
+				insStat=containerStatMap.get(containerName);
+			}
 		}
 		catch(Exception ex){
-			log.error("InstanceStat is null with stream name "+streamName, ex);
+			log.error("InstanceStat is null with stream name "+containerName, ex);
 		}
 		return insStat;
 	}
