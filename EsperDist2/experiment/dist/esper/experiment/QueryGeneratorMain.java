@@ -58,15 +58,15 @@ public class QueryGeneratorMain {
 	public static List<EventInstanceGenerator> genEventInstanceGenerators(){		
 		EventInstanceGenerator[] eventGens={
 				EventGeneratorFactory.genEventInstanceGenerator("A", "AJ"),
-				EventGeneratorFactory.genEventInstanceGenerator("A", "AK"),
+				//EventGeneratorFactory.genEventInstanceGenerator("A", "AK"),
 				EventGeneratorFactory.genEventInstanceGenerator("B", "BJ"),
-				EventGeneratorFactory.genEventInstanceGenerator("B", "BK"),
+				//EventGeneratorFactory.genEventInstanceGenerator("B", "BK"),
 				EventGeneratorFactory.genEventInstanceGenerator("C", "CJ"),
-				EventGeneratorFactory.genEventInstanceGenerator("C", "CK"),
+				//EventGeneratorFactory.genEventInstanceGenerator("C", "CK"),
 				EventGeneratorFactory.genEventInstanceGenerator("D", "DJ"),
-				EventGeneratorFactory.genEventInstanceGenerator("D", "DK"),
+				//EventGeneratorFactory.genEventInstanceGenerator("D", "DK"),
 				EventGeneratorFactory.genEventInstanceGenerator("E", "EJ"),
-				EventGeneratorFactory.genEventInstanceGenerator("E", "EK"),
+				//EventGeneratorFactory.genEventInstanceGenerator("E", "EK"),
 		};
 		return Arrays.asList(eventGens);
 	}

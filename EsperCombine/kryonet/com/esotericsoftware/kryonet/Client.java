@@ -39,6 +39,7 @@ public class Client extends Connection implements EndPoint {
 
 	private final Serialization serialization;
 	private Selector selector;
+	private int emptySelects;
 	private volatile boolean tcpRegistered, udpRegistered;
 	private Object tcpRegistrationLock = new Object();
 	private Object udpRegistrationLock = new Object();
@@ -49,6 +50,7 @@ public class Client extends Connection implements EndPoint {
 	private InetAddress connectHost;
 	private int connectTcpPort;
 	private int connectUdpPort;
+	private boolean isClosed;
 
 	/** Creates a Client with a write buffer size of 8192 and an object buffer size of 2048. */
 	public Client () {
@@ -219,13 +221,19 @@ public class Client extends Connection implements EndPoint {
 			select = selector.selectNow();
 		}
 		if (select == 0) {
-			// NIO freaks and returns immediately with 0 sometimes, so try to keep from hogging the CPU.
-			long elapsedTime = System.currentTimeMillis() - startTime;
-			try {
-				if (elapsedTime < 25) Thread.sleep(25 - elapsedTime);
-			} catch (InterruptedException ex) {
+			emptySelects++;
+			if (emptySelects == 100) {
+				emptySelects = 0;
+				// NIO freaks and returns immediately with 0 sometimes, so try to keep from hogging the CPU.
+				long elapsedTime = System.currentTimeMillis() - startTime;
+				try {
+					if (elapsedTime < 25) Thread.sleep(25 - elapsedTime);
+				} catch (InterruptedException ex) {
+				}
 			}
 		} else {
+			emptySelects = 0;
+			isClosed = false;
 			Set<SelectionKey> keys = selector.selectedKeys();
 			synchronized (keys) {
 				for (Iterator<SelectionKey> iter = keys.iterator(); iter.hasNext();) {
@@ -268,6 +276,7 @@ public class Client extends Connection implements EndPoint {
 										continue;
 									}
 									if (!isConnected) continue;
+									keepAlive();
 									if (DEBUG) {
 										String objectString = object == null ? "null" : object.getClass().getSimpleName();
 										if (!(object instanceof FrameworkMessage)) {
@@ -282,6 +291,7 @@ public class Client extends Connection implements EndPoint {
 								if (udp.readFromAddress() == null) continue;
 								Object object = udp.readObject(this);
 								if (object == null) continue;
+								keepAlive();
 								if (DEBUG) {
 									String objectString = object == null ? "null" : object.getClass().getSimpleName();
 									debug("kryonet", this + " received UDP: " + objectString);
@@ -302,11 +312,17 @@ public class Client extends Connection implements EndPoint {
 				if (DEBUG) debug("kryonet", this + " timed out.");
 				close();
 			} else {
-				if (tcp.needsKeepAlive(time)) sendTCP(FrameworkMessage.keepAlive);
-				if (udp != null && udpRegistered && udp.needsKeepAlive(time)) sendUDP(FrameworkMessage.keepAlive);
+				keepAlive();
 			}
 			if (isIdle()) notifyIdle();
 		}
+	}
+
+	void keepAlive () {
+		if (!isConnected) return;
+		long time = System.currentTimeMillis();
+		if (tcp.needsKeepAlive(time)) sendTCP(FrameworkMessage.keepAlive);
+		if (udp != null && udpRegistered && udp.needsKeepAlive(time)) sendUDP(FrameworkMessage.keepAlive);
 	}
 
 	public void run () {
@@ -368,10 +384,13 @@ public class Client extends Connection implements EndPoint {
 		super.close();
 		// Select one last time to complete closing the socket.
 		synchronized (updateLock) {
-			selector.wakeup();
-			try {
-				selector.selectNow();
-			} catch (IOException ignored) {
+			if (!isClosed) {
+				isClosed = true;
+				selector.wakeup();
+				try {
+					selector.selectNow();
+				} catch (IOException ignored) {
+				}
 			}
 		}
 	}
@@ -409,9 +428,15 @@ public class Client extends Connection implements EndPoint {
 				// Java 1.5 doesn't support getting the subnet mask, so try the two most common.
 				byte[] ip = address.getAddress();
 				ip[3] = -1; // 255.255.255.0
-				socket.send(new DatagramPacket(data, data.length, InetAddress.getByAddress(ip), udpPort));
+				try {
+					socket.send(new DatagramPacket(data, data.length, InetAddress.getByAddress(ip), udpPort));
+				} catch (Exception ignored) {
+				}
 				ip[2] = -1; // 255.255.0.0
-				socket.send(new DatagramPacket(data, data.length, InetAddress.getByAddress(ip), udpPort));
+				try {
+					socket.send(new DatagramPacket(data, data.length, InetAddress.getByAddress(ip), udpPort));
+				} catch (Exception ignored) {
+				}
 			}
 		}
 		if (DEBUG) debug("kryonet", "Broadcasted host discovery on port: " + udpPort);

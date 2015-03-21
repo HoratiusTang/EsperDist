@@ -2,12 +2,15 @@ package dist.esper.monitor.ui.data;
 
 import java.util.*;
 
+import dist.esper.core.cost.CostEvaluator;
 import dist.esper.core.cost.InstanceStat;
 import dist.esper.core.flow.container.*;
 import dist.esper.core.flow.stream.*;
 import dist.esper.core.id.WorkerId;
+import dist.esper.util.Logger2;
 
 public class ContainerListWrapper {
+	static Logger2 log=Logger2.getLogger(CostEvaluator.class);
 	WorkerId workerId;	
 	List<FilterStreamContainer> fscList;
 	List<JoinStreamContainer> jscList;
@@ -116,11 +119,23 @@ public class ContainerListWrapper {
 		this.containerStatMap = containerStatMap;
 	}
 	
+	public InstanceStat getContainerStat(String streamName){
+		InstanceStat insStat=containerStatMap.get(streamName);
+		try{
+			if(insStat==null)
+				throw new NullPointerException();
+		}
+		catch(Exception ex){
+			log.error("InstanceStat is null with stream name "+streamName, ex);
+		}
+		return insStat;
+	}
+	
 	class StreamContainerComparator implements Comparator<DerivedStreamContainer>{
 		@Override
 		public int compare(DerivedStreamContainer sc1, DerivedStreamContainer sc2) {
-			InstanceStat insStat1=containerStatMap.get(sc1.getUniqueName());
-			InstanceStat insStat2=containerStatMap.get(sc2.getUniqueName());
+			InstanceStat insStat1=getContainerStat(sc1.getUniqueName());
+			InstanceStat insStat2=getContainerStat(sc2.getUniqueName());
 			double d=insStat1.getOutputRateSec()-insStat2.getOutputRateSec();
 			if(d<0.0)
 				return 1;//reversed

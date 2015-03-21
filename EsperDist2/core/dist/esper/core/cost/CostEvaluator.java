@@ -4,6 +4,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
+import com.esotericsoftware.minlog.Log;
+
+import dist.esper.core.coordinator.CoordinatorStatReportor;
 import dist.esper.core.cost.DeltaResourceUsage.CandidateContainerType;
 import dist.esper.core.flow.container.*;
 import dist.esper.core.flow.stream.*;
@@ -14,9 +17,11 @@ import dist.esper.epl.expr.util.BooleanExpressionComparisonResult;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult.BooleanExpressionComparisonPair;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult.State;
 import dist.esper.util.IncludingExcludingPrincipleComputer;
+import dist.esper.util.Logger2;
 import dist.esper.util.MultiValueMap;
 
 public class CostEvaluator {
+	static Logger2 log=Logger2.getLogger(CostEvaluator.class);
 	public static int INDIRECT_REUSE_MAX_COUNT=3;
 	public static int NEW_MAX_COUNT=2;
 	public Map<String, WorkerStat> procWorkerStatMap=new ConcurrentSkipListMap<String, WorkerStat>();
@@ -69,6 +74,18 @@ public class CostEvaluator {
 		DeltaResourceUsage.setSizeEstimator(sizeEstimator);
 		DeltaResourceUsage.setWorkerInputContainersMap(workerInputContainersMap);
 		DeltaResourceUsage.setWorkerInputRawStreamsMap(workerInputRawStreamsMap);
+	}
+	
+	public InstanceStat getContainerStat(String streamName){
+		InstanceStat insStat=containerStatMap.get(streamName);
+		try{
+			if(insStat==null)
+				throw new NullPointerException();
+		}
+		catch(Exception ex){
+			log.error("InstanceStat is null with stream name "+streamName, ex);
+		}
+		return insStat;
 	}
 
 	public void updateWorkerStat(WorkerStat ws){
@@ -209,7 +226,7 @@ public class CostEvaluator {
 		if(psl.getDirectReusableContainerMapComparisonResultList().size()>0){
 			for(ContainerAndMapAndBoolComparisonResult cmcr: psl.getDirectReusableContainerMapComparisonResultList()){
 				DerivedStreamContainer psc=cmcr.getFirst();
-				double newRate=containerStatMap.get(psc.getUniqueName()).getOutputRateSec();
+				double newRate=getContainerStat(psc.getUniqueName()).getOutputRateSec();
 				maxRate=newRate>maxRate?newRate:maxRate;
 			}
 			psl.setRate(maxRate);			
@@ -218,7 +235,7 @@ public class CostEvaluator {
 			for(ContainerAndMapAndBoolComparisonResult cmcr: psl.getIndirectReusableContainerMapComparisonResultList()){				
 				DerivedStreamContainer psc=cmcr.getFirst();
 				double sf=estimateSelectFactor(psc, cmcr.getThird());
-				double rate=containerStatMap.get(psc.getUniqueName()).getOutputRateSec()*sf;
+				double rate=getContainerStat(psc.getUniqueName()).getOutputRateSec()*sf;
 				if(maxRate<rate){
 					maxRate=rate;
 				}
@@ -421,7 +438,7 @@ public class CostEvaluator {
 							DeltaResourceUsage filterCompDRU=new DeltaResourceUsage(procWorkerStatMap.get(workerId), CandidateContainerType.FILTER_INDIRECT_REUSE, fsl, null, null);//container is set below
 							filterCompDRU.addChild(agentDRUs[i]);
 							filterCompDRU.setContainer(cmcr.getFirst());
-							filterCompDRU.setContainerStat(containerStatMap.get(cmcr.getFirst().getUniqueName()));						
+							filterCompDRU.setContainerStat(getContainerStat(cmcr.getFirst().getUniqueName()));						
 							filterCompDRU.setEventAliasMap(cmcr.getSecond());
 							filterCompDRU.setCompResult(cmcr.getThird());						
 							druList.add(filterCompDRU);
@@ -490,7 +507,7 @@ public class CostEvaluator {
 							DeltaResourceUsage joinCompDRU=new DeltaResourceUsage(procWorkerStatMap.get(workerId), CandidateContainerType.JOIN_INDIRECT_REUSE, jsl, null, null);
 							joinCompDRU.addChild(agentDRUs[i]);
 							joinCompDRU.setContainer(agentDRUs[i].getContainer());
-							joinCompDRU.setContainerStat(containerStatMap.get(agentDRUs[i].getContainer().getUniqueName()));
+							joinCompDRU.setContainerStat(getContainerStat(agentDRUs[i].getContainer().getUniqueName()));
 							joinCompDRU.setEventAliasMap(cmcr.getSecond());
 							joinCompDRU.setCompResult(cmcr.getThird());
 							druList.add(joinCompDRU);
@@ -597,7 +614,7 @@ public class CostEvaluator {
 				type, 
 				psl, 
 				cmcr.getFirst(),
-				containerStatMap.get(cmcr.getFirst().getUniqueName()),
+				getContainerStat(cmcr.getFirst().getUniqueName()),
 				cmcr.getSecond(),
 				cmcr.getThird());//FIXME
 		return dur;

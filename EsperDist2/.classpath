@@ -16,7 +16,6 @@
 		</accessrules>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/kryonet/asm-4.0.jar"/>
-	<classpathentry kind="lib" path="lib/kryonet/jsonbeans-0.2.jar"/>
 	<classpathentry kind="lib" path="lib/kryonet/minlog-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/kryonet/objenesis-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/kryonet/reflectasm-1.07.jar"/>
@@ -58,5 +57,6 @@
 	<classpathentry kind="lib" path="lib/jfreechart/swtgraphics2d.jar"/>
 	<classpathentry kind="lib" path="lib/util/junit-4.11.jar"/>
 	<classpathentry kind="lib" path="lib/util/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="lib/kryonet/jsonbeans-0.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

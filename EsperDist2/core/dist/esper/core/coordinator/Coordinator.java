@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.log4j.Level;
 
@@ -80,6 +81,7 @@ public class Coordinator {
 	WorkerAssignmentStrategy rawSamplingStrategy=new WorkerAssignmentStrategy();
 	
 	CoordinatorStatReportor coordStatReportor;
+	ReentrantLock containerMapLock=new ReentrantLock();
 
 	class NewLinkHandler implements LinkManager.NewLinkListener, Link.Listener{
 		@Override public void connected(Link link) {}
@@ -355,6 +357,7 @@ public class Coordinator {
 	}
 	
 	public void addToExistedStreamContainer(StreamContainer sc){
+		this.lockContainerMap();
 		if(sc instanceof FilterStreamContainer && !this.existedFscList.contains(sc)){
 			this.existedFscList.add((FilterStreamContainer)sc);
 		}
@@ -369,6 +372,15 @@ public class Coordinator {
 		}
 		containerNameMap.put(sc.getUniqueName(), (DerivedStreamContainer)sc);
 		containerIdMap.put(sc.getId(), (DerivedStreamContainer)sc);
+		this.unlockContainerMap();
+	}
+	
+	public void lockContainerMap(){
+		this.containerMapLock.lock();
+	}
+	
+	public void unlockContainerMap(){
+		this.containerMapLock.unlock();
 	}
 	
 	@Override
