@@ -117,13 +117,14 @@ public class SocketLink extends Link{
 				for(Listener ls: overallListenerList){
 					ls.connected(SocketLink.this);
 				}
-				log.info("connnection reconnected/n");
+				log.info("connnection reconnected: %s", SocketLink.this.toString());
 			}
 		}
 		public void disconnected(Connection connection) {
 			if(connection==SocketLink.this.conn){
-				//notifyDisconnnected();
-				tryReconnect(connection);
+				notifyDisconnnected();
+				log.error("connection disconnected: %s", SocketLink.this.toString());
+				//tryReconnect(connection);
 			}
 		}
 		public void received(Connection connection, Object obj) {

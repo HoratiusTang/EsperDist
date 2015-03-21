@@ -87,6 +87,7 @@ public class Coordinator {
 		@Override public void connected(Link link) {}
 		@Override 
 		public void disconnected(Link link) {
+			log.info("Coordinator's Link is disconnected: %s", link.toString());
 			if(link.getTargetId().getType()==WorkerId.SPOUT)
 				spoutLinkMap.remove(link.getTargetId().getId());
 			else if(link.getTargetId().getType()==WorkerId.MONITOR)
@@ -336,14 +337,28 @@ public class Coordinator {
 		submitStreamContainerToWorker(sc2);
 		addToExistedStreamContainer(sc);
 	}
+	
+	public Link getWorkerLink(String workerId){
+		Link link=workerLinkMap.get(workerId);
+		try{
+			if(link==null){
+				throw new NullPointerException();
+			}
+		}
+		catch(Exception ex){
+			log.getLogger().error("Link is null for worker "+workerId, ex);
+		}
+		return link;
+	}
+	
 	public void submitNewRawStreamSamplingMessageToWorker(RawStream rsl, WorkerId targetWorkerId){
 		NewRawStreamSamplingMessage nrssMsg=new NewRawStreamSamplingMessage(id, rsl);
-		Link link=workerLinkMap.get(targetWorkerId.getId());
+		Link link=getWorkerLink(targetWorkerId.getId());
 		link.send(nrssMsg);
 	}
 	
 	public void submitStreamContainerToWorker(StreamContainer sc){
-		Link link=workerLinkMap.get(sc.getWorkerId().getId());
+		Link link=getWorkerLink(sc.getWorkerId().getId());
 		DerivedStreamContainer psc=(DerivedStreamContainer)sc;
 		
 		if(psc.isNew()){

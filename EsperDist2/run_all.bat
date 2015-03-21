@@ -2,7 +2,7 @@
 start run_coordinator.bat -this.id Coordinator -this.port 7123 -qf ./query/queries.txt
 
 ping 0.0.0.0 -n 2 > nul
-start run_worker.bat -this.id Worker1 -this.port 9001 -lqr true
+start run_worker.bat -this.id Worker1 -this.port 9001 -lqr false
 start run_worker.bat -this.id Worker2 -this.port 9002 -lqr false
 start run_worker.bat -this.id Worker3 -this.port 9003 -lqr false
 start run_worker.bat -this.id Worker4 -this.port 9004 -lqr false

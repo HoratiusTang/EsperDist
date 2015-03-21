@@ -107,8 +107,8 @@ public class SocketLinkManager extends LinkManager {
 		}
 		public void received(Connection connection, Object obj) {
 			if(obj instanceof LinkReconnectMessage){
-				LinkEstablishedMessage lem=(LinkEstablishedMessage)obj;
-				WorkerId targetId=lem.getWorkerId();
+				LinkReconnectMessage lrm=(LinkReconnectMessage)obj;
+				WorkerId targetId=lrm.getWorkerId();
 				SocketLink oldRecvLink=(SocketLink) recvLinkMap.get(targetId);
 				if(oldRecvLink!=null){
 					log.info("%s received LinkReconnectMessage from %s, and old SocketLink is found", myId, targetId);
