@@ -24,6 +24,7 @@ import dist.esper.epl.expr.util.ExpressionComparator;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult.State;
 import dist.esper.epl.expr.util.ExpressionComparator.CompareStrategy;
 import dist.esper.util.CollectionUtils;
+import dist.esper.util.ITuple3D;
 import dist.esper.util.Tuple2D;
 import dist.esper.util.Tuple3D;
 
@@ -239,14 +240,16 @@ public abstract class DerivedStreamContainer extends StreamContainer {
 		return allCondList;
 	}
 	
-	public static class StreamAndMapAndBoolComparisonResult extends
-		Tuple3D<Stream,Map<EventAlias,EventAlias>,BooleanExpressionComparisonResult>{
+	public static class StreamAndMapAndBoolComparisonResult implements
+		ITuple3D<Stream,Map<EventAlias,EventAlias>,BooleanExpressionComparisonResult>{
 		private static final long serialVersionUID = 1331939948512524595L;
-
+		Stream first;
+		Map<EventAlias,EventAlias> second;
+		transient BooleanExpressionComparisonResult third;
+		
 		public StreamAndMapAndBoolComparisonResult(){
 			super();
 		}
-		
 		/**
 		 * 
 		 * @param first
@@ -256,7 +259,44 @@ public abstract class DerivedStreamContainer extends StreamContainer {
 		public StreamAndMapAndBoolComparisonResult(Stream first,
 				Map<EventAlias, EventAlias> second, 
 				BooleanExpressionComparisonResult third) {
-			super(first, second, third);
+			this.first = first;
+			this.second = second;
+			this.third = third;
+		}
+
+		@Override
+		public Stream getFirst() {
+			return first;
+		}
+
+		@Override
+		public Map<EventAlias, EventAlias> getSecond() {
+			return second;
+		}
+
+		@Override
+		public BooleanExpressionComparisonResult getThird() {
+			return third;
+		}
+
+		@Override
+		public void setFirst(Stream stream) {
+			this.first = stream;
+		}
+
+		@Override
+		public void setSecond(Map<EventAlias, EventAlias> eaMap) {
+			this.second = eaMap;
+		}
+
+		@Override
+		public void setThird(BooleanExpressionComparisonResult cr) {
+			this.third = cr;
+		}
+		
+		@Override
+		public String toString(){
+			return String.format("[%s,%s,%s]", first.toString(), second.toString(), third.toString());
 		}
 	}
 }

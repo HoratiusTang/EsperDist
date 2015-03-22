@@ -1,6 +1,6 @@
 package dist.esper.util;
 
-public class Tuple3D<T,E,V> extends Tuple2D<T, E> {
+public class Tuple3D<T,E,V> extends Tuple2D<T, E>{
 	private static final long serialVersionUID = -6783030529653773677L;
 	protected V third;
 	public Tuple3D(){
