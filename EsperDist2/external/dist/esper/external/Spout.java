@@ -106,7 +106,7 @@ public class Spout {
 	}
 	
 	public void init(){
-		sendIntervalMS=ServiceManager.getConfig().getLong(Options.OUTPUT_INTERVERAL_US, sendIntervalMS);
+		sendIntervalMS=ServiceManager.getConfig().getLong(Options.OUTPUT_INTERVERAL_US, sendIntervalMS*1000)/1000;
 		batchCount=(int)ServiceManager.getConfig().getLong(Options.SPOUT_BATCH_COUNT, batchCount);
 		linkManager=ServiceManager.getInstance(id).getLinkManager();
 		linkManager.init();

@@ -15,9 +15,11 @@ import dist.esper.core.worker.pubsub.Instance;
 import dist.esper.core.worker.pubsub.Subscriber;
 import dist.esper.epl.expr.AbstractBooleanExpression;
 import dist.esper.event.Event;
+import dist.esper.util.Logger2;
 import dist.esper.util.StringUtil;
 
 public class InstanceStat implements Serializable{
+	static Logger2 log=Logger2.getLogger(InstanceStat.class);
 	private static final long serialVersionUID = 8726058215812361568L;
 	String workerId;
 	String type;
