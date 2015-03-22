@@ -20,6 +20,7 @@ import dist.esper.core.flow.container.*;
 import dist.esper.core.flow.stream.*;
 import dist.esper.core.id.WorkerId;
 import dist.esper.core.message.*;
+import dist.esper.core.util.MessageHandlingScheduler;
 import dist.esper.core.util.Options;
 import dist.esper.core.util.ServiceManager;
 import dist.esper.core.worker.WorkerStatCollector2.*;
@@ -63,6 +64,11 @@ public class Worker {
 	
 	ReentrantReadWriteLock instancesLock=new ReentrantReadWriteLock();
 	
+	MessageHandlingScheduler coordMessageHandlingScheduler;
+	MessageHandlingScheduler workerMessageHandlingScheduler;
+	CoordinatorMessageHandler coordMessageHandler=new CoordinatorMessageHandler();
+	WorkerMessageHandler workerMessageHandler=new WorkerMessageHandler();
+	
 	public static EventOrPropertySpecComparator epsComparator=new EventOrPropertySpecComparator();
 	
 	class CoordinatorLinkHandler implements Link.Listener{
@@ -71,7 +77,8 @@ public class Worker {
 
 		@Override
 		public void received(Link link, Object obj) {
-			handleCoordinatorMessage(obj);
+			//handleCoordinatorMessage(obj);
+			coordMessageHandlingScheduler.submit(link, obj, coordMessageHandler);
 		}
 	}
 	
@@ -93,7 +100,8 @@ public class Worker {
 	
 		@Override
 		public void received(Link link, Object obj) {
-			handleWorkerMessage(link, obj);
+			//handleWorkerMessage(link, obj);
+			workerMessageHandlingScheduler.submit(link, obj, workerMessageHandler);
 		}
 	}	
 	
@@ -123,6 +131,9 @@ public class Worker {
 		rawSampler.start();
 
 		workerStatReportor=new WorkerStatReportor(this);
+		
+		coordMessageHandlingScheduler=new MessageHandlingScheduler(id, 1);
+		workerMessageHandlingScheduler=new MessageHandlingScheduler(id, 1);
 	}
 	public void start(){
 		start(true);
@@ -159,6 +170,20 @@ public class Worker {
 //		EventType eventType=epService.getEPAdministrator().getConfiguration().getEventType(event.getName());
 //		String[] propNames=eventType.getPropertyNames();
 //		System.out.format("** registed event: %s:%s\n", eventType.getName(), Arrays.asList(propNames).toString());
+	}
+	
+	class CoordinatorMessageHandler implements MessageHandlingScheduler.IMessageHandler{
+		@Override
+		public void handleMessage(Link link, Object obj) {
+			handleCoordinatorMessage(obj);
+		}
+	}
+	
+	class WorkerMessageHandler implements MessageHandlingScheduler.IMessageHandler{
+		@Override
+		public void handleMessage(Link link, Object obj) {
+			handleWorkerMessage(link, obj);
+		}
 	}
 	
 	public void handleWorkerMessage(Link link, Object obj){
