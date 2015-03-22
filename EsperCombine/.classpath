@@ -34,7 +34,7 @@
 	<classpathentry kind="lib" path="../EsperDist2/lib/kryonet/jsonbeans-0.5.jar"/>
 	<classpathentry kind="lib" path="../EsperDist2/lib/kryonet/minlog-1.2.jar"/>
 	<classpathentry kind="lib" path="../EsperDist2/lib/kryonet/objenesis-1.2.jar"/>
-	<classpathentry kind="lib" path="../EsperDist2/lib/kryonet/reflectasm-1.07.jar"/>
+	<classpathentry kind="lib" path="../EsperDist2/lib/kryonet/reflectasm-1.09-shaded.jar"/>
 	<classpathentry kind="lib" path="../EsperDist2/lib/sigar-bin/lib/sigar.jar"/>
 	<classpathentry kind="lib" path="../EsperDist2/lib/util/junit-4.11.jar"/>
 	<classpathentry kind="lib" path="../EsperDist2/lib/util/log4j-1.2.17.jar"/>
