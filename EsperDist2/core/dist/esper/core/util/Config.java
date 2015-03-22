@@ -36,6 +36,8 @@ public class Config {
 		context.put(Options.WORKER_NUMBER_OF_PUBLISH_THREADS, "1");
 		context.put(Options.KRYONET_WRITE_BUFFER_SIZE, "4096000");
 		context.put(Options.KRYONET_OBJECT_BUFFER_SIZE, "2048000");
+		context.put(Options.SPOUT_BATCH_COUNT, "20");
+		context.put(Options.OUTPUT_INTERVERAL_US, "1000000");
 	}
 	
 	public String get(String key){

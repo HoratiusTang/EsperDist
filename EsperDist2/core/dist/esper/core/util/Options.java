@@ -22,4 +22,7 @@ public class Options {
 	
 	public static String KRYONET_WRITE_BUFFER_SIZE="kryonet.wbs";
 	public static String KRYONET_OBJECT_BUFFER_SIZE="kryonet.obs";
+	
+	public static String OUTPUT_INTERVERAL_US="outintus";
+	public static String SPOUT_BATCH_COUNT="spout.bc";
 }

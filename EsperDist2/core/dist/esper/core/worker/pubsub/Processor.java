@@ -521,7 +521,7 @@ public class Processor implements ISubscriberObserver{
 
 	public void setEpl(String epl) {
 		this.epl = epl + String.format(" output every %d msec", 
-				ServiceManager.getInstance(workerId).getOutputIntervalUS()/1000);
+				ServiceManager.getOutputIntervalUS()/1000);
 		log.info("Worker %s will start epl: %s", this.workerId, epl);
 	}
 

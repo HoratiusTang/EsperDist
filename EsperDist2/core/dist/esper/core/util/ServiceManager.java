@@ -16,7 +16,8 @@ import dist.esper.core.id.WorkerId;
 import dist.esper.event.EventRegistry;
 
 public class ServiceManager {
-	static Map<String,ServiceManager> serviceManagerMap=new HashMap<String,ServiceManager>();	
+	static Map<String,ServiceManager> serviceManagerMap=new HashMap<String,ServiceManager>();
+	static final long DEFAULT_OUTPUT_INTERVAL_US=1*1000*1000;
 	public static WorkerId coordinatorId;
 	static boolean isSimulation=true;
 	static Config config=null;
@@ -25,7 +26,7 @@ public class ServiceManager {
 	EventRegistry eventRegistry=new EventRegistry();
 	SortedMap<String,WorkerId> workerIdMap=new ConcurrentSkipListMap<String,WorkerId>();
 	String myId;
-	long OutputIntervalUS=1*1000*1000;	
+	
 	
 	public static void initConfig(String[] args) throws ConfigurationException{
 		if(config==null){
@@ -89,14 +90,10 @@ public class ServiceManager {
 		return eventRegistry;
 	}
 	
-	public long getOutputIntervalUS() {
-		return OutputIntervalUS;
+	public static long getOutputIntervalUS() {		
+		return config.getLong(Options.OUTPUT_INTERVERAL_US, DEFAULT_OUTPUT_INTERVAL_US);
 	}
-
-	public void setOutputIntervalUS(long outputIntervalUS) {
-		OutputIntervalUS = outputIntervalUS;
-	}
-
+	
 	public LinkManager getLinkManager(){
 		WorkerId myId=getMyWorkerId();
 		if(linkManager==null){

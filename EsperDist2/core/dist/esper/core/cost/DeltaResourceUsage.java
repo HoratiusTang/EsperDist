@@ -156,7 +156,7 @@ public class DeltaResourceUsage{
 		compute(parentWorkerId);
 	}
 	public void computeFilterReuse(String parentWorkerId){//FIXME: ignore parentExtraConditionEPSList ahora
-		double outputIntervalSec = ServiceManager.getInstance(this.getWorkerId()).getOutputIntervalUS()/1e6;
+		double outputIntervalSec = ServiceManager.getOutputIntervalUS()/1e6;
 		deltaProcTimeUS = 0.0d;
 		extraOutputElementList=getExtraResultElementList(stream, container, eaMap);
 		deltaOutputBytesPerEvent = sizeEstimator.computeSelectElementsByteSize(extraOutputElementList);
@@ -174,7 +174,7 @@ public class DeltaResourceUsage{
 	}
 	
 	public void computeJoinReuse(String parentWorkerId){//FIXME: ignore parentExtraConditionEPSList ahora
-		double outputIntervalSec = ServiceManager.getInstance(this.getWorkerId()).getOutputIntervalUS()/1e6;
+		double outputIntervalSec = ServiceManager.getOutputIntervalUS()/1e6;
 		for(DeltaResourceUsage childDRU: childList){
 			childDRU.compute(this.getWorkerId());
 		}
@@ -199,7 +199,7 @@ public class DeltaResourceUsage{
 	}
 	
 	public void computeRootReuse(){
-		double outputIntervalSec = ServiceManager.getInstance(this.getWorkerId()).getOutputIntervalUS()/1e6;
+		double outputIntervalSec = ServiceManager.getOutputIntervalUS()/1e6;
 		DeltaResourceUsage childDRU=this.childList.get(0);
 		childDRU.compute(this.getWorkerId());
 		
@@ -217,7 +217,7 @@ public class DeltaResourceUsage{
 	}
 	
 	public void computeFilterNew(String parentWorkerId){
-		double outputIntervalSec = ServiceManager.getInstance(this.getWorkerId()).getOutputIntervalUS()/1e6;
+		double outputIntervalSec = ServiceManager.getOutputIntervalUS()/1e6;
 		extraOutputElementList=stream.getResultElementList();
 		deltaOutputBytesPerEvent = sizeEstimator.computeSelectElementsByteSize(extraOutputElementList);		
 		
@@ -244,7 +244,7 @@ public class DeltaResourceUsage{
 	}
 	
 	public void computeJoinNew(String parentWorkerId){
-		double outputIntervalSec = ServiceManager.getInstance(this.getWorkerId()).getOutputIntervalUS()/1e6;
+		double outputIntervalSec = ServiceManager.getOutputIntervalUS()/1e6;
 		for(DeltaResourceUsage childDRU: childList){
 			childDRU.compute(this.getWorkerId());
 		}		
@@ -284,7 +284,7 @@ public class DeltaResourceUsage{
 	}
 	
 	public void computeRootNew(){
-		double outputIntervalSec = ServiceManager.getInstance(this.getWorkerId()).getOutputIntervalUS()/1e6;
+		double outputIntervalSec = ServiceManager.getOutputIntervalUS()/1e6;
 		DeltaResourceUsage childDRU=this.childList.get(0);
 		childDRU.compute(this.getWorkerId());
 		
@@ -314,7 +314,7 @@ public class DeltaResourceUsage{
 	}
 	
 	public void computeFilterIndirectReuse(String parentWorkerId){
-		double outputIntervalSec = ServiceManager.getInstance(this.getWorkerId()).getOutputIntervalUS()/1e6;
+		double outputIntervalSec = ServiceManager.getOutputIntervalUS()/1e6;
 		/* stream is own stream, container is agent's container */		
 		extraOutputElementList=stream.getResultElementList();
 		deltaOutputBytesPerEvent = sizeEstimator.computeSelectElementsByteSize(extraOutputElementList);
@@ -348,7 +348,7 @@ public class DeltaResourceUsage{
 	}
 	
 	public void computeJoinIndirectReuse(String parentWorkerId){
-		double outputIntervalSec = ServiceManager.getInstance(this.getWorkerId()).getOutputIntervalUS()/1e6;
+		double outputIntervalSec = ServiceManager.getOutputIntervalUS()/1e6;
 		/* stream is own stream, container is agent's container */
 		extraOutputElementList=stream.getResultElementList();
 		deltaOutputBytesPerEvent = sizeEstimator.computeSelectElementsByteSize(extraOutputElementList);

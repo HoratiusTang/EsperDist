@@ -52,7 +52,7 @@ public class InstanceStat implements Serializable{
 		this.instanceId = instance.getId();
 		this.processorId = instance.getProcessor().getId();
 		this.uniqueName = instance.getStreamContainer().getUniqueName();
-		this.outputIntervalUS = ServiceManager.getInstance(workerId).getOutputIntervalUS();
+		this.outputIntervalUS = ServiceManager.getOutputIntervalUS();
 		this.startTimestampUS = System.nanoTime()/1000;
 		this.lastTimestampUS = startTimestampUS+1;
 		this.batchCount = 0;

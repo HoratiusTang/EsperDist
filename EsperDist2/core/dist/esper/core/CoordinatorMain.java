@@ -61,7 +61,7 @@ public class CoordinatorMain{
 				log.info("end submit queries");
 			}
 			catch(Exception ex){
-				log.getLogger().error("error ocurr when read query file", ex);
+				log.getLogger().error("error ocurr when submit queries", ex);
 			}			
 		}	
 	}

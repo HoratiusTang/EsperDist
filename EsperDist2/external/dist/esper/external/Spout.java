@@ -9,6 +9,7 @@ import dist.esper.core.message.DataMessage;
 import dist.esper.core.message.NewSpoutMessage;
 import dist.esper.core.message.NewWorkerMessage;
 import dist.esper.core.message.StartSubscribeMessage;
+import dist.esper.core.util.Options;
 import dist.esper.core.util.ServiceManager;
 import dist.esper.core.worker.pubsub.ISubscriberObserver;
 import dist.esper.core.worker.pubsub.Publisher;
@@ -68,8 +69,8 @@ public class Spout {
 	
 	class PublishRunner implements Runnable{
 		@Override
-		public void run() {
-			log.info("Spout %s is running, sending %s", id, event.getName());
+		public void run() {			
+			log.info("Spout %s is running, sending %s at %d per %d ms", id, event.getName(), batchCount, sendIntervalMS);
 			while(true){
 				try {
 					Object[] objs=new Object[batchCount];
@@ -105,6 +106,8 @@ public class Spout {
 	}
 	
 	public void init(){
+		sendIntervalMS=ServiceManager.getConfig().getLong(Options.OUTPUT_INTERVERAL_US, sendIntervalMS);
+		batchCount=(int)ServiceManager.getConfig().getLong(Options.SPOUT_BATCH_COUNT, batchCount);
 		linkManager=ServiceManager.getInstance(id).getLinkManager();
 		linkManager.init();
 		linkManager.setNewLinkListener(newLinkHandler);

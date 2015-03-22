@@ -193,6 +193,9 @@ public class Coordinator {
 		epService = EPServiceProviderManager.getProvider(id);
 		epAdminProxy = new EPAdministratorImplProxy(epService.getEPAdministrator());
 		costEval=new CostEvaluator(containerNameMap);
+		
+		messageHandlingScheduler=new MessageHandlingScheduler(id, 1);
+		
 		linkManager=ServiceManager.getInstance(id).getLinkManager();
 		linkManager.init();
 		linkManager.setNewLinkListener(newLinkHandler);
@@ -203,8 +206,6 @@ public class Coordinator {
 		coordStatReportor=new CoordinatorStatReportor(this);
 		streamReviewer=new StreamReviewer(existedFscList, existedPscList,
 				existedJscList, existedRscList);
-		
-		messageHandlingScheduler=new MessageHandlingScheduler(id, 1);
 	}
 	
 	public void start(){

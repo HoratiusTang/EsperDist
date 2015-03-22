@@ -117,6 +117,9 @@ public class Worker {
 		procScheduler=new ProcessingScheduler2(id, numProcThread);
 		pubScheduler=new PublishingScheduler2(id, numPubThread);
 		
+		coordMessageHandlingScheduler=new MessageHandlingScheduler(id, 1);
+		workerMessageHandlingScheduler=new MessageHandlingScheduler(id, 1);
+		
 		linkManager=ServiceManager.getInstance(id).getLinkManager();
 		linkManager.init();
 		linkManager.setNewLinkListener(workerLinkHandler);
@@ -131,9 +134,6 @@ public class Worker {
 		rawSampler.start();
 
 		workerStatReportor=new WorkerStatReportor(this);
-		
-		coordMessageHandlingScheduler=new MessageHandlingScheduler(id, 1);
-		workerMessageHandlingScheduler=new MessageHandlingScheduler(id, 1);
 	}
 	public void start(){
 		start(true);
