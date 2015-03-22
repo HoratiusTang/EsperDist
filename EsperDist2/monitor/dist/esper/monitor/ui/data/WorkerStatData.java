@@ -99,7 +99,7 @@ public class WorkerStatData{
 		cpuChart = ChartFactory.createTimeSeriesChart(
 				CPU_USAGE, 
 				"S", 
-				CPU_USAGE, 
+				"percentage",//CPU_USAGE, 
 				cpuSet, 
 				true, true, false);
 	    XYPlot localXYPlot = (XYPlot)cpuChart.getPlot();
@@ -122,7 +122,7 @@ public class WorkerStatData{
 		memChart = ChartFactory.createTimeSeriesChart(
 				MEM_USED, 
 				"Seconds",
-				MEM_USED, 
+				"MB", //MEM_USED,
 				memSet, 
 				true, true, false);
 	    XYPlot localXYPlot = (XYPlot)memChart.getPlot();
@@ -145,7 +145,7 @@ public class WorkerStatData{
 		netChart = ChartFactory.createTimeSeriesChart(
 				BW_USAGE, 
 				"Seconds",
-				BW_USAGE, 
+				"percentage",//BW_USAGE, 
 				netSet, 
 				true, true, false);
 	    XYPlot localXYPlot = (XYPlot)netChart.getPlot();
@@ -226,10 +226,10 @@ public class WorkerStatData{
 	public void update(WorkerStat ws){
 		cpuSet.getSeries(CPU_USAGE).add(new Millisecond(), ws.cpuUsage);//FIXME
 		cpuSet.getSeries(CPU_FREE).add(new Millisecond(), 1.0-ws.cpuUsage);//FIXME
-		memSet.getSeries(MEM_USED).add(new Millisecond(), ws.memUsed);//FIXME
-		memSet.getSeries(MEM_FREE).add(new Millisecond(), ws.memFree);//FIXME
+		memSet.getSeries(MEM_USED).add(new Millisecond(), ws.memUsed/1E6);//FIXME
+		memSet.getSeries(MEM_FREE).add(new Millisecond(), ws.memFree/1E6);//FIXME
 		netSet.getSeries(BW_USAGE).add(new Millisecond(), ws.bwUsageUS/1E6);//FIXME
-		netSet.getSeries(BW_FREE).add(new Millisecond(), 1.0-ws.bwUsageUS);//FIXME
+		netSet.getSeries(BW_FREE).add(new Millisecond(), 1.0-ws.bwUsageUS/1E6);//FIXME
 		
 		subpubCountSet.setValue(ws.localSubscriberCount, LOCAL_SUB_COUNT, SUB_PUB_COUNT_CATEGORY);
 		subpubCountSet.setValue(ws.remoteSubscriberCount, REMOTE_SUB_COUNT, SUB_PUB_COUNT_CATEGORY);
