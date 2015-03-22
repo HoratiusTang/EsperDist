@@ -18,7 +18,6 @@
 	<classpathentry kind="lib" path="lib/kryonet/asm-4.0.jar"/>
 	<classpathentry kind="lib" path="lib/kryonet/minlog-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/kryonet/objenesis-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/kryonet/reflectasm-1.07.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-configuration-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-lang-2.6.jar"/>
@@ -58,5 +57,6 @@
 	<classpathentry kind="lib" path="lib/util/junit-4.11.jar"/>
 	<classpathentry kind="lib" path="lib/util/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="lib/kryonet/jsonbeans-0.5.jar"/>
+	<classpathentry kind="lib" path="lib/kryonet/reflectasm-1.09-shaded.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

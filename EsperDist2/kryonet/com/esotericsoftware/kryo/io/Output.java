@@ -1,10 +1,10 @@
 
 package com.esotericsoftware.kryo.io;
 
+import com.esotericsoftware.kryo.KryoException;
+
 import java.io.IOException;
 import java.io.OutputStream;
-
-import com.esotericsoftware.kryo.KryoException;
 
 /** An OutputStream that buffers data in a byte array and optionally flushes to another OutputStream. Utility methods are provided
  * for efficiently writing primitive types and strings.
@@ -144,6 +144,7 @@ public class Output extends OutputStream {
 			if (capacity == maxCapacity)
 				throw new KryoException("Buffer overflow. Available: " + (capacity - position) + ", required: " + required);
 			// Grow buffer.
+			if (capacity == 0) capacity = 1;
 			capacity = Math.min(capacity * 2, maxCapacity);
 			if (capacity < 0) capacity = maxCapacity;
 			byte[] newBuffer = new byte[capacity];

@@ -61,6 +61,7 @@ import com.esotericsoftware.kryo.util.IntArray;
 import com.esotericsoftware.kryo.util.MapReferenceResolver;
 import com.esotericsoftware.kryo.util.ObjectMap;
 import com.esotericsoftware.kryo.util.Util;
+import com.esotericsoftware.minlog.Log;
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 
 import java.lang.reflect.Constructor;
@@ -104,8 +105,7 @@ public class Kryo {
 	private final ClassResolver classResolver;
 	private int nextRegisterID;
 	private ClassLoader classLoader = getClass().getClassLoader();
-	private InstantiatorStrategy defaultStrategy = new DefaultInstantiatorStrategy();
-	private InstantiatorStrategy strategy = new DefaultInstantiatorStrategy();
+	private InstantiatorStrategy strategy = new DefaultInstantiatorStrategy(new StdInstantiatorStrategy());
 	private boolean registrationRequired;
 
 	private int depth, maxDepth = Integer.MAX_VALUE;
@@ -206,6 +206,20 @@ public class Kryo {
 		register(long.class, new LongSerializer());
 		register(double.class, new DoubleSerializer());
 		register(void.class, new VoidSerializer());
+		
+		// Lambdas support
+		// Enable only if JVM supports it
+		try {
+			String version = System.getProperty("java.version");
+			char minor = version.charAt(2);
+			if (minor >= '8') {
+				register(Class.forName("java.lang.invoke.SerializedLambda"));
+				register(Closure.class, (Serializer)Class.forName("com.esotericsoftware.kryo.serializers.ClosureSerializer")
+					.newInstance());
+			}
+		} catch (Exception e) {
+			Log.trace("Serialization of Java8 lambdas is not available on this system.");
+		}
 	}
 
 	// --- Default serializers ---
@@ -329,23 +343,28 @@ public class Kryo {
 	public Serializer getDefaultSerializer (Class type) {
 		if (type == null) throw new IllegalArgumentException("type cannot be null.");
 
-		if (type.isAnnotationPresent(DefaultSerializer.class)) {
-			DefaultSerializer defaultSerializerAnnotation = (DefaultSerializer)type.getAnnotation(DefaultSerializer.class);
-			return ReflectionSerializerFactory.makeSerializer(this, defaultSerializerAnnotation.value(), type);
-		}
+		final Serializer serializerForAnnotation = getDefaultSerializerForAnnotatedType(type);
+		if (serializerForAnnotation!=null) return serializerForAnnotation;
 
 		for (int i = 0, n = defaultSerializers.size(); i < n; i++) {
 			DefaultSerializerEntry entry = defaultSerializers.get(i);
 			if (entry.type.isAssignableFrom(type)) {
 				Serializer defaultSerializer = entry.serializerFactory.makeSerializer(this, type);
-				//Remember that it is a default serializer set internally by Kryo
-				if(i > n - lowPriorityDefaultSerializerCount)
-					defaultSerializer.setDefaultSerializer(true);
 				return defaultSerializer;
 			}
 		}
 
 		return newDefaultSerializer(type);
+	}
+
+	protected Serializer getDefaultSerializerForAnnotatedType(Class type)
+	{
+		if (type.isAnnotationPresent(DefaultSerializer.class)) {
+			DefaultSerializer defaultSerializerAnnotation = (DefaultSerializer)type.getAnnotation(DefaultSerializer.class);
+			return ReflectionSerializerFactory.makeSerializer(this, defaultSerializerAnnotation.value(), type);
+		}
+
+		return null;
 	}
 
 	/** Called by {@link #getDefaultSerializer(Class)} when no default serializers matched the type. Subclasses can override this
@@ -422,8 +441,8 @@ public class Kryo {
 		if (id < 0) throw new IllegalArgumentException("id must be > 0: " + id);
 
 		Registration existing = getRegistration(registration.getId());
-		if (existing != null && existing.getType() != registration.getType()) {
-			throw new KryoException("An existing registration with a different type already uses ID: " + registration.getId()
+		if (DEBUG && existing != null && existing.getType() != registration.getType()) {
+			debug("An existing registration with a different type already uses ID: " + registration.getId()
 				+ "\nExisting registration: " + existing + "\nUnable to set registration: " + registration);
 		}
 
@@ -456,6 +475,8 @@ public class Kryo {
 				registration = getRegistration(type.getEnclosingClass());
 			} else if (EnumSet.class.isAssignableFrom(type)) {
 				registration = classResolver.getRegistration(EnumSet.class);
+			} else if (isClousre(type)) {
+				registration = classResolver.getRegistration(Closure.class);
 			}
 			if (registration == null) {
 				if (registrationRequired) {
@@ -494,7 +515,7 @@ public class Kryo {
 			if (depth == 0 && autoReset) reset();
 		}
 	}
-	
+
 	/** Writes an object using the registered serializer. */
 	public void writeObject (Output output, Object object) {
 		if (output == null) throw new IllegalArgumentException("output cannot be null.");
@@ -506,8 +527,7 @@ public class Kryo {
 				return;
 			}
 			if (TRACE || (DEBUG && depth == 1)) log("Write", object);
-			Serializer ser=getRegistration(object.getClass()).getSerializer();
-			ser.write(this, output, object);
+			getRegistration(object.getClass()).getSerializer().write(this, output, object);
 		} finally {
 			if (--depth == 0 && autoReset) reset();
 		}
@@ -1041,11 +1061,10 @@ public class Kryo {
 	public void setInstantiatorStrategy (InstantiatorStrategy strategy) {
 		this.strategy = strategy;
 	}
-	
-	public InstantiatorStrategy getInstantiatorStrategy() {
+
+	public InstantiatorStrategy getInstantiatorStrategy () {
 		return strategy;
 	}
-	
 
 	/** Returns a new instantiator for creating new instances of the specified type. By default, an instantiator is returned that
 	 * uses reflection if the class has a zero argument constructor, an exception is thrown. If a
@@ -1061,9 +1080,6 @@ public class Kryo {
 		Registration registration = getRegistration(type);
 		ObjectInstantiator instantiator = registration.getInstantiator();
 		if (instantiator == null) {
-			if(registration.getSerializer().isDefaultSerializer())
-				instantiator = defaultStrategy.newInstantiatorOf(type);
-			else
 				instantiator = newInstantiator(type);
 			registration.setInstantiator(instantiator);
 		}
@@ -1086,6 +1102,13 @@ public class Kryo {
 	/** Returns the number of child objects away from the object graph root. */
 	public int getDepth () {
 		return depth;
+	}
+
+	/** Returns the internal map of original to copy objects when a copy method is used. This can be used after a copy to map old
+	 * objects to the copies, however it is cleared automatically by {@link #reset()} so this is only useful when
+	 * {@link #setAutoReset(boolean)} is false. */
+	public IdentityMap getOriginalToCopyMap () {
+		return originalToCopy;
 	}
 
 	/** If true (the default), {@link #reset()} is called automatically after an entire object graph has been read or written. If
@@ -1113,6 +1136,15 @@ public class Kryo {
 		if (type.isArray()) return Modifier.isFinal(Util.getElementClass(type).getModifiers());
 		return Modifier.isFinal(type.getModifiers());
 	}
+	
+	/** Returns true if the specified type is a closure.
+	 * <p>
+	 * This can be overridden to support alternative implementations of clousres. Current version supports 
+	 * Oracle's Java8 only */
+	public boolean isClousre (Class type) {
+		if (type == null) throw new IllegalArgumentException("type cannot be null.");
+		return type.getName().indexOf('/') >= 0;
+	}
 
 	static final class DefaultSerializerEntry {
 		final Class type;
@@ -1127,6 +1159,9 @@ public class Kryo {
 	public void pushGenericsScope (Class type, Generics generics) {
 		if (TRACE) trace("kryo", "Settting a new generics scope for class " + type.getName() + ": " + generics);
 		Generics currentScope = genericsScope;
+		if (generics.getParentScope() != null) {
+			generics = new Generics(generics.getMappings());
+		}
 		genericsScope = generics;
 		genericsScope.setParentScope(currentScope);
 	}
@@ -1145,7 +1180,7 @@ public class Kryo {
 		return streamFactory;
 	}
 
-	public void setStreamFactory (FastestStreamFactory streamFactory) {
+	public void setStreamFactory (StreamFactory streamFactory) {
 		this.streamFactory = streamFactory;
 	}
 
@@ -1169,14 +1204,21 @@ public class Kryo {
 	static public class DefaultInstantiatorStrategy implements org.objenesis.strategy.InstantiatorStrategy {
 		private InstantiatorStrategy fallbackStrategy;
 
-		public void setFallbackInstantiatorStrategy(final InstantiatorStrategy fallbackStrategy) {
+		public DefaultInstantiatorStrategy () {
+		}
+
+		public DefaultInstantiatorStrategy (InstantiatorStrategy fallbackStrategy) {
 			this.fallbackStrategy = fallbackStrategy;
 		}
-		
-		public InstantiatorStrategy getFallbackInstantiatorStrategy() {
+
+		public void setFallbackInstantiatorStrategy (final InstantiatorStrategy fallbackStrategy) {
+			this.fallbackStrategy = fallbackStrategy;
+		}
+
+		public InstantiatorStrategy getFallbackInstantiatorStrategy () {
 			return fallbackStrategy;
 		}
-		
+
 		public ObjectInstantiator newInstantiatorOf (final Class type) {
 			if (!Util.isAndroid) {
 				// Use ReflectASM if the class is not a non-static member class.
@@ -1228,6 +1270,9 @@ public class Kryo {
 			}
 			// InstantiatorStrategy.
 			return fallbackStrategy.newInstantiatorOf(type);
-		}		
-	}	
+		}
+	}
+	
+	private static class Closure {
+	}
 }

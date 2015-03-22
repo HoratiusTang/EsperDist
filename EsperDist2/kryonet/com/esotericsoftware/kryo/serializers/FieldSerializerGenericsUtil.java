@@ -52,7 +52,7 @@ final class FieldSerializerGenericsUtil {
 
 		if (typeParams != null && typeParams.length > 0) {
 			Generics genScope;
-			trace("kryo", "Class " + clazz.getName() + " has generic type parameters");
+			if (TRACE) trace("kryo", "Class " + clazz.getName() + " has generic type parameters");
 			int typeVarNum = 0;
 			Map<String, Class> typeVar2concreteClass;
 			typeVar2concreteClass = new HashMap<String, Class>();
@@ -196,7 +196,7 @@ final class FieldSerializerGenericsUtil {
 		cachedField = serializer.newMatchingCachedField(field, accessIndex, fieldClass[0], fieldGenericType, fieldGenerics);
 
 		if (fieldGenerics != null && cachedField instanceof ObjectField) {
-			if (fieldGenerics[0] != null) {
+			if (fieldGenerics.length > 0 && fieldGenerics[0] != null) {
 				// If any information about concrete types for generic arguments of current field's type
 				// was deriver, remember it.
 				((ObjectField)cachedField).generics = fieldGenerics;

@@ -102,7 +102,6 @@ public class UnsafeUtil {
 	 * Sort the set of lists by their offsets from the object start address.
 	 * 
 	 * @param allFields set of fields to be sorted by their offsets
-	 * @return
 	 */
 	public static Field[] sortFieldsByOffset (List<Field> allFields) {
 		Field[] allFieldsArray = allFields.toArray(new Field[] {});
@@ -131,14 +130,14 @@ public class UnsafeUtil {
 	 * Create a ByteBuffer that uses a provided (off-heap) memory region instead of allocating a new one.
 	 * 
 	 * @param address address of the memory region to be used for a ByteBuffer
-	 * @param maxBufferSize size of the memory region
+	 * @param size size of the memory region
 	 * @return a new ByteBuffer that uses a provided memory region instead of allocating a new one 
 	 */
-	final static public ByteBuffer getDirectBufferAt(long address, int maxBufferSize) {
+	final static public ByteBuffer getDirectBufferAt(long address, int size) {
 		if(directByteBufferConstr == null)
 			return null;
 		try {
-			return directByteBufferConstr.newInstance(address, maxBufferSize, null);
+			return directByteBufferConstr.newInstance(address, size, null);
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot allocate ByteBuffer at a given address: " + address, e);
 		}		
