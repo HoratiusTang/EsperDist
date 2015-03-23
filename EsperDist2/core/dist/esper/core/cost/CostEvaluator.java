@@ -79,9 +79,10 @@ public class CostEvaluator {
 	
 	public InstanceStat getContainerStat(String containerName){
 		InstanceStat insStat=containerStatMap.get(containerName);
+		StreamContainer cnt=containerNameMap.get(containerName);
 		try{
 			while(insStat==null){
-				log.debug("wait to get InstanceStat for StreamContainer "+containerName);
+				log.debug("wait to get InstanceStat for StreamContainer %s from %s", containerName, cnt.getWorkerId().getId());
 				ThreadUtil.sleep(1000);
 				insStat=containerStatMap.get(containerName);
 			}
