@@ -7,7 +7,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
-import dist.esper.core.comm.socket.SocketLink;
+import dist.esper.core.comm.kryosocket.KryoSocketLink;
 import dist.esper.util.Logger2;
 
 public class KryoByteArraySerializer{

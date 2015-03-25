@@ -18,7 +18,7 @@ public class QueryGeneratorMain {
 			
 			IntPair[] pairs={
 				new IntPair(1,20), /* 1-stream filter query, 20 in total*/ 
-				new IntPair(2,10), /* 1-stream join query, 10 in total*/
+				new IntPair(2,10), /* 2-stream join query, 10 in total*/
 				new IntPair(3,5), /* 3-stream join query, 5 in total*/
 				new IntPair(4,2), /* 4-stream join query, 2 in total*/
 				new IntPair(5,1), /* 5-stream join query, 1 in total*/

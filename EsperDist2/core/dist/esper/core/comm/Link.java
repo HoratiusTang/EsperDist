@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import dist.esper.core.comm.socket.SocketLink;
 import dist.esper.core.id.WorkerId;
 import dist.esper.util.Logger2;
 

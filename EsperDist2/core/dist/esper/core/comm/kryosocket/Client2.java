@@ -1,4 +1,4 @@
-package dist.esper.core.comm.socket;
+package dist.esper.core.comm.kryosocket;
 
 import java.util.concurrent.locks.ReentrantLock;
 import com.esotericsoftware.kryonet.Client;

@@ -1,4 +1,4 @@
-package dist.esper.core.comm.socket;
+package dist.esper.core.comm.local;
 
 import dist.esper.core.comm.Link;
 import dist.esper.core.id.WorkerId;

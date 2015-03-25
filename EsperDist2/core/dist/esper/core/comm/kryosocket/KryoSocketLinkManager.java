@@ -1,4 +1,4 @@
-package dist.esper.core.comm.socket;
+package dist.esper.core.comm.kryosocket;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -13,14 +13,15 @@ import dist.esper.core.CoordinatorMain;
 import dist.esper.core.comm.Link;
 import dist.esper.core.comm.LinkManager;
 import dist.esper.core.comm.Link.Listener;
+import dist.esper.core.comm.local.LocalLink;
 import dist.esper.core.id.WorkerId;
 import dist.esper.core.util.Options;
 import dist.esper.core.util.ServiceManager;
 import dist.esper.io.KryoClassRegister;
 import dist.esper.util.Logger2;
 
-public class SocketLinkManager extends LinkManager {
-	static Logger2 log=Logger2.getLogger(SocketLinkManager.class);
+public class KryoSocketLinkManager extends LinkManager {
+	static Logger2 log=Logger2.getLogger(KryoSocketLinkManager.class);
 	public int writeBufferSize=4096000;
 	public int objectBufferSize=2048000;
 	protected Server server=null;
@@ -29,7 +30,7 @@ public class SocketLinkManager extends LinkManager {
 	
 	ConcurrentHashMap<WorkerId, Client2> waitingClientMap=new ConcurrentHashMap<WorkerId, Client2>();
 	
-	public SocketLinkManager(WorkerId myId) {
+	public KryoSocketLinkManager(WorkerId myId) {
 		super(myId);
 		writeBufferSize=(int)ServiceManager.getConfig().getLong(Options.KRYONET_WRITE_BUFFER_SIZE, writeBufferSize);
 		objectBufferSize=(int)ServiceManager.getConfig().getLong(Options.KRYONET_OBJECT_BUFFER_SIZE, objectBufferSize);
@@ -82,7 +83,7 @@ public class SocketLinkManager extends LinkManager {
 				client.connect(100000, targetId.getIp(), targetId.getPort());
 				LinkEstablishedMessage lem=new LinkEstablishedMessage(myId);
 				client.sendTCP(lem);
-				link=new SocketLink(myId, targetId, client, this);
+				link=new KryoSocketLink(myId, targetId, client, this);
 				sendLinkMap.put(targetId, link);
 			}
 			return link;
@@ -98,7 +99,7 @@ public class SocketLinkManager extends LinkManager {
 
 	@Override
 	public Link reconnect(Link oldLink) {
-		SocketLink sockLink=(SocketLink)oldLink;
+		KryoSocketLink sockLink=(KryoSocketLink)oldLink;
 		return sockLink;
 	}
 	
@@ -112,7 +113,7 @@ public class SocketLinkManager extends LinkManager {
 			if(obj instanceof LinkReconnectMessage){
 				LinkReconnectMessage lrm=(LinkReconnectMessage)obj;
 				WorkerId targetId=lrm.getWorkerId();
-				SocketLink oldRecvLink=(SocketLink) recvLinkMap.get(targetId);
+				KryoSocketLink oldRecvLink=(KryoSocketLink) recvLinkMap.get(targetId);
 				if(oldRecvLink!=null){
 					log.info("%s received LinkReconnectMessage from %s, and old SocketLink is found", myId, targetId);
 					oldRecvLink.setNewConnection(connection);
@@ -125,7 +126,7 @@ public class SocketLinkManager extends LinkManager {
 			else if(obj instanceof LinkEstablishedMessage){
 				LinkEstablishedMessage lem=(LinkEstablishedMessage)obj;
 				WorkerId targetId=lem.getWorkerId();
-				SocketLink sockLink=new SocketLink(myId, targetId, connection, SocketLinkManager.this);
+				KryoSocketLink sockLink=new KryoSocketLink(myId, targetId, connection, KryoSocketLinkManager.this);
 				notifyNewReceivedLink(sockLink);
 			}
 		}

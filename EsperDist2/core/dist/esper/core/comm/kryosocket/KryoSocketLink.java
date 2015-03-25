@@ -1,4 +1,4 @@
-package dist.esper.core.comm.socket;
+package dist.esper.core.comm.kryosocket;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,16 +22,16 @@ import dist.esper.core.util.ServiceManager;
 import dist.esper.io.KryoByteArraySerializer;
 import dist.esper.util.Logger2;
 
-public class SocketLink extends Link{
-	static Logger2 log=Logger2.getLogger(SocketLink.class);
-	SocketLinkManager linkManager; 
+public class KryoSocketLink extends Link{
+	static Logger2 log=Logger2.getLogger(KryoSocketLink.class);
+	KryoSocketLinkManager linkManager; 
 	Connection conn=null;
 	KryoByteArraySerializer bytesSer;
 	KryonetListener kryonetListener=new KryonetListener();
 	ReentrantLock lock=new ReentrantLock();
 	Condition reconnectedCond=null;
 	
-	public SocketLink(WorkerId myId, WorkerId targetId, Connection conn, SocketLinkManager linkManager) {
+	public KryoSocketLink(WorkerId myId, WorkerId targetId, Connection conn, KryoSocketLinkManager linkManager) {
 		super(myId, targetId);
 		this.conn = conn;
 		this.conn.setTimeout(5*60*1000);
@@ -118,24 +118,24 @@ public class SocketLink extends Link{
 	
 	class KryonetListener extends com.esotericsoftware.kryonet.Listener{
 		public void connected(Connection connection) {
-			if(connection==SocketLink.this.conn){
+			if(connection==KryoSocketLink.this.conn){
 				for(Listener ls: overallListenerList){
-					ls.connected(SocketLink.this);
+					ls.connected(KryoSocketLink.this);
 				}
-				log.info("connnection reconnected: %s", SocketLink.this.toString());
+				log.info("connnection reconnected: %s", KryoSocketLink.this.toString());
 			}
 		}
 		public void disconnected(Connection connection) {
-			if(connection==SocketLink.this.conn){
+			if(connection==KryoSocketLink.this.conn){
 				notifyDisconnnected();
-				log.error("connection disconnected: %s, will try to reconnect", SocketLink.this.toString());
+				log.error("connection disconnected: %s, will try to reconnect", KryoSocketLink.this.toString());
 				//tryReconnect(connection);//WRONG, can't be sync
 				ReconnectRunnable rr=new ReconnectRunnable(connection);
 				new Thread(rr).start();
 			}
 		}
 		public void received(Connection connection, Object obj) {
-			if(connection==SocketLink.this.conn && !(obj instanceof KeepAlive)){
+			if(connection==KryoSocketLink.this.conn && !(obj instanceof KeepAlive)){
 				assert(obj instanceof byte[]);
 				Object obj2=bytesSer.fromBytes((byte[])obj);
 				//System.out.format("*** %s received %s (%d bytes) from %s\n", getMyMeta().getId(), obj2.getClass().getSimpleName(), ((byte[])obj).length, getTargetMeta().getId());
