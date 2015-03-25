@@ -2,14 +2,15 @@ package dist.esper.core.comm;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import dist.esper.core.id.WorkerId;
 
 public abstract class LinkManager {
 	protected WorkerId myId;	
 	protected NewLinkListener newLinkListener=new DefaultNewLinkListener();
-	protected Map<WorkerId,Link> sendLinkMap=new HashMap<WorkerId,Link>();//indexed by targetId, store the link, not for send
-	protected Map<WorkerId,Link> recvLinkMap=new HashMap<WorkerId,Link>();//indexed by targetId, store the link, not for send
+	protected Map<WorkerId,Link> sendLinkMap=new ConcurrentHashMap<WorkerId,Link>();//indexed by targetId, store the link, not for send
+	protected Map<WorkerId,Link> recvLinkMap=new ConcurrentHashMap<WorkerId,Link>();//indexed by targetId, store the link, not for send
 	
 	public LinkManager(WorkerId myId){
 		this.myId = myId;

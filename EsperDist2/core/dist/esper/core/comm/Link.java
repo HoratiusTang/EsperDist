@@ -20,6 +20,10 @@ public abstract class Link {
 	protected Map<String,List<Listener>> listenerListMap=new TreeMap<String,List<Listener>>();
 	private static AtomicLong linkCounter=new AtomicLong(0L);
 	
+	public Link(){
+		this(null, null);
+	}
+	
 	public Link(WorkerId myId, WorkerId targetId) {
 		super();
 		this.myId = myId;

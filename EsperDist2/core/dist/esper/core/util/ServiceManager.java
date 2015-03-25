@@ -11,6 +11,7 @@ import org.apache.log4j.PropertyConfigurator;
 
 import dist.esper.core.comm.LinkManager;
 import dist.esper.core.comm.kryosocket.KryoSocketLinkManager;
+import dist.esper.core.comm.rawsocket.RawSocketLinkManager;
 import dist.esper.core.comm.simulation.SimulationLinkPool;
 import dist.esper.core.id.WorkerId;
 import dist.esper.event.EventRegistry;
@@ -101,7 +102,8 @@ public class ServiceManager {
 				linkManager=SimulationLinkPool.getInstance().newLinkManager(myId);
 			}
 			else{
-				linkManager=new KryoSocketLinkManager(myId);
+				//linkManager=new KryoSocketLinkManager(myId);
+				linkManager=new RawSocketLinkManager(myId);
 			}
 		}
 		return linkManager;

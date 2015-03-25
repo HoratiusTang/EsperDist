@@ -29,6 +29,10 @@ public class KryoByteArraySerializer{
 		this.output=new Output();
 	}
 	
+	public Kryo getKryo() {
+		return kryo;
+	}
+	
 	public byte[] toBytes(Object obj){
 		lock.lock();
 		while(true){
@@ -48,14 +52,31 @@ public class KryoByteArraySerializer{
 		return copy;
 	}
 	
-	public Kryo getKryo() {
-		return kryo;
+	public int toBytes(Object obj, byte[] bytes){
+		return toBytes(obj, bytes, 0);
+	}
+	
+	public int toBytes(Object obj, byte[] bytes, int offset){
+		try{
+			output.setBuffer(bytes);
+			output.setPosition(offset);
+			kryo.writeClassAndObject(output, obj);
+			return output.position()-offset;
+		}
+		catch(Exception ex){
+			log.getLogger().error("error occur in toBytes(object, byte[], int)");
+			return 0;
+		}
+	}
+	
+	public Object fromBytes(byte[] bytes, int offset, int count){
+		Input input=new Input();
+		input.setBuffer(bytes, offset, count);
+		Object obj=kryo.readClassAndObject(input);
+		return obj;
 	}
 
 	public Object fromBytes(byte[] bytes){
-		Input input=new Input();
-		input.setBuffer(bytes);
-		Object obj=kryo.readClassAndObject(input);
-		return obj;
+		return this.fromBytes(bytes, 0, bytes.length);
 	}
 }

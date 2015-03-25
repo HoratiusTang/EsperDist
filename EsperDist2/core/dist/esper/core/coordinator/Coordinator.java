@@ -345,7 +345,12 @@ public class Coordinator {
 				submitNewRawStreamSamplingMessageToWorker(fsc.getRawStream(), wm);
 				rawSamplingWorkerMap.put(fsc.getRawStream().getEventName(), wm.getId());
 			}
-			costEval.workerInputRawStreamsMap.putPair(fsc.getWorkerId().getId(), fsc.getRawStream());
+			try{
+				costEval.workerInputRawStreamsMap.putPair(fsc.getWorkerId().getId(), fsc.getRawStream());
+			}
+			catch(Exception ex){
+				log.getLogger().error(String.format("fsc.getWorkerId()=%s, fsc.getRawStream()=%s", fsc.getWorkerId(), fsc.getRawStream()), ex);
+			}
 		}
 		StreamContainer sc2=StreamContainerFactory.copy(sc, 2);//FIXME
 		submitStreamContainerToWorker(sc2);
@@ -372,6 +377,7 @@ public class Coordinator {
 	}
 	
 	public void submitStreamContainerToWorker(StreamContainer sc){
+		log.debug("sc.getWorkerId()=%s", sc.getWorkerId());
 		Link link=getWorkerLink(sc.getWorkerId().getId());
 		DerivedStreamContainer psc=(DerivedStreamContainer)sc;
 		
