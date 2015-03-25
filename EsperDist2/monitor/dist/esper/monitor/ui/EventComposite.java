@@ -33,6 +33,7 @@ import dist.esper.epl.expr.AbstractBooleanExpression;
 import dist.esper.epl.expr.EventAlias;
 import dist.esper.epl.expr.EventOrPropertySpecification;
 import dist.esper.epl.expr.EventPropertySpecification;
+import dist.esper.epl.expr.util.BooleanExpressionNoEventAliasStringlizer;
 import dist.esper.epl.expr.util.DeepCloneReplaceFactory;
 import dist.esper.epl.expr.util.EventAliasDumper;
 import dist.esper.epl.expr.util.EventOrPropertySpecReferenceDumper;
@@ -369,7 +370,9 @@ public class EventComposite extends AbstractMonitorComposite{
 				cols=newEmptyTableRow(eventStatTableColumnNames.length);
 				cols[1]=psc.getClass().getSimpleName()+" "+psc.getId();
 				AbstractBooleanExpression cond=psc.getOwnCondition();
-				cols[2]=(cond==null)?"":cond.toString();
+				//cols[2]=(cond==null)?"":cond.toString();
+				cols[2]=(cond==null)?"":
+					BooleanExpressionNoEventAliasStringlizer.getInstance().toString(cond);
 				cols[3]=NumberFormatter.format(insStat.getOutputRateSec());
 				cols[4]=NumberFormatter.format(insStat.computeSelectFactor());
 				item2.setText(cols);
