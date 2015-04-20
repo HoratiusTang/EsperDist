@@ -32,6 +32,7 @@ import dist.esper.epl.sementic.StatementVisitor;
 import dist.esper.event.Event;
 import dist.esper.io.GlobalStat;
 import dist.esper.proxy.EPAdministratorImplProxy;
+import dist.esper.util.AsyncFileWriter;
 import dist.esper.util.AsyncLogger2;
 import dist.esper.util.CollectionUtils;
 import dist.esper.util.Logger2;
@@ -39,10 +40,10 @@ import dist.esper.util.ThreadUtil;
 
 public class Coordinator {
 	static Logger2 log;
-	static Logger2 workerStatLog;
+	//static Logger2 workerStatLog;
 	static{
 		log=Logger2.getLogger(Coordinator.class);
-		workerStatLog=AsyncLogger2.getAsyncLogger(Coordinator.class, Level.DEBUG, "log/workerstats.txt", false, "%d{MM-dd HH:mm:ss} %p %m%n");
+		//workerStatLog=AsyncLogger2.getAsyncLogger(Coordinator.class, Level.DEBUG, "log/workerstats.txt", false, "%d{MM-dd HH:mm:ss} %p %m%n");
 	}
 	public static final double GATEWAY_WORKER_RATIO_MIN=1.0d/3.0d;
 	static int CENTRALIZED_TREE_PRUNE_COUNT=5;
@@ -85,6 +86,8 @@ public class Coordinator {
 	
 	MessageHandlingScheduler messageHandlingScheduler;
 	MessageHandler messageHandler=new MessageHandler();
+	
+	AsyncFileWriter workerStatWriter;
 
 	class NewLinkHandler implements LinkManager.NewLinkListener, Link.Listener{
 		@Override public void connected(Link link) {}
@@ -165,20 +168,20 @@ public class Coordinator {
 		else if(obj instanceof WorkerStat){
 			WorkerStat ws=(WorkerStat)obj;
 			//System.err.println(ws.toString());
+			costEval.updateWorkerStat(ws);
 			logWorkerStat(ws);
-			costEval.updateWorkerStat(ws);			
 		}
 	}
 	
 	private void logWorkerStat(WorkerStat ws){
-		workerStatLog.debug("WorkerId=%s, isGateway=%s, memUsed=%d, memFree=%d, " +
+		String str=String.format("WorkerId=%s, isGateway=%s, memUsed=%d, memFree=%d, " +
 				"bwUsageUs=%.2f, cpuUsage=%.2f, sendByteRateUS=%.2f, sendBaseTimeUS=%.2f, " +
 				"procThreadCount=%d, pubThreadCount=%d, localSubscriberCount=%d, " +
 				"remoteSubscriberCount=%d, localPublisherCount=%d, remotePublisherCount=%d" +
 				"filterCondProcTimeUS=%.2f, joinCondProcTimeUS=%.2f, " +
 				"filterCount=%d, filterDelayedCount=%d, " +
 				"joinCount=%d, joinDelayedCount=%d, " +
-				"rootCount=%d, rawStreamSampleCount=%d", 
+				"rootCount=%d, rawStreamSampleCount=%d\n", 
 				ws.id, ws.isGateway, ws.memUsed, 
 				ws.memFree, ws.bwUsageUS, ws.cpuUsage,
 				ws.sendByteRateUS, ws.sendBaseTimeUS,
@@ -189,6 +192,7 @@ public class Coordinator {
 				ws.filterCount, ws.filterDelayedCount,
 				ws.joinCount, ws.joinDelayedCount,
 				ws.rootCount, ws.getRawStreamSampleCount());
+		workerStatWriter.append(str);
 	}
 	
 	public Coordinator(String id){
@@ -201,6 +205,8 @@ public class Coordinator {
 		costEval=new CostEvaluator(containerNameMap);
 		
 		messageHandlingScheduler=new MessageHandlingScheduler(id, 1);
+		
+		workerStatWriter=new AsyncFileWriter("log/workerstats", 8000);
 		
 		linkManager=ServiceManager.getInstance(id).getLinkManager();
 		linkManager.init();

@@ -12,9 +12,10 @@ public class AsyncLogger2 {
 	public static Logger2 getAsyncLogger(Class<?> clazz, Level level, 
 			String filePath, boolean isAppend, String pattern){
 		Logger log = Logger.getLogger(clazz);
+		//log.setAdditivity(false); //ATT: DO NOT inherit from parent logger
 		//log.removeAllAppenders();
 		log.setLevel(level);
-		//log.setAdditivity(false);//ATT: DO NOT inherit from parent logger
+		
 		
 		FileAppender fileAppender = new DailyRollingFileAppender();  
         PatternLayout layout = new PatternLayout();        
@@ -22,14 +23,15 @@ public class AsyncLogger2 {
         fileAppender.setLayout(layout);
         fileAppender.setFile(filePath);
         fileAppender.setAppend(isAppend);
-        fileAppender.setBufferedIO(true);
+//        fileAppender.setBufferedIO(true);
         fileAppender.activateOptions();
+        //fileAppender.set
         
-        AsyncAppender asyncAppender=new AsyncAppender();
-        asyncAppender.addAppender(fileAppender);
-        log.addAppender(asyncAppender);
+//        AsyncAppender asyncAppender=new AsyncAppender();
+//        asyncAppender.addAppender(fileAppender);
+//        log.addAppender(asyncAppender);
         
-        //log.addAppender(fileAppender);
+        log.addAppender(fileAppender);
 		return new Logger2(log);
 	}
 }
