@@ -17,6 +17,9 @@ public class StreamStringlizer {
 		if(fsl.getWorkerId()!=null){
 			sw.append("["+fsl.getWorkerId().getId()+"]");
 		}
+		else{
+			sw.append("[no worker]");
+		}
 		sw.append(fsl.getWindowTimeViewSpecString());
 		sw.append(" : ");
 		sw.append(fsl.getResultElementList().toString());
@@ -47,6 +50,9 @@ public class StreamStringlizer {
 		if(fcsl.getWorkerId()!=null){
 			sw.append("["+fcsl.getWorkerId().id+"]");
 		}
+		else{
+			sw.append("[no worker]");
+		}
 		sw.append(fcsl.getWindowTimeViewSpecString());
 		sw.append(" : ");		
 		sw.append(fcsl.getResultElementList().toString());
@@ -75,6 +81,9 @@ public class StreamStringlizer {
 		sw.append(jsl.getClass().getSimpleName());
 		if(jsl.getWorkerId()!=null){
 			sw.append("["+jsl.getWorkerId().getId()+"]");
+		}
+		else{
+			sw.append("[no worker]");
 		}
 		sw.append(jsl.getWindowTimeViewSpecString());
 		sw.append(" : ");
@@ -105,6 +114,9 @@ public class StreamStringlizer {
 		if(jcsl.getWorkerId()!=null){
 			sw.append("["+jcsl.getWorkerId().getId()+"]");
 		}
+		else{
+			sw.append("[no worker]");
+		}
 		sw.append(" : ");
 		sw.append(jcsl.getResultElementList().toString());
 		sw.append(" : ");
@@ -132,6 +144,9 @@ public class StreamStringlizer {
 		if(rsl.getWorkerId()!=null){
 			sw.append("["+rsl.getWorkerId().getId()+"]");
 		}
+		else{
+			sw.append("[no worker]");
+		}
 		sw.append(rsl.getWindowTimeViewSpecString());
 		sw.append(" : ");
 		sw.append(rsl.getResultElementList().toString());
@@ -157,6 +172,9 @@ public class StreamStringlizer {
 		if(rsl.getWorkerId()!=null){
 			sw.append("["+rsl.getWorkerId().getId()+"]");
 		}
+		else{
+			sw.append("[no worker]");
+		}
 		sw.append(" : ");
 		sw.append(rsl.event.getName());
 	}
@@ -166,6 +184,9 @@ public class StreamStringlizer {
 		sw.append(psl.getClass().getSimpleName());
 		if(psl.workerId!=null){
 			sw.append("["+psl.workerId.id+"]");
+		}
+		else{
+			sw.append("[no worker]");
 		}
 		sw.append(" : ");
 		sw.append(psl.getResultElementList().toString());

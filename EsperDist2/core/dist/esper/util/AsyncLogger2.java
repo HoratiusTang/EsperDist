@@ -12,9 +12,9 @@ public class AsyncLogger2 {
 	public static Logger2 getAsyncLogger(Class<?> clazz, Level level, 
 			String filePath, boolean isAppend, String pattern){
 		Logger log = Logger.getLogger(clazz);
-		log.removeAllAppenders();
+		//log.removeAllAppenders();
 		log.setLevel(level);
-		log.setAdditivity(false);//ATT: DO NOT inherit from parent logger
+		//log.setAdditivity(false);//ATT: DO NOT inherit from parent logger
 		
 		FileAppender fileAppender = new DailyRollingFileAppender();  
         PatternLayout layout = new PatternLayout();        

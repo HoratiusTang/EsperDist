@@ -9,14 +9,19 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import org.apache.commons.configuration.*;
 import org.apache.log4j.PropertyConfigurator;
 
+import com.esotericsoftware.minlog.Log;
+
 import dist.esper.core.comm.LinkManager;
 import dist.esper.core.comm.kryosocket.KryoSocketLinkManager;
 import dist.esper.core.comm.rawsocket.RawSocketLinkManager;
 import dist.esper.core.comm.simulation.SimulationLinkPool;
+import dist.esper.core.coordinator.StreamContainerFlowBuilder;
 import dist.esper.core.id.WorkerId;
 import dist.esper.event.EventRegistry;
+import dist.esper.util.Logger2;
 
 public class ServiceManager {
+	static Logger2 log=Logger2.getLogger(ServiceManager.class);
 	static Map<String,ServiceManager> serviceManagerMap=new HashMap<String,ServiceManager>();
 	static final long DEFAULT_OUTPUT_INTERVAL_US=1*1000*1000;
 	public static WorkerId coordinatorId;
@@ -110,6 +115,7 @@ public class ServiceManager {
 	}
 	
 	public WorkerId registerWorkerId(WorkerId workerId){
+		//log.debug("regist "+workerId);
 		return workerIdMap.put(workerId.getId(), workerId);
 	}
 	

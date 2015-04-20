@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.ReentrantLock;
 
 import dist.esper.core.comm.Link;
@@ -29,17 +30,19 @@ public class RawSocketLink extends Link{
 		this.socket = socket;
 		this.recvBuffer = new byte[recvBufferSize];
 		this.bytesSer = new KryoByteArraySerializer(recvBufferSize);
-		init();
+		//init();
 	}
 	
-	private void init(){
+	public void init(){
 		try {
 			sender=new Sender();
 			recevierRun=new ReceiverRunnable();
 			new Thread(recevierRun).start();
+			recevierRun.waitStarted();
 		}
-		catch (IOException e) {			
-			e.printStackTrace();
+		catch (Exception e) {			
+			log.getLogger().fatal(
+					String.format("error occur when init RawSocketLink: targetId=%s", targetId.getId()),e);
 		}
 	}
 
@@ -68,10 +71,10 @@ public class RawSocketLink extends Link{
 			try{
 				lock.lock();
 				byte[] bytes=bytesSer.toBytes(obj);
-				OutputStream os=socket.getOutputStream();
-				RawSocketLinkUtil.writeLength(os, bytes.length);
-				os.write(bytes);
-				os.flush();
+				//OutputStream os=socket.getOutputStream();
+				RawSocketLinkUtil.writeLength(bos, bytes.length);
+				bos.write(bytes);
+				bos.flush();
 				return bytes.length;
 			}
 			catch(Exception ex){				
@@ -85,12 +88,14 @@ public class RawSocketLink extends Link{
 	
 	class ReceiverRunnable implements Runnable{
 		BufferedInputStream bis=null;
+		Semaphore sem=new Semaphore(0);
 		@Override
 		public void run(){
 			//log.info("SocketThread %d running...\n", id);
 			try {
 				bis=new BufferedInputStream(socket.getInputStream());
 				socket.setKeepAlive(true);
+				sem.release();
 				while(true){
 					boolean isReceived=receive();
 					if(!isReceived){
@@ -106,6 +111,10 @@ public class RawSocketLink extends Link{
 					try{bis.close();} catch(Exception ex){}
 				}
 			}
+		}
+		
+		public void waitStarted() throws InterruptedException{
+			sem.acquire();
 		}
 		
 		public boolean receive() throws Exception{

@@ -109,7 +109,13 @@ public class Coordinator {
 		@Override
 		public void received(Link link, Object obj) {
 			//handleReceiving(link, obj);
-			messageHandlingScheduler.submit(link, obj, messageHandler);
+			if(obj instanceof NewWorkerMessage){
+				WorkerId workerId=link.getTargetId();
+//				workerLinkMap.put(workerId.getId(), link);
+//				registerWorkerId(workerId);
+				log.debug("%s received NewWorkerMessage from %s", id, workerId.toString());
+			}
+			messageHandlingScheduler.submit(link, obj, messageHandler);			
 		}
 	}
 	
@@ -376,9 +382,17 @@ public class Coordinator {
 		link.send(nrssMsg);
 	}
 	
-	public void submitStreamContainerToWorker(StreamContainer sc){
-		log.debug("sc.getWorkerId()=%s", sc.getWorkerId());
-		Link link=getWorkerLink(sc.getWorkerId().getId());
+	public void submitStreamContainerToWorker(StreamContainer sc){		
+		Link link=null;
+		if(sc.getWorkerId()==null){
+			System.out.println("------------------------ sc.getWorkerId() is null");
+		}
+		try{
+			link=getWorkerLink(sc.getWorkerId().getId());
+		}
+		catch(Exception ex){
+			log.error(ex.getMessage());
+		}
 		DerivedStreamContainer psc=(DerivedStreamContainer)sc;
 		
 		if(psc.isNew()){

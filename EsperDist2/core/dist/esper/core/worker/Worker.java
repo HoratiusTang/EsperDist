@@ -128,7 +128,7 @@ public class Worker {
 		
 		coordLink=linkManager.connect(ServiceManager.getCoordinatorWorkerId());
 		coordLink.addListener(coordLinkHandler);
-		coordLink.send(new NewWorkerMessage());
+		coordLink.send(new NewWorkerMessage(id));
 		
 		rawSampler=new RawStreamSampler(linkManager);
 		rawSampler.start();

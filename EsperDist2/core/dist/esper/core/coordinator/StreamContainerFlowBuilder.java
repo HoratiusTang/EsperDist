@@ -13,6 +13,7 @@ import dist.esper.core.flow.container.*;
 import dist.esper.core.flow.container.DerivedStreamContainer.StreamAndMapAndBoolComparisonResult;
 import dist.esper.core.flow.stream.*;
 import dist.esper.core.flow.stream.DerivedStream.ContainerAndMapAndBoolComparisonResult;
+import dist.esper.core.id.WorkerId;
 import dist.esper.core.util.ServiceManager;
 import dist.esper.epl.expr.*;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult;
@@ -41,7 +42,9 @@ public class StreamContainerFlowBuilder {
 	
 	public StreamContainerFlow buildStreamContainerFlow(StreamFlow sf, DeltaResourceUsage rootDRU){
 		assert(rootDRU.getStream()==sf.getRootStream());
+		log.info("StreamFlow: \n%s", sf.toString());
 		RootStream rootStream=(RootStream)insertDelayedStreamByDeltaResourceUsageIfNeeded(rootDRU);
+		log.info("StreamFlow: \n%s", sf.toString());
 		RootStreamContainer rootContainer=(RootStreamContainer)buildStreamContainerRecursively2(sf.getRootStream(), false);
 		
 		assginUniqueName(rootContainer);
@@ -169,7 +172,11 @@ public class StreamContainerFlowBuilder {
 				}
 			}
 			else{//BRANCH 33
-				fsl.setWorkerId(ServiceManager.getInstance(coordinator.id).getWorkerId(dru.getWorkerId()));
+				WorkerId workerId=ServiceManager.getInstance(coordinator.id).getWorkerId(dru.getWorkerId());
+				if(workerId==null){
+					log.error("WorkerId is null by workerId=%s, workerIdMap=%s",dru.getWorkerId(), ServiceManager.getInstance(coordinator.id).getWorkerIdMap().toString());
+				}
+				fsl.setWorkerId(workerId);
 			}
 			return (fcsl==null)?fsl:fcsl;
 		}

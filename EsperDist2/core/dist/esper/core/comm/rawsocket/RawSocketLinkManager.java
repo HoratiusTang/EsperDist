@@ -79,6 +79,7 @@ public class RawSocketLinkManager extends LinkManager {
 						os.flush();
 						log.info("%s connected to %s", myId.getId(), targetId.getId());
 						RawSocketLink sockLink=new RawSocketLink(myId, targetId, socket, getBufferSize());
+						sockLink.init();
 						sendLinkMap.put(targetId, sockLink);
 						return sockLink;
 					}
@@ -156,6 +157,7 @@ public class RawSocketLinkManager extends LinkManager {
 				RawSocketLink sockLink=new RawSocketLink(myId, targetId, socket, getBufferSize());
 				log.info("server accept connection from %s", targetId.getId());
 				notifyNewReceivedLink(sockLink);
+				sockLink.init();
 				return true;
 			}
 			else{

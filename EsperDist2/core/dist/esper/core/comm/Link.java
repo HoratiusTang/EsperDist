@@ -103,6 +103,9 @@ public abstract class Link {
 	public abstract int send(Object obj) throws RuntimeException;
 	
 	public void notifyReceived(Object obj){
+		if(obj.getClass().getSimpleName().equals("NewWorkerMessage") && getOverallListenerList().size()==0){
+			log.warn("recevied NewWorkerMessage from %s, but OverallListenerList is empty", targetId.getId());
+		}
 		for(Link.Listener ln: getOverallListenerList()){
 			try{
 				ln.received(this, obj);
