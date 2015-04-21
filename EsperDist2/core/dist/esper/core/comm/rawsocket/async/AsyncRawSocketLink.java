@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import dist.esper.core.comm.rawsocket.RawSocketLink;
+import dist.esper.core.comm.rawsocket.RawSocketLinkUtil;
 import dist.esper.core.id.WorkerId;
 import dist.esper.util.Logger2;
 import dist.esper.util.ThreadUtil;
@@ -68,28 +69,32 @@ public class AsyncRawSocketLink extends RawSocketLink {
 		}
 		
 		public int append(Object obj){
-			int size=bytesSer.toBytes(obj, objectBuf);
+			int objectBufLength=bytesSer.toBytes(obj, objectBuf, RawSocketLinkUtil.LENGTH_SIZE);
+			int totalBufLength=objectBufLength+RawSocketLinkUtil.LENGTH_SIZE;
+			//length += RawSocketLinkUtil.LENGTH_SIZE;
+			byte[] lengthBytes=RawSocketLinkUtil.toBytes(objectBufLength);
+			System.arraycopy(lengthBytes, 0, objectBuf, 0, lengthBytes.length);
 			long oldEnd=end;
-			log.debug("append %s, before acquire: begin=%d, end=%d, oldEnd=%d, newEnd=%d",
-					obj.getClass().getSimpleName(), begin, end, oldEnd, newEnd);
-			if(require(size)){
-				log.debug("append %s, after acquire: begin=%d, end=%d, oldEnd=%d, newEnd=%d",
-						obj.getClass().getSimpleName(), begin, end, oldEnd, newEnd);
-				newEnd=end+size;
+//			log.debug("append %s, before acquire: begin=%d, end=%d, oldEnd=%d, newEnd=%d, length=%d",
+//					obj.getClass().getSimpleName(), begin, end, oldEnd, newEnd, objectBufLength);
+			if(require(totalBufLength)){
+//				log.debug("append %s, after acquire: begin=%d, end=%d, oldEnd=%d, newEnd=%d",
+//						obj.getClass().getSimpleName(), begin, end, oldEnd, newEnd);
+				newEnd=oldEnd+totalBufLength;
 				if(newEnd / array.length == oldEnd / array.length){
-					System.arraycopy(objectBuf, 0, array, (int)(oldEnd % array.length), size);
+					System.arraycopy(objectBuf, 0, array, (int)(oldEnd % array.length), totalBufLength);
 				}
 				else{
 					int firstSegLength =  array.length - (int)(oldEnd % array.length);
 					if(firstSegLength>0){
 						System.arraycopy(objectBuf, 0, array, (int)(oldEnd % array.length), firstSegLength);
 					}
-					System.arraycopy(objectBuf, firstSegLength, array, 0, size-firstSegLength);
+					System.arraycopy(objectBuf, firstSegLength, array, 0, totalBufLength-firstSegLength);
 				}
 				end=newEnd;
-				log.debug("append %s, before return: begin=%d, end=%d, oldEnd=%d, newEnd=%d",
-						obj.getClass().getSimpleName(), begin, end, oldEnd, newEnd);
-				return size;
+//				log.debug("append %s, before return: begin=%d, end=%d, oldEnd=%d, newEnd=%d",
+//						obj.getClass().getSimpleName(), begin, end, oldEnd, newEnd);
+				return totalBufLength;
 			}
 			return 0;
 		}
@@ -98,9 +103,10 @@ public class AsyncRawSocketLink extends RawSocketLink {
 			if(out==null || end==begin){
 				return 0;
 			}
+			log.debug("before flush");
 			long oldEnd=end;
 			long oldBegin=begin;
-			try {
+			try {				
 				if(oldEnd / array.length == oldBegin / array.length){
 					out.write(array, (int)(oldBegin % array.length), (int)(oldEnd-oldBegin));
 				}
@@ -111,7 +117,9 @@ public class AsyncRawSocketLink extends RawSocketLink {
 					}
 					out.write(array, 0, (int)(oldEnd % array.length));
 				}
+				out.flush();//MUST!
 				begin=oldEnd;
+				//log.debug("flushed %d bytes", (int)(oldEnd-oldBegin));
 				return (int)(oldEnd-oldBegin);
 			}
 			catch (IOException e) {

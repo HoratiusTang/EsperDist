@@ -20,7 +20,7 @@ public class RawSocketLink extends Link{
 	static Logger2 log=Logger2.getLogger(RawSocketLink.class);
 	protected Socket socket;
 	protected KryoByteArraySerializer bytesSer;
-	protected Sender sender;
+	protected SyncSender sender;
 	protected ReceiverRunnable recevierRun;
 	protected ReentrantLock lock=new ReentrantLock();
 	protected byte[] recvBuffer;	
@@ -35,7 +35,7 @@ public class RawSocketLink extends Link{
 	
 	public void init(){
 		try {
-			sender=new Sender();
+			sender=new SyncSender();
 			recevierRun=new ReceiverRunnable();
 			new Thread(recevierRun).start();
 			recevierRun.waitStarted();
@@ -61,9 +61,9 @@ public class RawSocketLink extends Link{
 		}
 	}
 	
-	public class Sender{
+	public class SyncSender{
 		BufferedOutputStream bos=null;		
-		public Sender() throws IOException{
+		public SyncSender() throws IOException{
 			bos=new BufferedOutputStream(socket.getOutputStream());
 		}
 		
@@ -119,7 +119,7 @@ public class RawSocketLink extends Link{
 		
 		public boolean receive() throws Exception{
 			int length=RawSocketLinkUtil.readLength(bis);
-			//bis.read(recvBuffer, 0, length);
+			log.debug("ReceiverRunnable read %d bytes", length);
 			RawSocketLinkUtil.readBytes(bis, recvBuffer, 0, length);
 			Object obj=bytesSer.fromBytes(recvBuffer, 0, length);
 			notifyReceived(obj);

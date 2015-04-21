@@ -12,9 +12,11 @@ import dist.esper.core.id.WorkerId;
 import dist.esper.core.util.Options;
 import dist.esper.core.util.ServiceManager;
 import dist.esper.io.KryoByteArraySerializer;
+import dist.esper.util.Logger2;
 import dist.esper.util.ThreadUtil;
 
 public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
+	static Logger2 log=Logger2.getLogger(AsyncRawSocketLinkManager.class);
 	FlushLinkRunnable flushRun=new FlushLinkRunnable();
 	public AsyncRawSocketLinkManager(WorkerId myId) {
 		super(myId);
@@ -49,7 +51,8 @@ public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 					((AsyncRawSocketLink)link).flush();
 				}
 				long endTimeNS=System.nanoTime();
-				long sleepTimeMS = outputIntervalUS>>>10-(endTimeNS-startTimeNS)>>>20;
+				long sleepTimeMS = (outputIntervalUS>>>10) - ((endTimeNS-startTimeNS)>>>20);
+				log.debug("flush all links use %d ms, will sleep %d ms, outputIntervalUS=%d ms", (endTimeNS-startTimeNS)>>>20, sleepTimeMS, outputIntervalUS>>>10);
 				if(sleepTimeMS>0){
 					ThreadUtil.sleep(sleepTimeMS);
 				}

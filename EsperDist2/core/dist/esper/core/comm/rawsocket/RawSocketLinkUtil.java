@@ -3,8 +3,9 @@ package dist.esper.core.comm.rawsocket;
 import java.io.*;
 
 public class RawSocketLinkUtil {
+	public static int LENGTH_SIZE=4;
 	public static byte[] toBytes(int n){
-		byte[] b=new byte[4];
+		byte[] b=new byte[LENGTH_SIZE];
 		b[0] = (byte)((n & 0xFF000000) >>> 3*8);
 		b[1] = (byte)((n & 0x00FF0000) >>> 2*8);
 		b[2] = (byte)((n & 0x0000FF00) >>> 1*8);
@@ -17,7 +18,7 @@ public class RawSocketLinkUtil {
 	}
 	
 	public static int toInt(byte[] b){
-		assert(b.length==4);
+		assert(b.length==LENGTH_SIZE);
 		int n=0;
 		n |= ((b[0] & 0x000000FF) << 3*8);
 		n |= ((b[1] & 0x000000FF) << 2*8);
@@ -26,7 +27,7 @@ public class RawSocketLinkUtil {
 		return n;
 	}
 	public static int readLength(InputStream is) throws IOException{
-		byte[] b=new byte[4];
+		byte[] b=new byte[LENGTH_SIZE];
 		readBytes(is, b, 0, b.length);
 		return toInt(b);
 	}
