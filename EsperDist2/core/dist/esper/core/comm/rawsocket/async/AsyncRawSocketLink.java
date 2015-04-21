@@ -103,7 +103,7 @@ public class AsyncRawSocketLink extends RawSocketLink {
 			if(out==null || end==begin){
 				return 0;
 			}
-			log.debug("before flush");
+			//log.debug("before flush");
 			long oldEnd=end;
 			long oldBegin=begin;
 			try {				
