@@ -119,7 +119,7 @@ public class RawSocketLink extends Link{
 		
 		public boolean receive() throws Exception{
 			int length=RawSocketLinkUtil.readLength(bis);
-			log.debug("ReceiverRunnable read %d bytes", length);
+			//log.debug("ReceiverRunnable read %d bytes", length);
 			RawSocketLinkUtil.readBytes(bis, recvBuffer, 0, length);
 			Object obj=bytesSer.fromBytes(recvBuffer, 0, length);
 			notifyReceived(obj);

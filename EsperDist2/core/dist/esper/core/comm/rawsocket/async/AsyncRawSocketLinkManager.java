@@ -52,7 +52,7 @@ public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 				}
 				long endTimeNS=System.nanoTime();
 				long sleepTimeMS = (outputIntervalUS>>>10) - ((endTimeNS-startTimeNS)>>>20);
-				log.debug("flush all links use %d ms, will sleep %d ms, outputIntervalUS=%d ms", (endTimeNS-startTimeNS)>>>20, sleepTimeMS, outputIntervalUS>>>10);
+				//log.debug("flush all links use %d ms, will sleep %d ms, outputIntervalUS=%d ms", (endTimeNS-startTimeNS)>>>20, sleepTimeMS, outputIntervalUS>>>10);
 				if(sleepTimeMS>0){
 					ThreadUtil.sleep(sleepTimeMS);
 				}
