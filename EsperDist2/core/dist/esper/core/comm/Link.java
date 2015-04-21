@@ -16,6 +16,7 @@ public abstract class Link {
 	protected long linkId=0;
 	protected WorkerId myId=null;
 	protected WorkerId targetId=null;
+	protected LinkManager linkManager=null;
 	protected List<Listener> overallListenerList=new ArrayList<Listener>(4);
 	protected Map<String,List<Listener>> listenerListMap=new TreeMap<String,List<Listener>>();
 	private static AtomicLong linkCounter=new AtomicLong(0L);
@@ -45,6 +46,14 @@ public abstract class Link {
 
 	public void setTargetID(WorkerId targetId) {
 		this.targetId = targetId;
+	}
+
+	public LinkManager getLinkManager() {
+		return linkManager;
+	}
+
+	public void setLinkManager(LinkManager linkManager) {
+		this.linkManager = linkManager;
 	}
 
 	public void addListener(Listener listener){

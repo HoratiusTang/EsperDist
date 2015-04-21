@@ -14,6 +14,7 @@ import com.esotericsoftware.minlog.Log;
 import dist.esper.core.comm.LinkManager;
 import dist.esper.core.comm.kryosocket.KryoSocketLinkManager;
 import dist.esper.core.comm.rawsocket.RawSocketLinkManager;
+import dist.esper.core.comm.rawsocket.async.AsyncRawSocketLinkManager;
 import dist.esper.core.comm.simulation.SimulationLinkPool;
 import dist.esper.core.coordinator.StreamContainerFlowBuilder;
 import dist.esper.core.id.WorkerId;
@@ -108,7 +109,8 @@ public class ServiceManager {
 			}
 			else{
 				//linkManager=new KryoSocketLinkManager(myId);
-				linkManager=new RawSocketLinkManager(myId);
+				//linkManager=new RawSocketLinkManager(myId);
+				linkManager=new AsyncRawSocketLinkManager(myId);
 			}
 		}
 		return linkManager;

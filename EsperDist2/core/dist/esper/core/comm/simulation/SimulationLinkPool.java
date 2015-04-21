@@ -78,6 +78,11 @@ public class SimulationLinkPool{
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		protected Link newLink(WorkerId myId, WorkerId targetId, Object... args) {
+			return SimulationLinkPool.this.newLink(myId, targetId);
+		}
 		
 	}
 	class SimulationLink extends Link{

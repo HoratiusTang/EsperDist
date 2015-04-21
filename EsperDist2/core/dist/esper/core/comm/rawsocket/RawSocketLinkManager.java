@@ -33,7 +33,7 @@ public class RawSocketLinkManager extends LinkManager {
 	}
 	
 	public int getBufferSize(){
-		return (int)ServiceManager.getConfig().getLong(Options.KRYONET_WRITE_BUFFER_SIZE, 
+		return (int)ServiceManager.getConfig().getLong(Options.KRYONET_OBJECT_BUFFER_SIZE, 
 				KryoByteArraySerializer.DEFAULT_BASE_SIZE);
 	}
 
@@ -78,7 +78,8 @@ public class RawSocketLinkManager extends LinkManager {
 						os.write(sendBuffer, 0, length);
 						os.flush();
 						log.info("%s connected to %s", myId.getId(), targetId.getId());
-						RawSocketLink sockLink=new RawSocketLink(myId, targetId, socket, getBufferSize());
+						//RawSocketLink sockLink=new RawSocketLink(myId, targetId, socket, getBufferSize());
+						RawSocketLink sockLink=(RawSocketLink)newLink(myId, targetId, socket, getBufferSize(), getBufferSize());
 						sockLink.init();
 						sendLinkMap.put(targetId, sockLink);
 						return sockLink;
@@ -154,7 +155,8 @@ public class RawSocketLinkManager extends LinkManager {
 			if(obj instanceof LinkEstablishedMessage){
 				LinkEstablishedMessage lem=(LinkEstablishedMessage)obj;
 				WorkerId targetId=lem.getWorkerId();				
-				RawSocketLink sockLink=new RawSocketLink(myId, targetId, socket, getBufferSize());
+				//RawSocketLink sockLink=new RawSocketLink(myId, targetId, socket, getBufferSize());
+				RawSocketLink sockLink=(RawSocketLink)newLink(myId, targetId, socket, getBufferSize(), getBufferSize());
 				log.info("server accept connection from %s", targetId.getId());
 				notifyNewReceivedLink(sockLink);
 				sockLink.init();
@@ -164,6 +166,14 @@ public class RawSocketLinkManager extends LinkManager {
 				return false;
 			}
 		}
+	}
+
+	@Override
+	protected Link newLink(WorkerId myId, WorkerId targetId, Object... args) {
+		Socket socket=(Socket)args[0];
+		Integer recvBufferSize=(Integer)args[1];
+		Integer sendObjectBufferSize=(Integer)args[2];
+		return new RawSocketLink(myId, targetId, socket, recvBufferSize, sendObjectBufferSize);
 	}
 }
 /**

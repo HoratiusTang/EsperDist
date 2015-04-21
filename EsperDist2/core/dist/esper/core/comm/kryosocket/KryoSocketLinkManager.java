@@ -103,6 +103,13 @@ public class KryoSocketLinkManager extends LinkManager {
 		return sockLink;
 	}
 	
+	@Override
+	protected Link newLink(WorkerId myId, WorkerId targetId, Object... args){
+		Connection conn=(Connection)args[0];
+		LinkManager linkManager=(LinkManager)args[1];
+		return new KryoSocketLink(myId, targetId, conn, linkManager);
+	}
+	
 	class ServerListener extends com.esotericsoftware.kryonet.Listener{
 		/**waiting for new connections*/
 		public void connected(Connection connection) {

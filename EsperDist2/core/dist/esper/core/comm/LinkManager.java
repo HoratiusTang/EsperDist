@@ -33,6 +33,7 @@ public abstract class LinkManager {
 	public abstract void init();
 	public abstract Link connect(WorkerId targetId);
 	public abstract Link reconnect(Link oldLink);
+	protected abstract Link newLink(WorkerId myId, WorkerId targetId, Object...  args);
 	
 	public void notifyNewReceivedLink(Link link){
 		recvLinkMap.put(link.getTargetId(), link);

@@ -18,18 +18,18 @@ import dist.esper.util.Logger2;
 
 public class RawSocketLink extends Link{
 	static Logger2 log=Logger2.getLogger(RawSocketLink.class);
-	Socket socket;
-	KryoByteArraySerializer bytesSer;
-	Sender sender;
-	ReceiverRunnable recevierRun;
-	ReentrantLock lock=new ReentrantLock();
-	byte[] recvBuffer;	
+	protected Socket socket;
+	protected KryoByteArraySerializer bytesSer;
+	protected Sender sender;
+	protected ReceiverRunnable recevierRun;
+	protected ReentrantLock lock=new ReentrantLock();
+	protected byte[] recvBuffer;	
 	
-	public RawSocketLink(WorkerId myId, WorkerId targetId, Socket socket, int recvBufferSize){
+	public RawSocketLink(WorkerId myId, WorkerId targetId, Socket socket, int recvBufferSize, int sendObjectBufferSize){
 		super(myId, targetId);
 		this.socket = socket;
 		this.recvBuffer = new byte[recvBufferSize];
-		this.bytesSer = new KryoByteArraySerializer(recvBufferSize);
+		this.bytesSer = new KryoByteArraySerializer(sendObjectBufferSize);
 		//init();
 	}
 	
@@ -61,7 +61,7 @@ public class RawSocketLink extends Link{
 		}
 	}
 	
-	class Sender{
+	public class Sender{
 		BufferedOutputStream bos=null;		
 		public Sender() throws IOException{
 			bos=new BufferedOutputStream(socket.getOutputStream());
@@ -86,7 +86,7 @@ public class RawSocketLink extends Link{
 		}
 	}
 	
-	class ReceiverRunnable implements Runnable{
+	public class ReceiverRunnable implements Runnable{
 		BufferedInputStream bis=null;
 		Semaphore sem=new Semaphore(0);
 		@Override

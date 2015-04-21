@@ -15,6 +15,7 @@ import com.esotericsoftware.kryonet.FrameworkMessage.KeepAlive;
 
 import dist.esper.core.comm.Link;
 import dist.esper.core.comm.Link.Listener;
+import dist.esper.core.comm.LinkManager;
 import dist.esper.core.id.WorkerId;
 import dist.esper.core.message.SubmitEplResponse;
 import dist.esper.core.util.Options;
@@ -24,14 +25,14 @@ import dist.esper.util.Logger2;
 
 public class KryoSocketLink extends Link{
 	static Logger2 log=Logger2.getLogger(KryoSocketLink.class);
-	KryoSocketLinkManager linkManager; 
+	//KryoSocketLinkManager linkManager; 
 	Connection conn=null;
 	KryoByteArraySerializer bytesSer;
 	KryonetListener kryonetListener=new KryonetListener();
 	ReentrantLock lock=new ReentrantLock();
 	Condition reconnectedCond=null;
 	
-	public KryoSocketLink(WorkerId myId, WorkerId targetId, Connection conn, KryoSocketLinkManager linkManager) {
+	public KryoSocketLink(WorkerId myId, WorkerId targetId, Connection conn, LinkManager linkManager) {
 		super(myId, targetId);
 		this.conn = conn;
 		this.conn.setTimeout(5*60*1000);
@@ -114,7 +115,6 @@ public class KryoSocketLink extends Link{
 		lock.unlock();
 		log.debug("in SocketLink.tryReconnect(), after unlock");
 	}
-		
 	
 	class KryonetListener extends com.esotericsoftware.kryonet.Listener{
 		public void connected(Connection connection) {
