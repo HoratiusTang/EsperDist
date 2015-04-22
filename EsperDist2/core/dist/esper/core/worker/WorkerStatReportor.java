@@ -10,7 +10,7 @@ class WorkerStatReportor implements Runnable{
 	Worker worker;
 	
 	public WorkerStatReportor(Worker worker){
-		this(worker, 4000, 460);
+		this(worker, 3000, 600);
 	}
 	public WorkerStatReportor(Worker worker, long sendIntervalMS, long updateStatIntervalMS) {
 		super();
