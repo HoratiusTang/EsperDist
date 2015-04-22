@@ -10,6 +10,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.hyperic.sigar.*;
 
+import dist.esper.core.comm.Link;
+import dist.esper.core.comm.LinkManager;
+import dist.esper.core.comm.rawsocket.async.AsyncRawSocketLinkManager;
 import dist.esper.core.cost.RawStreamStat;
 import dist.esper.core.cost.WorkerStat;
 import dist.esper.core.flow.container.DerivedStreamContainer;
@@ -36,29 +39,30 @@ public class WorkerStatCollector2 {
 	SubscriberInspector subInspector;
 	ProcessorInspector procInspector;
 	PublisherInspector pubInspector;
+	AsyncLinkManagerInspector asynclinkMgnInspector=null;
 	
 	//ReentrantReadWriteLock lock=new ReentrantReadWriteLock();
 	ReentrantLock lock=new ReentrantLock();
 	
-	public WorkerStatCollector2(Worker worker,
+	public WorkerStatCollector2(Worker worker, LinkManager linkManager, 
 			ProcessingScheduler2 procScheduler, PublishingScheduler2 pubScheduler){
 		this.procScheduler = procScheduler;
 		this.pubScheduler = pubScheduler;
 		workerStat=new WorkerStat(worker.id);
 		workerStat.isGateway=ServiceManager.getInstance(worker.id).getMyWorkerId().isGateway();
-		subInspector=new SubscriberInspector(getOuputIntervalUS());
+		subInspector=new SubscriberInspector(ServiceManager.getOutputIntervalUS());
 		procInspector=new ProcessorInspector(subInspector);
-		pubInspector=new PublisherInspector(getOuputIntervalUS());
+		pubInspector=new PublisherInspector(ServiceManager.getOutputIntervalUS());
+		if(linkManager instanceof AsyncRawSocketLinkManager){
+			asynclinkMgnInspector=new AsyncLinkManagerInspector(ServiceManager.getOutputIntervalUS());
+			((AsyncRawSocketLinkManager)linkManager).setStatRecorder(asynclinkMgnInspector);
+		}
 		sigar=new Sigar();
 		initWorkerStat();
 	}
 	
 	public void setGateway(boolean isGateway){
 		workerStat.isGateway=isGateway;
-	}
-	
-	public long getOuputIntervalUS(){
-		return ServiceManager.getInstance(workerStat.id).getOutputIntervalUS();
 	}
 	
 	public ProcessingScheduler2 getProcessingScheduler() {
@@ -445,6 +449,74 @@ public class WorkerStatCollector2 {
 				this.serialTimeUS = serialTimeUS;
 				this.sendTimeUS = sendTimeUS;
 				this.sendBytes = sendBytes;
+			}
+		}
+	}
+	
+	public static class AsyncLinkManagerInspector 
+		extends Inspector implements AsyncRawSocketLinkManager.IStatRecorder{
+		LinkManagerStatQueue linkMngStatQueue;
+		LinkManagerStat curLinkMngStat;
+		long outputIntervalUS;
+		
+		public AsyncLinkManagerInspector(long outputIntervalUS) {
+			super();
+			this.outputIntervalUS = outputIntervalUS;
+			linkMngStatQueue=new LinkManagerStatQueue(QUEUE_SIZE);
+		}
+
+		@Override
+		public void beginRound(int linkCount) {
+			curLinkMngStat=linkMngStatQueue.alloc();
+			curLinkMngStat.beginAssign(linkCount);
+		}
+
+		@Override
+		public void record(long linkId, int sendBytes, long sendTimeUS) {
+			curLinkMngStat.assign(linkId, sendBytes, sendTimeUS);
+		}
+
+		@Override
+		public void endRound() {
+			curLinkMngStat.endAssign();
+			
+		}
+		
+		public static class LinkManagerStatQueue extends CyclicQueue<LinkManagerStat>{
+			public LinkManagerStatQueue(int capacity) {
+				super(LinkManagerStat.class, capacity);
+			}
+		}
+		
+		public static class LinkManagerStat{
+			LinkStat[] linkStats;
+			int actualCount=0;
+			public void beginAssign(int linkCount){
+				if(linkStats==null || linkStats.length<linkCount){
+					linkStats=new LinkStat[linkCount];
+					for(int i=0;i<linkStats.length;i++){
+						linkStats[i]=new LinkStat();
+					}
+				}
+			}
+			public void endAssign(){}
+			public void assign(long linkId, int sendBytes, long sendTimeUS){
+				linkStats[actualCount].assign(linkId, sendBytes, sendTimeUS);
+				actualCount++;
+			}
+		}
+		
+		public static class LinkStat{
+			long linkId;
+			int sendBytes;
+			long sendTimeUS;
+			public LinkStat(){
+				super();
+			}
+			public void assign(long linkId, int sendBytes, long sendTimeUS){
+				this.linkId=linkId;
+				this.sendBytes=sendBytes;
+				this.sendTimeUS=sendTimeUS;
 			}
 		}
 	}
