@@ -49,33 +49,49 @@ public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 		@Override
 		public void run() {
 			long outputIntervalUS=ServiceManager.getOutputIntervalUS();
+			long sendStartTimeNS, sendEndTimeNS, totalStartTimeNS, totalEndTimeNS;
+			int bytes;
+			IStatRecorder curStatRecorder=null;
 			while(true){
-				long totalStartTimeNS=System.nanoTime();
-				long sendStartTimeNS,sendEndTimeNS;
-				int bytes;
-				statRecorder.beginRound(sendLinkMap.size()+recvLinkMap.size());
+				totalStartTimeNS=System.nanoTime();
+				curStatRecorder=statRecorder;
+				curStatRecorder.beginRound(sendLinkMap.size()+recvLinkMap.size());
 				refreshLinkList(sendLinkMap.values(), sendLinkList);
 				for(Link link: sendLinkList){
 					if(link instanceof AsyncRawSocketLink){
-						sendStartTimeNS=System.nanoTime();
-						bytes=((AsyncRawSocketLink)link).flush();
-						sendEndTimeNS=System.nanoTime();
-						statRecorder.record(link.getLinkId(), bytes, (int)((sendEndTimeNS-sendStartTimeNS)/990.0));
+						try{
+							sendStartTimeNS=System.nanoTime();
+							bytes=((AsyncRawSocketLink)link).flush();
+							sendEndTimeNS=System.nanoTime();
+							statRecorder.record(link.getLinkId(), bytes, (int)((sendEndTimeNS-sendStartTimeNS)/990.0));
+						}
+						catch(Exception ex){
+							log.debug(ex.getMessage(), ex);
+						}
 					}
 				}
+				//TEST
+				ThreadUtil.sleep(200);
+				
 				refreshLinkList(recvLinkMap.values(), recvLinkList);
 				for(Link link: recvLinkList){
 					if(link instanceof AsyncRawSocketLink){
-						sendStartTimeNS=System.nanoTime();
-						bytes=((AsyncRawSocketLink)link).flush();
-						sendEndTimeNS=System.nanoTime();
-						statRecorder.record(link.getLinkId(), bytes, (int)((sendEndTimeNS-sendStartTimeNS)/990.0));
+						try{
+							sendStartTimeNS=System.nanoTime();
+							bytes=((AsyncRawSocketLink)link).flush();
+							sendEndTimeNS=System.nanoTime();
+							statRecorder.record(link.getLinkId(), bytes, (int)((sendEndTimeNS-sendStartTimeNS)/990.0));
+						}
+						catch(Exception ex){
+							log.debug(ex.getMessage(), ex);
+						}
 					}
 				}
-				statRecorder.endRound();
-				long totalEndTimeNS=System.nanoTime();
-				long sleepTimeMS = (outputIntervalUS>>>10) - ((totalEndTimeNS-totalStartTimeNS)>>>20);
-				log.debug("flush all links use %d ms, will sleep %d ms, outputIntervalUS=%d ms", (totalEndTimeNS-totalStartTimeNS)>>>20, sleepTimeMS, outputIntervalUS>>>10);
+				totalEndTimeNS=System.nanoTime();
+				long totalSendTimeUS=(totalEndTimeNS-totalStartTimeNS)/1000+1;
+				curStatRecorder.endRound(totalSendTimeUS);
+				long sleepTimeMS = (outputIntervalUS>>>10) - totalSendTimeUS/1000;
+				log.debug("flush all links use %d ms, will sleep %d ms, outputIntervalUS=%d ms", totalSendTimeUS/1000, sleepTimeMS, outputIntervalUS>>>10);
 				if(sleepTimeMS>0){
 					ThreadUtil.sleep(sleepTimeMS);
 				}
@@ -93,12 +109,12 @@ public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 	public interface IStatRecorder{
 		public void beginRound(int linkCount);
 		public void record(long linkId, int sendBytes, long sendTimeUS);
-		public void endRound();
+		public void endRound(long totalSendTimeUS);
 	}
 	
 	class DummyStatRecorder implements IStatRecorder{
 		@Override public void beginRound(int linkCount) {}
 		@Override public void record(long linkId, int sendBytes, long sendTimeUS) {}
-		@Override public void endRound() {}
+		@Override public void endRound(long totalSendTimeUS) {}
 	}
 }

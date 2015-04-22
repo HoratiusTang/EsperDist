@@ -42,7 +42,7 @@ public class AsyncRawSocketLink extends RawSocketLink {
 		return size;
 	}
 	
-	public int flush(){
+	public int flush() throws Exception{
 		int size=sendBuffer.flush();
 		return size;
 	}
@@ -99,7 +99,7 @@ public class AsyncRawSocketLink extends RawSocketLink {
 			return 0;
 		}
 		
-		public int flush(){
+		public int flush() throws Exception{
 			if(out==null || end==begin){
 				return 0;
 			}
@@ -123,11 +123,10 @@ public class AsyncRawSocketLink extends RawSocketLink {
 				return (int)(oldEnd-oldBegin);
 			}
 			catch (IOException e) {
-				log.getLogger().error(
-						String.format("error occur when write to OutputStream: begin=%d, end=%d, oldEnd=%d, newEnd=%d",
+				Exception ex=new Exception(String.format("error occur when write to OutputStream: begin=%d, end=%d, oldEnd=%d, newEnd=%d",
 								begin, end, oldEnd, newEnd), e);
+				throw ex;
 			}
-			return 0;
 		}
 		
 		public void setOutputStream(OutputStream out){

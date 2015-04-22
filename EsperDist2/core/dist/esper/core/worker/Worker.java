@@ -124,7 +124,7 @@ public class Worker {
 		linkManager.init();
 		linkManager.setNewLinkListener(workerLinkHandler);
 		
-		workerStatCollector=new WorkerStatCollector2(this, procScheduler, pubScheduler);
+		workerStatCollector=new WorkerStatCollector2(this, linkManager, procScheduler, pubScheduler);
 		
 		coordLink=linkManager.connect(ServiceManager.getCoordinatorWorkerId());
 		coordLink.addListener(coordLinkHandler);

@@ -159,12 +159,20 @@ public class WorkerStatCollector2 {
 			workerStat.joinCondProcTimeUS=procInspector.joinCondProcTimeUS;
 			procInspector.unlock();
 			
-			pubInspector.lock();
-			pubInspector.computeSendParameters();
-			workerStat.sendBaseTimeUS=pubInspector.sendBaseTimeUS;
-			workerStat.sendByteRateUS=pubInspector.sendByteRateUS;
-			workerStat.bwUsageUS=pubInspector.computeBandwidthUsage();
-			pubInspector.unlock();
+			if(asynclinkMgnInspector!=null){
+				asynclinkMgnInspector.computeSendParameters();
+				workerStat.sendBaseTimeUS=asynclinkMgnInspector.sendBaseTimeUS;
+				workerStat.sendByteRateUS=asynclinkMgnInspector.sendByteRateUS;
+				workerStat.bwUsageUS=asynclinkMgnInspector.computeBandwidthUsage();
+			}
+			else{
+				pubInspector.lock();
+				pubInspector.computeSendParameters();
+				workerStat.sendBaseTimeUS=pubInspector.sendBaseTimeUS;
+				workerStat.sendByteRateUS=pubInspector.sendByteRateUS;
+				workerStat.bwUsageUS=pubInspector.computeBandwidthUsage();
+				pubInspector.unlock();
+			}
 			
 			this.lock.unlock();
 		}
@@ -405,7 +413,9 @@ public class WorkerStatCollector2 {
 				queue.lock();
 				double totalTime=0.0;
 				if(queue.size()>0){
-					for(int i=queue.beginSeq; i<queue.endSeq; i++){
+					int beginSeq=queue.beginSeq;
+					int endSeq=queue.endSeq;
+					for(int i=beginSeq; i<endSeq; i++){
 						totalTime += queue.get(i).sendTimeUS;
 					}
 					totalTime=totalTime/queue.size();
@@ -458,6 +468,8 @@ public class WorkerStatCollector2 {
 		LinkManagerStatQueue linkMngStatQueue;
 		LinkManagerStat curLinkMngStat;
 		long outputIntervalUS;
+		double sendBaseTimeUS=0;
+		double sendByteRateUS=0;
 		
 		public AsyncLinkManagerInspector(long outputIntervalUS) {
 			super();
@@ -467,6 +479,7 @@ public class WorkerStatCollector2 {
 
 		@Override
 		public void beginRound(int linkCount) {
+			//linkMngStatQueue.lock();
 			curLinkMngStat=linkMngStatQueue.alloc();
 			curLinkMngStat.beginAssign(linkCount);
 		}
@@ -477,9 +490,39 @@ public class WorkerStatCollector2 {
 		}
 
 		@Override
-		public void endRound() {
-			curLinkMngStat.endAssign();
+		public void endRound(long roundTimeUS) {
+			if(curLinkMngStat==null){
+				System.out.print("");
+			}
+			curLinkMngStat.endAssign(roundTimeUS);
 			
+			//linkMngStatQueue.unlock();
+			curLinkMngStat=null;
+		}
+		
+		public void computeSendParameters(){
+			//TODO
+			sendBaseTimeUS=50.0;
+			sendByteRateUS=5.0;
+		}
+		
+		public double computeBandwidthUsage(){
+			int beginSeq=linkMngStatQueue.beginSeq;
+			int endSeq=linkMngStatQueue.endSeq;
+			int count=0;
+			long roundTimeUS;
+			long totalRoundTimeUS=0;
+			for(int i=beginSeq; i<endSeq; i++){
+				roundTimeUS=linkMngStatQueue.get(i).roundTimeUS;
+				if(roundTimeUS>0){
+					count++;
+					totalRoundTimeUS+=roundTimeUS;
+				}
+			}
+			if(count>0){
+				return (totalRoundTimeUS*1e6)/(double)(count*outputIntervalUS);
+			}
+			return 0.0;
 		}
 		
 		public static class LinkManagerStatQueue extends CyclicQueue<LinkManagerStat>{
@@ -490,6 +533,7 @@ public class WorkerStatCollector2 {
 		
 		public static class LinkManagerStat{
 			LinkStat[] linkStats;
+			long roundTimeUS=-1;
 			int actualCount=0;
 			public void beginAssign(int linkCount){
 				if(linkStats==null || linkStats.length<linkCount){
@@ -498,8 +542,12 @@ public class WorkerStatCollector2 {
 						linkStats[i]=new LinkStat();
 					}
 				}
+				actualCount=0;
+				roundTimeUS=-1;
 			}
-			public void endAssign(){}
+			public void endAssign(long roundTimeUS){
+				this.roundTimeUS=roundTimeUS;
+			}
 			public void assign(long linkId, int sendBytes, long sendTimeUS){
 				linkStats[actualCount].assign(linkId, sendBytes, sendTimeUS);
 				actualCount++;
