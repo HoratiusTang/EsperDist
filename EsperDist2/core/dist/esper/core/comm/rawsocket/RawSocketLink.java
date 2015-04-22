@@ -47,8 +47,8 @@ public class RawSocketLink extends Link{
 	}
 
 	@Override
-	public boolean isConnected() {
-		return socket.isConnected();
+	public boolean isClosed(){
+		return socket.isClosed();
 	}
 
 	@Override

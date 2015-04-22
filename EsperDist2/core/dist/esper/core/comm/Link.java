@@ -108,7 +108,7 @@ public abstract class Link {
 				getClass().getSimpleName(), linkId, myId, targetId);
 	}
 
-	public abstract boolean isConnected();
+	public abstract boolean isClosed();
 	public abstract int send(Object obj) throws RuntimeException;
 	
 	public void notifyReceived(Object obj){

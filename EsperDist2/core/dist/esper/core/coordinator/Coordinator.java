@@ -91,6 +91,7 @@ public class Coordinator {
 	MessageHandler messageHandler=new MessageHandler();
 	
 	AsyncFileWriter workerStatWriter;
+	DelayedStreamContainerFlowRegistry delayedContainerFlowRegistry=new DelayedStreamContainerFlowRegistry();
 
 	class NewLinkHandler implements LinkManager.NewLinkListener, Link.Listener{
 		@Override public void connected(Link link) {}
@@ -115,12 +116,6 @@ public class Coordinator {
 		@Override
 		public void received(Link link, Object obj) {
 			//handleReceiving(link, obj);
-			if(obj instanceof NewWorkerMessage){
-				WorkerId workerId=link.getTargetId();
-//				workerLinkMap.put(workerId.getId(), link);
-//				registerWorkerId(workerId);
-				log.debug("%s received NewWorkerMessage from %s", id, workerId.toString());
-			}
 			messageHandlingScheduler.submit(link, obj, messageHandler);			
 		}
 	}
@@ -171,6 +166,7 @@ public class Coordinator {
 		else if(obj instanceof WorkerStat){
 			WorkerStat ws=(WorkerStat)obj;
 			//System.err.println(ws.toString());
+			delayedContainerFlowRegistry.checkContainerAppeared(ws.getInsStats());
 			costEval.updateWorkerStat(ws);
 			logWorkerStat(ws);
 		}
@@ -325,33 +321,35 @@ public class Coordinator {
 		}
 	}
 	
-	public void submit(StreamContainerFlow sct){
-		costEval.registContainerRecursively(sct.getRootContainer());
-		submit(sct.getRootContainer());
+	public void submit(StreamContainerFlow scf){
+		containerTreeMap.put(scf.getEplId(), scf);
+		costEval.registContainerRecursively(scf.getRootContainer());
+		delayedContainerFlowRegistry.delayNewStreamContainerFlow(scf);
+		submitRecursively(scf.getRootContainer());
 	}
 	
-	public void submit(StreamContainer sc){
+	public void submitRecursively(StreamContainer sc){
 		if(sc instanceof RootStreamContainer){
 			RootStreamContainer rsc=(RootStreamContainer)sc;
 			costEval.workerInputContainersMap.putPair(rsc.getWorkerId().getId(), (DerivedStreamContainer)rsc.getUpContainer());
-			submit(rsc.getUpContainer());
+			submitRecursively(rsc.getUpContainer());
 		}
 		else if(sc instanceof JoinDelayedStreamContainer){
 			JoinDelayedStreamContainer jcsc=(JoinDelayedStreamContainer)sc;
 			costEval.workerInputContainersMap.putPair(jcsc.getWorkerId().getId(), (DerivedStreamContainer)jcsc.getAgent());
-			submit(jcsc.getAgent());
+			submitRecursively(jcsc.getAgent());
 		}
 		else if(sc instanceof JoinStreamContainer){
 			JoinStreamContainer jsc=(JoinStreamContainer)sc;
 			for(StreamContainer csc: jsc.getUpContainerList()){
 				costEval.workerInputContainersMap.putPair(jsc.getWorkerId().getId(), (DerivedStreamContainer)csc);
-				submit(csc);
+				submitRecursively(csc);
 			}
 		}
 		else if(sc instanceof FilterDelayedStreamContainer){
 			FilterDelayedStreamContainer fcsc=(FilterDelayedStreamContainer)sc;
 			costEval.workerInputContainersMap.putPair(fcsc.getWorkerId().getId(), (DerivedStreamContainer)fcsc.getAgent());
-			submit(fcsc.getAgent());
+			submitRecursively(fcsc.getAgent());
 		}
 		else if(sc instanceof FilterStreamContainer){			
 			FilterStreamContainer fsc=(FilterStreamContainer)sc;			
@@ -369,7 +367,7 @@ public class Coordinator {
 		}
 		StreamContainer sc2=StreamContainerFactory.copy(sc, 2);//FIXME
 		submitStreamContainerToWorker(sc2);
-		addToExistedStreamContainer(sc);
+		//addToExistedStreamContainer(sc);
 	}
 	
 	public Link getWorkerLink(String workerId){
@@ -415,7 +413,6 @@ public class Coordinator {
 	}
 	
 	public void addToExistedStreamContainer(StreamContainer sc){
-		this.lockContainerMap();
 		if(sc instanceof FilterStreamContainer && !this.existedFscList.contains(sc)){
 			this.existedFscList.add((FilterStreamContainer)sc);
 		}
@@ -428,9 +425,6 @@ public class Coordinator {
 		else if(sc instanceof RootStreamContainer && !this.existedRscList.contains(sc)){
 			this.existedRscList.add((RootStreamContainer)sc);
 		}
-		containerNameMap.put(sc.getUniqueName(), (DerivedStreamContainer)sc);
-		containerIdMap.put(sc.getId(), (DerivedStreamContainer)sc);
-		this.unlockContainerMap();
 	}
 	
 	public void lockContainerMap(){
@@ -446,19 +440,31 @@ public class Coordinator {
 		return this.getClass().getSimpleName()+"["+id+"]";
 	}
 	
-	public class DelayedStreamContainerFlowsRegistry{
-		Map<String,ContainerAndFlag> containerAndFlagMap=new TreeMap<String,ContainerAndFlag>();
-		Set<ContainerFlowFlag> containerFlowFlagSet=new ConcurrentSkipListSet<ContainerFlowFlag>();
-		public void cacheNewStreamContainerFlow(StreamContainerFlow scf){
+	public class DelayedStreamContainerFlowRegistry{
+		Map<String, ContainerFlag> containerFlagMap=new ConcurrentHashMap<String, ContainerFlag>();
+		Map<Long, ContainerFlowFlag> containerFlowFlagSet=new ConcurrentHashMap<Long, ContainerFlowFlag>();
+		public void delayNewStreamContainerFlow(StreamContainerFlow scf){
+			List<StreamContainer> containerList=scf.dumpAllUpStreamContainers();
+			lockContainerMap();
+			for(StreamContainer container: containerList){
+				containerNameMap.put(container.getUniqueName(), (DerivedStreamContainer)container);
+				containerIdMap.put(container.getId(), (DerivedStreamContainer)container);				
+			}
+			unlockContainerMap();
 			
+			ContainerFlowFlag cff=new ContainerFlowFlag(scf.getEplId(), containerList);
+			containerFlowFlagSet.put(cff.eqlId, cff);
+			for(ContainerFlag cf: cff.containerFlags){
+				containerFlagMap.put(cf.getContainerName(), cf);
+			}
 		}
 		
 		public void checkContainerAppeared(InstanceStat[] insStats){
-			if(containerAndFlagMap.size()<=0){
+			if(containerFlagMap.size()<=0){
 				return;
 			}
 			for(InstanceStat insStat: insStats){
-				ContainerAndFlag cf=containerAndFlagMap.get(insStat.getUniqueName());
+				ContainerFlag cf=containerFlagMap.get(insStat.getUniqueName());
 				if(cf!=null && cf.markAppeared()){
 					ContainerFlowFlag cff=cf.containerFlowFlag;
 					cff.incAppearedCount();
@@ -470,24 +476,30 @@ public class Coordinator {
 		}
 		
 		public void registStreamContainerFlow(ContainerFlowFlag cff){
-			containerFlowFlagSet.remove(cff);
-			for(ContainerAndFlag cf: cff.containerFlags){
-				containerAndFlagMap.remove(cf.container.getUniqueName());
+			log.debug("regist StreamContainerFlow with eqlId="+cff.eqlId);
+			for(ContainerFlag cf: cff.containerFlags){
+				containerFlagMap.remove(cf.getContainerName());
 				addToExistedStreamContainer(cf.container);
 				//gc
 				cf.containerFlowFlag=null;
 			}
+			containerFlowFlagSet.remove(cff.eqlId);
 			//gc
 			cff.containerFlags=null;
 			
 		}
 		class ContainerFlowFlag{
 			long eqlId;
-			ContainerAndFlag[] containerFlags;
+			ContainerFlag[] containerFlags;
 			AtomicInteger appearedCount=new AtomicInteger(0);
-			public ContainerFlowFlag(StreamContainerFlow scf){
-				//,List<StreamContainer> containerList
+			public ContainerFlowFlag(long eqlId, List<StreamContainer> containerList){
+				this.eqlId=eqlId;
+				containerFlags=new ContainerFlag[containerList.size()];
+				for(int i=0;i<containerFlags.length;i++){
+					containerFlags[i]=new ContainerFlag(containerList.get(i), this);
+				}
 			}
+			
 			public boolean allAppeared(){
 				return appearedCount.intValue()==containerFlags.length;
 			}
@@ -496,16 +508,19 @@ public class Coordinator {
 			}
 		}
 		
-		class ContainerAndFlag{
+		class ContainerFlag{
 			ContainerFlowFlag containerFlowFlag;
 			StreamContainer container;
 			AtomicBoolean appeared=new AtomicBoolean(false);
-			public ContainerAndFlag(ContainerFlowFlag cntFlowFlag, StreamContainer container){
+			public ContainerFlag(StreamContainer container, ContainerFlowFlag cntFlowFlag){
 				this.container=container;
 				this.containerFlowFlag=cntFlowFlag;				
 			}
 			public boolean markAppeared(){
 				return appeared.compareAndSet(false, true);
+			}
+			public String getContainerName(){
+				return container.getUniqueName();
 			}
 		}
 	}

@@ -13,11 +13,11 @@ import dist.esper.util.ThreadUtil;
 
 public class AsyncRawSocketLink extends RawSocketLink {
 	static Logger2 log=Logger2.getLogger(RawSocketLink.class);
-	SendBuffer sendBuffer;
+	AsyncSender sendBuffer;
 	public AsyncRawSocketLink(WorkerId myId, WorkerId targetId, Socket socket,
 			int recvBufferSize, int sendObjectBufferSize, int sendBufferSize) {
 		super(myId, targetId, socket, recvBufferSize, 8);
-		sendBuffer=new SendBuffer(sendObjectBufferSize, sendBufferSize);
+		sendBuffer=new AsyncSender(sendObjectBufferSize, sendBufferSize);
 	}
 	
 	@Override	
@@ -36,6 +36,11 @@ public class AsyncRawSocketLink extends RawSocketLink {
 	
 	@Override
 	public int send(Object obj){
+		if(socket.isClosed()){
+			log.error("send() failed, socket is closed between %s with %s", 
+					myId.getId(), targetId.getId());
+			return 0;
+		}
 		lock.lock();
 		int size=sendBuffer.append(obj);
 		lock.unlock();
@@ -43,11 +48,16 @@ public class AsyncRawSocketLink extends RawSocketLink {
 	}
 	
 	public int flush() throws Exception{
+		if(socket.isClosed()){
+			log.error("flush() failed, socket is closed between %s with %s", 
+					myId.getId(), targetId.getId());
+			return 0;
+		}
 		int size=sendBuffer.flush();
 		return size;
 	}
 	
-	class SendBuffer{
+	class AsyncSender{
 		private byte[] objectBuf;
 		byte[] array;
 		volatile long begin;	//begin of current buffer (included)
@@ -55,11 +65,11 @@ public class AsyncRawSocketLink extends RawSocketLink {
 		volatile long newEnd;	//excluded
 		OutputStream out;
 		
-		public SendBuffer(int sendObjectBufferSize, int sendBufferSize){
+		public AsyncSender(int sendObjectBufferSize, int sendBufferSize){
 			this(sendObjectBufferSize, sendBufferSize, null);
 		}
 		
-		public SendBuffer(int sendObjectBufferSize, int sendBufferSize, OutputStream out){
+		public AsyncSender(int sendObjectBufferSize, int sendBufferSize, OutputStream out){
 			this.out=out;
 			this.objectBuf=new byte[sendObjectBufferSize];
 			this.array=new byte[sendBufferSize];

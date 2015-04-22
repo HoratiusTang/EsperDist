@@ -42,14 +42,15 @@ public class StreamContainerFlowBuilder {
 	
 	public StreamContainerFlow buildStreamContainerFlow(StreamFlow sf, DeltaResourceUsage rootDRU){
 		assert(rootDRU.getStream()==sf.getRootStream());
-		log.info("StreamFlow: \n%s", sf.toString());
+		//log.info("StreamFlow: \n%s", sf.toString());
 		RootStream rootStream=(RootStream)insertDelayedStreamByDeltaResourceUsageIfNeeded(rootDRU);
-		log.info("StreamFlow: \n%s", sf.toString());
+		//log.info("StreamFlow: \n%s", sf.toString());
 		RootStreamContainer rootContainer=(RootStreamContainer)buildStreamContainerRecursively2(sf.getRootStream(), false);
 		
 		assginUniqueName(rootContainer);
 		StreamContainerFlow sct=new StreamContainerFlow(sf.getEplId(), sf.getEpl(), rootStream, rootContainer, rootDRU);
-		coordinator.containerTreeMap.put(sct.getEplId(), sct);
+
+
 		//log.info("\n-----------------------------------------------");
 		log.info("StreamFlow: \n%s", sf.toString());
 		//log.info("-----------------------------------------------");

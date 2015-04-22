@@ -13,8 +13,8 @@ public class LocalLink extends Link{
 	}
 
 	@Override
-	public boolean isConnected() {
-		return true;
+	public boolean isClosed() {
+		return false;
 	}
 
 	@Override

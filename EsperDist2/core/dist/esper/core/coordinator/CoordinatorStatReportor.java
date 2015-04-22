@@ -78,7 +78,7 @@ public class CoordinatorStatReportor implements Runnable{
 		monLinkList.clear();
 		monLinkList.addAll(coordinator.monitorLinkMap.values());
 		for(Link link: monLinkList){
-			if(link.isConnected()){
+			if(!link.isClosed()){
 				int bytes=link.send(gs);
 			}
 		}

@@ -61,8 +61,8 @@ public class KryoSocketLink extends Link{
 	}
 	
 	@Override
-	public boolean isConnected() {
-		return conn.isConnected();
+	public boolean isClosed() {
+		return !conn.isConnected();
 	}
 	
 	protected void setNewConnection(Connection newConn){

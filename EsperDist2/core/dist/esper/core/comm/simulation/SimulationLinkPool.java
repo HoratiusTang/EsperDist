@@ -106,7 +106,7 @@ public class SimulationLinkPool{
 		}
 
 		@Override
-		public boolean isConnected() {
+		public boolean isClosed() {
 			return true;
 		}
 	}
