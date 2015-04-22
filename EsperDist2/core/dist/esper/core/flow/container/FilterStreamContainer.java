@@ -135,4 +135,9 @@ public class FilterStreamContainer extends BaseStreamContainer{
 	public AbstractBooleanExpression getOwnCondition() {
 		return filterExpr;
 	}
+
+	@Override
+	public void dumpAllUpStreamContainers(List<StreamContainer> dscList) {
+		dscList.add(this);
+	}
 }

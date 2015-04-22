@@ -135,4 +135,10 @@ public class RootStreamContainer extends DerivedStreamContainer{
 		}
 		return new CompositeExpression(RelationTypeEnum.AND, this.whereExprList);
 	}
+	
+	@Override
+	public void dumpAllUpStreamContainers(List<StreamContainer> dscList) {
+		upContainer.dumpAllUpStreamContainers(dscList);
+		dscList.add(this);
+	}
 }

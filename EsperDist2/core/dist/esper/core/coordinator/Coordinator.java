@@ -3,6 +3,9 @@ package dist.esper.core.coordinator;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -390,15 +393,15 @@ public class Coordinator {
 	
 	public void submitStreamContainerToWorker(StreamContainer sc){		
 		Link link=null;
-		if(sc.getWorkerId()==null){
-			System.out.println("------------------------ sc.getWorkerId() is null");
-		}
-		try{
+//		if(sc.getWorkerId()==null){
+//			System.out.println("------------------------ sc.getWorkerId() is null");
+//		}
+//		try{
 			link=getWorkerLink(sc.getWorkerId().getId());
-		}
-		catch(Exception ex){
-			log.error(ex.getMessage());
-		}
+//		}
+//		catch(Exception ex){
+//			log.error(ex.getMessage());
+//		}
 		DerivedStreamContainer psc=(DerivedStreamContainer)sc;
 		
 		if(psc.isNew()){
@@ -441,6 +444,70 @@ public class Coordinator {
 	@Override
 	public String toString(){
 		return this.getClass().getSimpleName()+"["+id+"]";
+	}
+	
+	public class DelayedStreamContainerFlowsRegistry{
+		Map<String,ContainerAndFlag> containerAndFlagMap=new TreeMap<String,ContainerAndFlag>();
+		Set<ContainerFlowFlag> containerFlowFlagSet=new ConcurrentSkipListSet<ContainerFlowFlag>();
+		public void cacheNewStreamContainerFlow(StreamContainerFlow scf){
+			
+		}
+		
+		public void checkContainerAppeared(InstanceStat[] insStats){
+			if(containerAndFlagMap.size()<=0){
+				return;
+			}
+			for(InstanceStat insStat: insStats){
+				ContainerAndFlag cf=containerAndFlagMap.get(insStat.getUniqueName());
+				if(cf!=null && cf.markAppeared()){
+					ContainerFlowFlag cff=cf.containerFlowFlag;
+					cff.incAppearedCount();
+					if(cff.allAppeared()){
+						registStreamContainerFlow(cff);
+					}
+				}
+			}
+		}
+		
+		public void registStreamContainerFlow(ContainerFlowFlag cff){
+			containerFlowFlagSet.remove(cff);
+			for(ContainerAndFlag cf: cff.containerFlags){
+				containerAndFlagMap.remove(cf.container.getUniqueName());
+				addToExistedStreamContainer(cf.container);
+				//gc
+				cf.containerFlowFlag=null;
+			}
+			//gc
+			cff.containerFlags=null;
+			
+		}
+		class ContainerFlowFlag{
+			long eqlId;
+			ContainerAndFlag[] containerFlags;
+			AtomicInteger appearedCount=new AtomicInteger(0);
+			public ContainerFlowFlag(StreamContainerFlow scf){
+				//,List<StreamContainer> containerList
+			}
+			public boolean allAppeared(){
+				return appearedCount.intValue()==containerFlags.length;
+			}
+			public void incAppearedCount(){
+				appearedCount.incrementAndGet();
+			}
+		}
+		
+		class ContainerAndFlag{
+			ContainerFlowFlag containerFlowFlag;
+			StreamContainer container;
+			AtomicBoolean appeared=new AtomicBoolean(false);
+			public ContainerAndFlag(ContainerFlowFlag cntFlowFlag, StreamContainer container){
+				this.container=container;
+				this.containerFlowFlag=cntFlowFlag;				
+			}
+			public boolean markAppeared(){
+				return appeared.compareAndSet(false, true);
+			}
+		}
 	}
 	
 	public class WorkerAssignmentStrategy{

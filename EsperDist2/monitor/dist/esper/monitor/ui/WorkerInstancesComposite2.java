@@ -167,15 +167,17 @@ public class WorkerInstancesComposite2 extends AbstractMonitorComposite {
 			
 			if(insStat!=null){
 				DerivedStreamContainer dsc=(DerivedStreamContainer)gs.getContainerNameMap().get(instanceName);
-				addInstanceStatTableItem("unique name",insStat.getUniqueName());
-				addInstanceStatTableItem("type",insStat.getType());
-				addInstanceStatTableItem("worker id",insStat.getWorkerId());
-				addInstanceStatTableItem("condition",BooleanExpressionNoEventAliasStringlizer.getInstance().toString(dsc.getOwnCondition()));
-				addInstanceStatTableItem("duration",insStat.durationUS()/1000000 + " s");
-				addInstanceStatTableItem("event count",insStat.getEventCount());
-				addInstanceStatTableItem("processing time",insStat.getProcTimeUS()/100000 + " s");
-				addInstanceStatTableItem("output interval",insStat.getOutputIntervalUS() + " us");
-				addInstanceStatTableItem("output rate",insStat.getOutputRateSec() + " /s");
+				if(dsc!=null){
+					addInstanceStatTableItem("unique name",insStat.getUniqueName());
+					addInstanceStatTableItem("type",insStat.getType());
+					addInstanceStatTableItem("worker id",insStat.getWorkerId());
+					addInstanceStatTableItem("condition",BooleanExpressionNoEventAliasStringlizer.getInstance().toString(dsc.getOwnCondition()));
+					addInstanceStatTableItem("duration",insStat.durationUS()/1000000 + " s");
+					addInstanceStatTableItem("event count",insStat.getEventCount());
+					addInstanceStatTableItem("processing time",insStat.getProcTimeUS()/100000 + " s");
+					addInstanceStatTableItem("output interval",insStat.getOutputIntervalUS() + " us");
+					addInstanceStatTableItem("output rate",insStat.getOutputRateSec() + " /s");
+				}
 			}
 			else{
 				RawStreamStat rawStat=gs.getRawStreamStatMap().get(instanceName);
@@ -283,6 +285,9 @@ public class WorkerInstancesComposite2 extends AbstractMonitorComposite {
 			DerivedStreamContainer dsc=gs.getContainerNameMap().get(instanceName);
 		
 			clearGraph(flowGraph);
+			if(dsc==null){
+				return;
+			}
 			
 			GraphNode selfNode=newFlowGraphNode(dsc);			
 			for(Stream upStream: dsc.getUpStreams()){
@@ -291,6 +296,7 @@ public class WorkerInstancesComposite2 extends AbstractMonitorComposite {
 			}
 			for(Long downId: dsc.getDownContainerIdList()){
 				DerivedStreamContainer downStream=gs.getContainerIdMap().get(downId);
+				if(downStream==null){ return; }
 				GraphNode downNode=newFlowGraphNode(downStream);				
 				new GraphConnection(flowGraph, SWT.ARROW, selfNode, downNode);
 			}
@@ -338,6 +344,7 @@ public class WorkerInstancesComposite2 extends AbstractMonitorComposite {
 			}
 			for(Long downId: psc.getDownContainerIdList()){
 				DerivedStreamContainer downStream=gs.getContainerIdMap().get(downId);
+				if(downStream==null){ return; }
 				if(flowGraph.getData(downStream.getUniqueName())==null){
 					GraphNode downNode=newFlowGraphNode(downStream);
 					new GraphConnection(flowGraph, SWT.ARROW, node, downNode);

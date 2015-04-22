@@ -183,4 +183,10 @@ public class JoinDelayedStreamContainer extends
 		}
 		return ce;
 	}
+	
+	@Override
+	public void dumpAllUpStreamContainers(List<StreamContainer> dscList) {
+		agent.dumpAllUpStreamContainers(dscList);
+		dscList.add(this);
+	}
 }

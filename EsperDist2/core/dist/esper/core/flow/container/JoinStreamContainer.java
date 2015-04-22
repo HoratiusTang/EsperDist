@@ -177,13 +177,13 @@ public class JoinStreamContainer extends DerivedStreamContainer{
 
 	@Override
 	public Stream[] getUpStreams() {
-		Stream[] upLocations=new Stream[this.upContainerList.size()];		
+		Stream[] upStreams=new Stream[this.upContainerList.size()];
 		int i=0;
-		for(StreamContainer child: this.upContainerList){
-			upLocations[i]=child;
+		for(StreamContainer upContainer: this.upContainerList){
+			upStreams[i]=upContainer;
 			i++;
 		}
-		return upLocations;
+		return upStreams;
 	}
 
 	@Override
@@ -195,5 +195,13 @@ public class JoinStreamContainer extends DerivedStreamContainer{
 			return this.joinExprList.get(0);
 		}
 		return new CompositeExpression(RelationTypeEnum.AND, this.joinExprList);
+	}
+	
+	@Override
+	public void dumpAllUpStreamContainers(List<StreamContainer> dscList) {
+		for(StreamContainer upContainer: this.upContainerList){
+			upContainer.dumpAllUpStreamContainers(dscList);
+		}
+		dscList.add(this);
 	}
 }

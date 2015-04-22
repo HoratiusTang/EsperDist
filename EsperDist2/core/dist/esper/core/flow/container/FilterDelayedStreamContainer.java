@@ -180,4 +180,10 @@ public class FilterDelayedStreamContainer extends
 		}
 		return new CompositeExpression(RelationTypeEnum.AND, this.extraFilterCondList);
 	}
+	
+	@Override
+	public void dumpAllUpStreamContainers(List<StreamContainer> dscList) {
+		agent.dumpAllUpStreamContainers(dscList);
+		dscList.add(this);
+	}
 }

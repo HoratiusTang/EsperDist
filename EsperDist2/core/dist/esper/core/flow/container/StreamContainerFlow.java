@@ -3,6 +3,8 @@ package dist.esper.core.flow.container;
 import java.io.Serializable;
 
 
+import java.util.List;
+
 import dist.esper.core.cost.DeltaResourceUsage;
 import dist.esper.core.flow.stream.RootStream;
 
@@ -83,5 +85,9 @@ public class StreamContainerFlow implements Serializable {
 
 	public void setRootDeltaResourceUsage(DeltaResourceUsage rootDeltaResourceUsage) {
 		this.rootDeltaResourceUsage = rootDeltaResourceUsage;
+	}
+	
+	public List<StreamContainer> dumpAllUpStreamContainers(){
+		return this.rootContainer.dumpAllUpStreamContainers();
 	}
 }

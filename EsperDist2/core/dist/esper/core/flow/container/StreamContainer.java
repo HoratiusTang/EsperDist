@@ -44,4 +44,11 @@ public abstract class StreamContainer extends Stream {
 	public void setDownContainerIdList(List<Long> downContainerIdList) {
 		this.downContainerIdList = downContainerIdList;
 	}
+	
+	public abstract void dumpAllUpStreamContainers(List<StreamContainer> dscList);
+	public List<StreamContainer> dumpAllUpStreamContainers(){
+		List<StreamContainer> dscList=new ArrayList<StreamContainer>();
+		dumpAllUpStreamContainers(dscList);
+		return dscList;
+	}
 }

@@ -47,7 +47,7 @@ public abstract class DerivedStreamContainer extends StreamContainer {
 	long windowTimeUS=UNCONCERNED_WINDOW_TIME;
 	public abstract ViewSpecification[] getViewSpecs();
 	public abstract Stream[] getUpStreams();
-	public abstract AbstractBooleanExpression getOwnCondition();
+	public abstract AbstractBooleanExpression getOwnCondition();	
 	
 	public String getWindowTimeViewSpecString(){
 		return String.format(".win:time(%d msec)", this.getWindowTimeUS()/1000);

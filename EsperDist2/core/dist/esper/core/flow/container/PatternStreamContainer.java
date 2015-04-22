@@ -121,7 +121,11 @@ public class PatternStreamContainer extends BaseStreamContainer{
 
 	@Override
 	public AbstractBooleanExpression getOwnCondition() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented yet");
+	}
+
+	@Override
+	public void dumpAllUpStreamContainers(List<StreamContainer> dscList) {
+		throw new RuntimeException("not implemented yet");
 	}
 }
