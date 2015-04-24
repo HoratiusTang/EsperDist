@@ -100,6 +100,8 @@ public class AsyncRawSocketLink extends RawSocketLink {
 						System.arraycopy(objectBuf, 0, array, (int)(oldEnd % array.length), firstSegLength);
 					}
 					System.arraycopy(objectBuf, firstSegLength, array, 0, totalBufLength-firstSegLength);
+					log.debug("append in two segments: %d=%d+%d", totalBufLength, 
+							firstSegLength, totalBufLength-firstSegLength);
 				}
 				end=newEnd;
 //				log.debug("append %s, before return: begin=%d, end=%d, oldEnd=%d, newEnd=%d",
@@ -126,6 +128,8 @@ public class AsyncRawSocketLink extends RawSocketLink {
 						out.write(array, (int)(oldBegin % array.length), firstSegLength);
 					}
 					out.write(array, 0, (int)(oldEnd % array.length));
+					log.debug("flush in two segments: %d=%d+%d", (oldEnd-oldBegin), 
+							firstSegLength, oldEnd-oldBegin-firstSegLength);
 				}
 				out.flush();//MUST!
 				begin=oldEnd;
