@@ -71,7 +71,7 @@ public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 					}
 				}
 				//TEST
-				ThreadUtil.sleep(200);
+				//ThreadUtil.sleep(200);
 				
 				refreshLinkList(recvLinkMap.values(), recvLinkList);
 				for(Link link: recvLinkList){
