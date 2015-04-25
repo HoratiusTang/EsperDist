@@ -118,7 +118,7 @@ public class RawSocketLink extends Link{
 		}
 		
 		public boolean receive() throws Exception{
-			int length=-1;
+			int length=Integer.MIN_VALUE;
 			try{
 				length=RawSocketLinkUtil.readLength(bis);
 				if(length<=0){
@@ -130,7 +130,7 @@ public class RawSocketLink extends Link{
 				notifyReceived(obj);
 			}
 			catch(Exception ex){
-				log.error("try read length=%d, myId=%s, targetId=%s", length, myId.getId(), targetId.getId(), ex);
+				log.error(String.format("try read length=%d, myId=%s, targetId=%s\n", length, myId.getId(), targetId.getId()), ex);
 			}
 			return true;
 		}
