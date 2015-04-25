@@ -27,11 +27,11 @@ public class InstanceStatSerializer extends Serializer<InstanceStat> {
 		kryo.writeObject(output, insStat.getOutputIntervalUS());
 		
 		insStat.getSubLock().readLock().lock();
-		kryo.writeObject(output, insStat.getOutputIntervalUS());
+		kryo.writeObject(output, insStat.getSubStats());
 		insStat.getSubLock().readLock().unlock();
 		
 		insStat.getPubLock().readLock().lock();
-		kryo.writeObject(output, insStat.getOutputIntervalUS());
+		kryo.writeObject(output, insStat.getPubStats());
 		insStat.getPubLock().readLock().unlock();
 	}
 
