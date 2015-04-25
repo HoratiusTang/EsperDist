@@ -130,7 +130,7 @@ public class RawSocketLink extends Link{
 				notifyReceived(obj);
 			}
 			catch(Exception ex){
-				log.error(String.format("try read length=%d, myId=%s, targetId=%s\n", length, myId.getId(), targetId.getId()), ex);
+				log.error(String.format("try read length=%d, myId=%s, targetId=%s", length, myId.getId(), targetId.getId()), ex);
 			}
 			return true;
 		}

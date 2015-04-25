@@ -129,7 +129,7 @@ public class RawSocketLinkManager extends LinkManager {
 						break;
 					}
 				}
-				catch (IOException e) {
+				catch (Exception e) {
 					log.getLogger().error("error ocurr when ServerSocket.accept()", e);
 				}
 			}
@@ -141,7 +141,7 @@ public class RawSocketLinkManager extends LinkManager {
 			log.info("server stoped");
 		}
 		
-		public boolean acceptConnection() throws IOException{
+		public boolean acceptConnection() throws Exception{
 			Socket socket = serverSocket.accept();
 			if(socket==null || !socket.isConnected()){
 				return false;

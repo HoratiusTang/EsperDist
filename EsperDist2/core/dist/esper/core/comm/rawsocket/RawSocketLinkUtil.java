@@ -26,17 +26,31 @@ public class RawSocketLinkUtil {
 		n |= (b[3] & 0x000000FF);
 		return n;
 	}
-	public static int readLength(InputStream is) throws IOException{
+	public static int readLength(InputStream is) throws Exception{
 		byte[] b=new byte[LENGTH_SIZE];
 		readBytes(is, b, 0, b.length);
 		return toInt(b);
 	}
 	
 	public static int readBytes(InputStream is, byte[] buffer, 
-			int offset, int count) throws IOException{
+			int offset, int count) throws Exception{
 		int curCount=0;
-		while(curCount<count){
-			curCount += is.read(buffer, offset + curCount, count-curCount);
+		try{
+			while(curCount<count){
+				int readCount=is.read(buffer, offset + curCount, count-curCount);
+				if(readCount>=0){
+					curCount += readCount;
+				}
+				else{
+					throw new RuntimeException(String.format("read() return %d, socket might be closed", readCount));
+				}
+			}
+		}
+		catch(Exception ex){
+			if(ex instanceof IndexOutOfBoundsException){
+				throw new RuntimeException(
+						String.format("offset=%d, count=%d, buffer.length=%d", offset, count, buffer.length), ex);
+			}
 		}
 		return count;
 	}
