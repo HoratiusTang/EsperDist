@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import com.esotericsoftware.kryo.DefaultSerializer;
+
 import dist.esper.core.flow.container.*;
 import dist.esper.core.util.ServiceManager;
 import dist.esper.core.worker.WorkerStatCollector2.ProcessorInspector;
@@ -14,10 +16,11 @@ import dist.esper.core.worker.WorkerStatCollector2.SubscriberInspector;
 import dist.esper.core.worker.pubsub.Instance;
 import dist.esper.core.worker.pubsub.Subscriber;
 import dist.esper.epl.expr.AbstractBooleanExpression;
-import dist.esper.event.Event;
 import dist.esper.util.Logger2;
 import dist.esper.util.StringUtil;
+import dist.esper.core.cost.io.InstanceStatSerializer;
 
+@DefaultSerializer(value = InstanceStatSerializer.class)
 public class InstanceStat implements Serializable{
 	static Logger2 log=Logger2.getLogger(InstanceStat.class);
 	private static final long serialVersionUID = 8726058215812361568L;
@@ -338,11 +341,11 @@ public class InstanceStat implements Serializable{
 	
 	public void addPublisherStat(long publisherId, String destWorkerId){
 		PublisherStat[] newPubStats=new PublisherStat[pubStats.length+1];
-		procLock.writeLock().lock();
+		pubLock.writeLock().lock();
 		System.arraycopy(pubStats, 0, newPubStats, 0, pubStats.length);
 		newPubStats[pubStats.length]=new PublisherStat(publisherId, destWorkerId);
 		pubStats=newPubStats;
-		procLock.writeLock().unlock();
+		pubLock.writeLock().unlock();
 		pubInspector.addPublisher(publisherId);
 	}
 	
@@ -395,6 +398,7 @@ public class InstanceStat implements Serializable{
 		pubInspector.updatePublishStat(publisherId, deltaOuputEventCount, 
 				deltaSerialTimeUS, deltaOutputTimeUS, deltaOuputBytes);
 		pubLock.writeLock().lock();
+		//TODO: optimize
 		for(PublisherStat pubStat: pubStats){
 			if(pubStat.publisherId==publisherId){
 				pubStat.serialTimeUS += deltaSerialTimeUS;

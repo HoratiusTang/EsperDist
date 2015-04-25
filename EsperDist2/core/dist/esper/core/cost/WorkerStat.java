@@ -1,6 +1,8 @@
 package dist.esper.core.cost;
 
 import java.io.Serializable;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class WorkerStat implements Serializable{
 private static final long serialVersionUID = 6077447393633191724L;
@@ -62,6 +64,9 @@ private static final long serialVersionUID = 6077447393633191724L;
 	//public int rawStatsCount=0;
 	public InstanceStat[] insStats=new InstanceStat[0];
 	public RawStreamStat[] rawStats=new RawStreamStat[0];
+	
+	transient ReentrantLock insStatsLock=new ReentrantLock();
+	transient ReentrantLock rawStatsLock=new ReentrantLock();
 	
 	@Override
 	public String toString(){
@@ -532,6 +537,22 @@ private static final long serialVersionUID = 6077447393633191724L;
 
 	public void setRawStats(RawStreamStat[] rawStats) {
 		this.rawStats = rawStats;
+	}
+
+	public ReentrantLock getInsStatsLock() {
+		return insStatsLock;
+	}
+
+	public void setInsStatsLock(ReentrantLock insStatsLock) {
+		this.insStatsLock = insStatsLock;
+	}
+
+	public ReentrantLock getRawStatsLock() {
+		return rawStatsLock;
+	}
+
+	public void setRawStatsLock(ReentrantLock rawStatsLock) {
+		this.rawStatsLock = rawStatsLock;
 	}
 
 	public static long getSerialversionuid() {

@@ -100,6 +100,8 @@ public class WorkerStatCollector2 {
 	
 	public void updateWorkerStat(Worker worker){
 		this.lock.lock();
+		workerStat.getInsStatsLock().lock();
+		workerStat.getRawStatsLock().lock();
 		workerStat.reset(worker.insMap.size(), worker.rawSampler.size());
 		int i=0;
 		for(Instance ins: worker.insMap.values()){
@@ -120,6 +122,8 @@ public class WorkerStatCollector2 {
 			workerStat.rawStats[i]=rawStat;
 			i++;
 		}
+		workerStat.getRawStatsLock().unlock();
+		workerStat.getInsStatsLock().unlock();
 		this.lock.unlock();
 	}
 	

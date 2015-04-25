@@ -45,7 +45,8 @@ public class StreamContainerFlowBuilder {
 		//log.info("StreamFlow: \n%s", sf.toString());
 		RootStream rootStream=(RootStream)insertDelayedStreamByDeltaResourceUsageIfNeeded(rootDRU);
 		//log.info("StreamFlow: \n%s", sf.toString());
-		RootStreamContainer rootContainer=(RootStreamContainer)buildStreamContainerRecursively2(sf.getRootStream(), false);
+		//RootStreamContainer rootContainer=(RootStreamContainer)buildStreamContainerRecursively2(sf.getRootStream(), false);
+		RootStreamContainer rootContainer=buildRootStreamContainerRecursively2((RootStream)sf.getRootStream());
 		
 		assginUniqueName(rootContainer);
 		StreamContainerFlow sct=new StreamContainerFlow(sf.getEplId(), sf.getEpl(), rootStream, rootContainer, rootDRU);
@@ -182,6 +183,13 @@ public class StreamContainerFlowBuilder {
 			return (fcsl==null)?fsl:fcsl;
 		}
 		return null;
+	}
+	
+	public RootStreamContainer buildRootStreamContainerRecursively2(RootStream rs){
+		coordinator.containersLock.lock();
+		RootStreamContainer rsc=(RootStreamContainer)buildStreamContainerRecursively2(rs, false);
+		coordinator.containersLock.unlock();
+		return rsc;
 	}
 	
 	public StreamContainer buildStreamContainerRecursively2(Stream sl, boolean alreadyIndirectReused){
