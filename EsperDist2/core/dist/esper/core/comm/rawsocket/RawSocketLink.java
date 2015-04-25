@@ -121,7 +121,7 @@ public class RawSocketLink extends Link{
 			int length=Integer.MIN_VALUE;
 			try{
 				length=RawSocketLinkUtil.readLength(bis);
-				if(length<=0){
+				if(length<0){
 					throw new RuntimeException();
 				}
 				//log.debug("ReceiverRunnable read %d bytes", length);
