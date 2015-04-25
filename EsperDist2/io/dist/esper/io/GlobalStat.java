@@ -5,14 +5,23 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
+import com.esotericsoftware.kryo.DefaultSerializer;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
 import dist.esper.core.cost.InstanceStat;
 import dist.esper.core.cost.RawStreamStat;
 import dist.esper.core.cost.WorkerStat;
+import dist.esper.core.cost.io.WorkerStatSerializer;
 import dist.esper.core.flow.container.DerivedStreamContainer;
+import dist.esper.core.flow.container.StreamContainer;
 import dist.esper.core.flow.container.StreamContainerFlow;
 import dist.esper.core.id.WorkerId;
 import dist.esper.event.Event;
 
+@DefaultSerializer(value = GlobalStat.GlobalStatSerializer.class)
 public class GlobalStat implements Serializable{
 	private static final long serialVersionUID = 2799939768112516438L;
 	
@@ -102,5 +111,37 @@ public class GlobalStat implements Serializable{
 	public void setContainerTreeMap(
 			Map<Long, StreamContainerFlow> containerTreeMap) {
 		this.containerTreeMap = containerTreeMap;
+	}
+	
+	public static class GlobalStatSerializer extends Serializer<GlobalStat>{
+		@Override
+		public void write(Kryo kryo, Output output, GlobalStat gs) {
+			kryo.writeClassAndObject(output, gs.eventMap);
+			kryo.writeClassAndObject(output, gs.workerIdMap);
+			kryo.writeClassAndObject(output, gs.procWorkerStatMap);
+			kryo.writeClassAndObject(output, gs.gateWorkerStatMap);
+			kryo.writeClassAndObject(output, gs.rawStreamStatMap);
+			kryo.writeClassAndObject(output, gs.containerStatMap);
+			StreamContainer.streamContainersLock.lock();
+			kryo.writeClassAndObject(output, gs.containerTreeMap);
+			kryo.writeClassAndObject(output, gs.containerNameMap);
+			kryo.writeClassAndObject(output, gs.containerIdMap);
+			StreamContainer.streamContainersLock.unlock();
+		}
+
+		@Override
+		public GlobalStat read(Kryo kryo, Input input, Class<GlobalStat> type) {
+			GlobalStat gs=new GlobalStat();
+			gs.eventMap = (Map<String,Event>) kryo.readClassAndObject(input);
+			gs.workerIdMap = (Map<String, WorkerId>) kryo.readClassAndObject(input);
+			gs.procWorkerStatMap = (Map<String, WorkerStat>) kryo.readClassAndObject(input);
+			gs.gateWorkerStatMap = (Map<String, WorkerStat>) kryo.readClassAndObject(input);
+			gs.rawStreamStatMap = (Map<String, RawStreamStat>) kryo.readClassAndObject(input);
+			gs.containerStatMap = (Map<String, InstanceStat>) kryo.readClassAndObject(input);
+			gs.containerTreeMap = (Map<Long, StreamContainerFlow>) kryo.readClassAndObject(input);
+			gs.containerNameMap = (Map<String, DerivedStreamContainer>) kryo.readClassAndObject(input);
+			gs.containerIdMap = (Map<Long, DerivedStreamContainer>) kryo.readClassAndObject(input);
+			return null;
+		}		
 	}
 }

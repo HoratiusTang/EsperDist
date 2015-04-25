@@ -2,8 +2,12 @@ package dist.esper.core.cost;
 
 import java.io.Serializable;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import com.esotericsoftware.kryo.DefaultSerializer;
+
+import dist.esper.core.cost.io.WorkerStatSerializer;
+
+@DefaultSerializer(value = WorkerStatSerializer.class)
 public class WorkerStat implements Serializable{
 private static final long serialVersionUID = 6077447393633191724L;
 	public static double DEFAULT_SEND_BYTE_RATE_US=5.0;//40 mbps

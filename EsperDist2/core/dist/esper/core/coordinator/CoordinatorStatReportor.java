@@ -79,9 +79,9 @@ public class CoordinatorStatReportor implements Runnable{
 		monLinkList.addAll(coordinator.monitorLinkMap.values());
 		for(Link link: monLinkList){
 			if(!link.isClosed()){
-				coordinator.containersLock.lock();
+				//coordinator.containersLock.lock();
 				int bytes=link.send(gs);
-				coordinator.containersLock.unlock();
+				//coordinator.containersLock.unlock();
 			}
 		}
 	}

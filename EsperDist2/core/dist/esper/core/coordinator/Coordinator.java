@@ -91,9 +91,7 @@ public class Coordinator {
 	MessageHandler messageHandler=new MessageHandler();
 	
 	AsyncFileWriter workerStatWriter;
-	DelayedStreamContainerFlowRegistry delayedContainerFlowRegistry;
-	
-	ReentrantLock containersLock=new ReentrantLock();
+	DelayedStreamContainerFlowRegistry delayedContainerFlowRegistry;	
 
 	class NewLinkHandler implements LinkManager.NewLinkListener, Link.Listener{
 		@Override public void connected(Link link) {}

@@ -3,6 +3,7 @@ package dist.esper.core.flow.container;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import dist.esper.core.cost.InstanceStat;
 import dist.esper.core.flow.stream.Stream;
@@ -30,7 +31,9 @@ import dist.esper.epl.expr.util.ExpressionComparator;
 public abstract class StreamContainer extends Stream {
 	private static final long serialVersionUID = -5003957696744609553L;
 	public static DeepCloneFactory cloner=new DeepCloneFactory();
+	public static ReentrantLock streamContainersLock=new ReentrantLock();
 	List<Long> downContainerIdList=new ArrayList<Long>(8);
+	
 	public void addDownContainerId(long downContainerId){
 		if(!this.downContainerIdList.contains(downContainerId)){
 			this.downContainerIdList.add(downContainerId);
