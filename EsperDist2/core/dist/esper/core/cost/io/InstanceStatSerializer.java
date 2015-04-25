@@ -40,6 +40,7 @@ public class InstanceStatSerializer extends Serializer<InstanceStat> {
 		String workerId=kryo.readObject(input, String.class);
 		String instanceType=kryo.readObject(input, String.class);
 		String uniqueName=kryo.readObject(input, String.class);
+		
 		Long instanceId=kryo.readObject(input, Long.class);
 		Long processorId=kryo.readObject(input, Long.class);
 		Long startTimestampUS=kryo.readObject(input, Long.class);
