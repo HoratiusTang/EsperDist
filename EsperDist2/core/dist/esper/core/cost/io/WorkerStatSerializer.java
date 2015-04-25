@@ -128,7 +128,7 @@ public class WorkerStatSerializer extends Serializer<WorkerStat> {
 		
 		ws.insStats=kryo.readObject(input, InstanceStat[].class);
 		ws.rawStats=kryo.readObject(input, RawStreamStat[].class);		
-		return null;
+		return ws;
 	}
 
 }

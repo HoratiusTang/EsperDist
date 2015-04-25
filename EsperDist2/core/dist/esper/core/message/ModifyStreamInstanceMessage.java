@@ -54,7 +54,7 @@ public class ModifyStreamInstanceMessage extends AbstractMessage{
 			msim.primaryType = kryo.readObject(input, Integer.class);
 			msim.sourceId = kryo.readObject(input, String.class);			
 			msim.streamContainer = (StreamContainer) kryo.readClassAndObject(input);
-			return null;
+			return msim;
 		}
 	}
 	

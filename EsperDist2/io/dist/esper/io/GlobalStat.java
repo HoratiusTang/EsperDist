@@ -141,7 +141,7 @@ public class GlobalStat implements Serializable{
 			gs.containerTreeMap = (Map<Long, StreamContainerFlow>) kryo.readClassAndObject(input);
 			gs.containerNameMap = (Map<String, DerivedStreamContainer>) kryo.readClassAndObject(input);
 			gs.containerIdMap = (Map<Long, DerivedStreamContainer>) kryo.readClassAndObject(input);
-			return null;
+			return gs;
 		}		
 	}
 }

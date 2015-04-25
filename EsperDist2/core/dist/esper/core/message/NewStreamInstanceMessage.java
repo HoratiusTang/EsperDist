@@ -54,7 +54,7 @@ public class NewStreamInstanceMessage extends AbstractMessage{
 			nsim.primaryType = kryo.readObject(input, Integer.class);
 			nsim.sourceId = kryo.readObject(input, String.class);			
 			nsim.streamContainer = (StreamContainer) kryo.readClassAndObject(input);
-			return null;
+			return nsim;
 		}
 	}
 }
