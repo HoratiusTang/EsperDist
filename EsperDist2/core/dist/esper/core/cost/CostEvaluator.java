@@ -103,14 +103,18 @@ public class CostEvaluator {
 			gateWorkerStatMap.remove(ws.id);
 		}
 		allWorkerStatMap.put(ws.id, ws);
+		ws.getInsStatsLock().lock();
 		for(InstanceStat insStat: ws.insStats){
 			containerStatMap.put(insStat.uniqueName, insStat);
 			DerivedStreamContainer psc=containerNameMap.get(insStat.uniqueName);
 			updateContainerStat(psc, insStat);
 		}
+		ws.getInsStatsLock().unlock();
+		ws.getRawStatsLock().lock();
 		for(RawStreamStat rawStat: ws.rawStats){
 			rawStats.updateRawStreamStat(rawStat);
 		}
+		ws.getRawStatsLock().unlock();
 	}
 	
 	public void updateContainerStat(DerivedStreamContainer psc, InstanceStat insStat){

@@ -65,11 +65,17 @@ public class WorkerStatSerializer extends Serializer<WorkerStat> {
 		kryo.writeObject(output, ws.rootCount);
 		
 		ws.getInsStatsLock().lock();
-		kryo.writeObject(output, ws.insStats);
+		kryo.writeObject(output, ws.insStats.length);
+		for(InstanceStat insStat: ws.insStats){
+			kryo.writeObject(output, insStat);
+		}
 		ws.getInsStatsLock().unlock();
 		
 		ws.getRawStatsLock().lock();
-		kryo.writeObject(output, ws.rawStats);
+		kryo.writeObject(output, ws.rawStats.length);
+		for(RawStreamStat rawStat: ws.rawStats){
+			kryo.writeObject(output, rawStat);
+		}
 		ws.getRawStatsLock().unlock();
 	}
 
@@ -126,8 +132,16 @@ public class WorkerStatSerializer extends Serializer<WorkerStat> {
 		ws.joinDelayedCount=kryo.readObject(input, Integer.class);
 		ws.rootCount=kryo.readObject(input, Integer.class);
 		
-		ws.insStats=kryo.readObject(input, InstanceStat[].class);
-		ws.rawStats=kryo.readObject(input, RawStreamStat[].class);		
+		int insStatCount=kryo.readObject(input, Integer.class);
+		ws.insStats=new InstanceStat[insStatCount];
+		for(int i=0;i<insStatCount;i++){
+			ws.insStats[i]=kryo.readObject(input, InstanceStat.class);
+		}
+		int rawStatCount=kryo.readObject(input, Integer.class);
+		ws.rawStats=new RawStreamStat[rawStatCount];
+		for(int i=0;i<rawStatCount;i++){
+			ws.rawStats[i]=kryo.readObject(input, RawStreamStat.class);
+		}
 		return ws;
 	}
 
