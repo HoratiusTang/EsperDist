@@ -119,36 +119,40 @@ public class Publisher implements IProcessorObserver{
 	public void updateProcessorObserver(EventBean[] newEvents) {
 //		if(pubDelegator!=null){
 //			pubDelegator.publish(newEvents, this);
-//		}
+//		}		
+		long startSerialTimeNS=System.nanoTime();
+		Object[][] records=new Object[newEvents.length][];
+		DataMessage dataMsg=null;
 		try{
-			long startSerialTimeNS=System.nanoTime();
-			Object[][] records=new Object[newEvents.length][];
-			DataMessage dataMsg=null;
-			rwLock.readLock().lock();{
-				for(int i=0; i<newEvents.length; i++){
-					records[i]=new Object[selectElementNames.length];
-					for(int j=0; j<selectElementNames.length; j++){
-						records[i][j]=newEvents[i].get(selectElementNames[j]);
-					}
+			rwLock.readLock().lock();
+			for(int i=0; i<newEvents.length; i++){
+				records[i]=new Object[selectElementNames.length];
+				for(int j=0; j<selectElementNames.length; j++){
+					records[i][j]=newEvents[i].get(selectElementNames[j]);
 				}
-				dataMsg=new DataMessage(workerId, streamName, 
-						selectElementNames,
-						records);
-			}rwLock.readLock().unlock();
-			long endSerialTimeNS=System.nanoTime();
-			long startSendTimeNS=endSerialTimeNS;
-			link.send(dataMsg);
-			long endSendTimeNS=System.nanoTime();
-			
-			instanceStat.updatePublisherStat(this.id,
-					newEvents.length, //deltaOuputEventCount, 
-					(endSerialTimeNS-startSerialTimeNS)/1000.0, //deltaSerialTimeUS, 
-					(endSendTimeNS-startSendTimeNS)/1000.0, //deltaOutputTimeUS, 
-					Link.LOCAL_TRANSMISSION);//deltaOuputBytes
+			}
+			dataMsg=new DataMessage(workerId, streamName, 
+					selectElementNames,
+					records);
 		}
-		catch(PropertyAccessException e1){
-			e1.printStackTrace();
+		catch(PropertyAccessException ex){
+			log.error("error occur when get selected elements", ex);
+			return;
 		}
+		finally{
+			rwLock.readLock().unlock();
+		}
+		long endSerialTimeNS=System.nanoTime();
+		long startSendTimeNS=endSerialTimeNS;
+		link.send(dataMsg);
+		long endSendTimeNS=System.nanoTime();
+		
+		instanceStat.updatePublisherStat(this.id,
+				newEvents.length, //deltaOuputEventCount, 
+				(endSerialTimeNS-startSerialTimeNS)/1000.0, //deltaSerialTimeUS, 
+				(endSendTimeNS-startSendTimeNS)/1000.0, //deltaOutputTimeUS, 
+				Link.LOCAL_TRANSMISSION);//deltaOuputBytes
+		
 	}
 	
 	public static interface PublishDelegator{
