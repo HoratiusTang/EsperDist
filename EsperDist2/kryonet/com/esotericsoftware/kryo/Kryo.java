@@ -773,10 +773,12 @@ public class Kryo {
 	public Object readClassAndObject (Input input) {
 		if (input == null) throw new IllegalArgumentException("input cannot be null.");
 		beginObject();
+		Registration registration=null;
+		Class type=null;
 		try {
-			Registration registration = readClass(input);
+			registration = readClass(input);
 			if (registration == null) return null;
-			Class type = registration.getType();
+			type = registration.getType();
 
 			Object object;
 			if (references) {
@@ -789,7 +791,12 @@ public class Kryo {
 				object = registration.getSerializer().read(this, input, type);
 			if (TRACE || (DEBUG && depth == 1)) log("Read", object);
 			return object;
-		} finally {
+		}
+		catch(RuntimeException ex){
+			throw new RuntimeException(
+					String.format("error ocurr in Kryo.readClassAndObject(): class=%s", type==null?"null":type), ex);
+		}
+		finally {
 			if (--depth == 0 && autoReset) reset();
 		}
 	}
