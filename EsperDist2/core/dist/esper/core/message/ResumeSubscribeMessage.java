@@ -1,5 +1,6 @@
 package dist.esper.core.message;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResumeSubscribeMessage extends AbstractMessage {
@@ -18,7 +19,8 @@ public class ResumeSubscribeMessage extends AbstractMessage {
 		this.primaryType = PrimaryTypes.SUBSCRIBE;
 		this.streamName = streamName;
 		//this.streamEventTypeName = streamEventTypeName;
-		this.selectElementNameList = selectElementNameList;
+		this.selectElementNameList = new ArrayList<String>(selectElementNameList.size());
+		this.selectElementNameList.addAll(selectElementNameList);
 	}
 	public String getStreamName() {
 		return streamName;
