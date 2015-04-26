@@ -27,11 +27,17 @@ public class InstanceStatSerializer extends Serializer<InstanceStat> {
 		kryo.writeObject(output, insStat.getOutputIntervalUS());
 		
 		insStat.getSubLock().readLock().lock();
-		kryo.writeObject(output, insStat.getSubStats());
+		kryo.writeObject(output, insStat.getSubStats().length);
+		for(SubscriberStat subStat: insStat.getSubStats()){
+			kryo.writeObject(output, subStat);
+		}
 		insStat.getSubLock().readLock().unlock();
 		
 		insStat.getPubLock().readLock().lock();
-		kryo.writeObject(output, insStat.getPubStats());
+		kryo.writeObject(output, insStat.getPubStats().length);
+		for(PublisherStat pubStat: insStat.getPubStats()){
+			kryo.writeObject(output, pubStat);
+		}
 		insStat.getPubLock().readLock().unlock();
 	}
 
@@ -51,8 +57,17 @@ public class InstanceStatSerializer extends Serializer<InstanceStat> {
 		Double procTimeUS=kryo.readObject(input, Double.class);
 		Double outputIntervalUS=kryo.readObject(input, Double.class);
 		
-		SubscriberStat[] subStats=kryo.readObject(input, SubscriberStat[].class);
-		PublisherStat[] pubStats=kryo.readObject(input, PublisherStat[].class);
+		int subStatCount=kryo.readObject(input, Integer.class);
+		SubscriberStat[] subStats=new SubscriberStat[subStatCount];
+		for(int i=0; i<subStatCount; i++){
+			subStats[i]=kryo.readObject(input, SubscriberStat.class);	
+		}
+		
+		int pubStatCount=kryo.readObject(input, Integer.class);
+		PublisherStat[] pubStats=new PublisherStat[pubStatCount];
+		for(int i=0; i<pubStatCount; i++){
+			pubStats[i]=kryo.readObject(input, PublisherStat.class);
+		}
 		
 		InstanceStat insStat=new InstanceStat();
 		insStat.setWorkerId(workerId);
