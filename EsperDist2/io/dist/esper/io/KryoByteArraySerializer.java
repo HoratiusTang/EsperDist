@@ -37,6 +37,7 @@ public class KryoByteArraySerializer{
 		lock.lock();
 		while(true){
 			try{
+				kryo.reset();
 				output.setBuffer(buffer);
 				kryo.writeClassAndObject(output, obj);
 				break;
@@ -57,11 +58,13 @@ public class KryoByteArraySerializer{
 	}
 	
 	public int toBytes(Object obj, byte[] bytes, int offset){
+		Output out=new Output();
 		try{
-			output.setBuffer(bytes);
-			output.setPosition(offset);
-			kryo.writeClassAndObject(output, obj);
-			return output.position()-offset;
+			kryo.reset();
+			out.setBuffer(bytes);
+			out.setPosition(offset);
+			kryo.writeClassAndObject(out, obj);
+			return out.position()-offset;
 		}
 		catch(Exception ex){
 			log.getLogger().error("error occur in toBytes(object, byte[], int)", ex);
