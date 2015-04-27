@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.esotericsoftware.kryo.DefaultSerializer;
@@ -38,6 +39,8 @@ public class InstanceStat implements Serializable{
 	SubscriberStat[] subStats;
 	PublisherStat[] pubStats;
 	//PropertyStat[] fieldStats;//only filter is not empty
+	
+	transient Map<Long, PublisherStat> pubStatMap=new TreeMap<Long, PublisherStat>();
 	
 	transient SubscriberInspector subInspector;
 	transient ProcessorInspector procInspector;
@@ -343,8 +346,10 @@ public class InstanceStat implements Serializable{
 		PublisherStat[] newPubStats=new PublisherStat[pubStats.length+1];
 		pubLock.writeLock().lock();
 		System.arraycopy(pubStats, 0, newPubStats, 0, pubStats.length);
-		newPubStats[pubStats.length]=new PublisherStat(publisherId, destWorkerId);
+		PublisherStat pubStat=new PublisherStat(publisherId, destWorkerId);
+		newPubStats[pubStats.length]=pubStat;
 		pubStats=newPubStats;
+		pubStatMap.put(publisherId, pubStat);
 		pubLock.writeLock().unlock();
 		pubInspector.addPublisher(publisherId);
 	}
@@ -399,16 +404,18 @@ public class InstanceStat implements Serializable{
 				deltaSerialTimeUS, deltaOutputTimeUS, deltaOuputBytes);
 		pubLock.writeLock().lock();
 		//TODO: optimize
-		for(PublisherStat pubStat: pubStats){
-			if(pubStat.publisherId==publisherId){
+		PublisherStat pubStat=pubStatMap.get(publisherId);
+		if(pubStat!=null){
+//		for(PublisherStat pubStat: pubStats){
+//			if(pubStat.publisherId==publisherId){
 				pubStat.serialTimeUS += deltaSerialTimeUS;
 				pubStat.batchCount++;
 				pubStat.eventCount += deltaOuputEventCount;
 				pubStat.outputTimeUS += deltaOutputTimeUS;
 				pubStat.outputBytes += deltaOuputBytes;
 				pubStat.lastTimestampUS = System.nanoTime()/1000;
-				break;
-			}
+//				break;
+//			}
 		}
 		pubLock.writeLock().unlock();
 	}

@@ -64,8 +64,9 @@ public class Worker {
 	
 	ReentrantReadWriteLock instancesLock=new ReentrantReadWriteLock();
 	
-	MessageHandlingScheduler coordMessageHandlingScheduler;
-	MessageHandlingScheduler workerMessageHandlingScheduler;
+	//MessageHandlingScheduler coordMessageHandlingScheduler;
+	//MessageHandlingScheduler workerMessageHandlingScheduler;
+	MessageHandlingScheduler messageHandlingScheduler;
 	CoordinatorMessageHandler coordMessageHandler=new CoordinatorMessageHandler();
 	WorkerMessageHandler workerMessageHandler=new WorkerMessageHandler();
 	
@@ -78,7 +79,8 @@ public class Worker {
 		@Override
 		public void received(Link link, Object obj) {
 			//handleCoordinatorMessage(obj);
-			coordMessageHandlingScheduler.submit(link, obj, coordMessageHandler);
+			//coordMessageHandlingScheduler.submit(link, obj, coordMessageHandler);
+			messageHandlingScheduler.submit(link, obj, coordMessageHandler);
 		}
 	}
 	
@@ -101,7 +103,8 @@ public class Worker {
 		@Override
 		public void received(Link link, Object obj) {
 			//handleWorkerMessage(link, obj);
-			workerMessageHandlingScheduler.submit(link, obj, workerMessageHandler);
+			//workerMessageHandlingScheduler.submit(link, obj, workerMessageHandler);
+			messageHandlingScheduler.submit(link, obj, workerMessageHandler);
 		}
 	}	
 	
@@ -117,8 +120,9 @@ public class Worker {
 		procScheduler=new ProcessingScheduler2(id, numProcThread);
 		pubScheduler=new PublishingScheduler2(id, numPubThread);
 		
-		coordMessageHandlingScheduler=new MessageHandlingScheduler(id, 1);
-		workerMessageHandlingScheduler=new MessageHandlingScheduler(id, 1);
+		//coordMessageHandlingScheduler=new MessageHandlingScheduler(id, 1);
+		//workerMessageHandlingScheduler=new MessageHandlingScheduler(id, 1);
+		messageHandlingScheduler=new MessageHandlingScheduler(id, 1);
 		
 		linkManager=ServiceManager.getInstance(id).getLinkManager();
 		linkManager.init();

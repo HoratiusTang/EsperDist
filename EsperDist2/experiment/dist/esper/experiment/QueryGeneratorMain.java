@@ -17,11 +17,11 @@ public class QueryGeneratorMain {
 			initQueryGeneratorEvents(qg);
 			
 			IntPair[] pairs={
-				new IntPair(1,20), /* 1-stream filter query, 20 in total*/ 
-				new IntPair(2,10), /* 2-stream join query, 10 in total*/
-				new IntPair(3,5), /* 3-stream join query, 5 in total*/
-				new IntPair(4,2), /* 4-stream join query, 2 in total*/
-				new IntPair(5,1), /* 5-stream join query, 1 in total*/
+				new IntPair(1,50), /* 1-stream filter query, 50 in total*/ 
+				new IntPair(2,30), /* 2-stream join query, 20 in total*/
+				new IntPair(3,15), /* 3-stream join query, 15 in total*/
+				new IntPair(4,6), /* 4-stream join query, 6 in total*/
+				new IntPair(5,2), /* 5-stream join query, 2 in total*/
 			};
 			
 			List<String> queryList=qg.generateQuries(Arrays.asList(pairs));
