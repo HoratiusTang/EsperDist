@@ -36,7 +36,7 @@ public class CoordinatorMain{
 	 */
 	static class SumbitQueryRunnable implements Runnable{
 		Coordinator coord;
-		long intervalMS=5000;
+		long intervalMS=3500;
 		
 		public SumbitQueryRunnable(Coordinator coord) {
 			super();

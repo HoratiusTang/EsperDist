@@ -42,8 +42,8 @@ public class KryoByteArraySerializer{
 				break;
 			}
 			catch(IndexOutOfBoundsException ex){
-				log.getLogger().error(String.format("kryo bytes buffer size %d is not enough, try to extend length to %d", 
-						buffer.length, buffer.length+baseSize), ex);
+				log.getLogger().error(String.format("kryo bytes buffer size %d is not enough for %s, try to extend length to %d", 
+						buffer.length, obj.getClass().getSimpleName(), buffer.length+baseSize), ex);
 				buffer=new byte[buffer.length+baseSize];
 			}
 		}
@@ -64,7 +64,7 @@ public class KryoByteArraySerializer{
 			return output.position()-offset;
 		}
 		catch(Exception ex){
-			log.getLogger().error("error occur in toBytes(object, byte[], int)");
+			log.getLogger().error("error occur in toBytes(object, byte[], int)", ex);
 			return 0;
 		}
 	}

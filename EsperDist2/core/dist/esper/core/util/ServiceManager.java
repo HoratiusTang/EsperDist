@@ -109,8 +109,8 @@ public class ServiceManager {
 			}
 			else{
 				//linkManager=new KryoSocketLinkManager(myId);
-				//linkManager=new RawSocketLinkManager(myId);
-				linkManager=new AsyncRawSocketLinkManager(myId);
+				linkManager=new RawSocketLinkManager(myId);
+				//linkManager=new AsyncRawSocketLinkManager(myId);
 			}
 		}
 		return linkManager;
