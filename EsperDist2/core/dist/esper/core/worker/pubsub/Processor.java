@@ -409,8 +409,11 @@ public class Processor implements ISubscriberObserver{
 				//might be RawStreamLocation or StreamLocationContainer
 				Stream child=this.streamContainer.getUpStreamByEventName(eventTypeName);
 				
-				if(child==null || child.getInternalCompositeEvent()==null){
-					System.out.print("");
+				if(child==null){
+					throw new RuntimeException("child is null for StreamContainer "+streamContainer.getUniqueName());
+				}
+				if(child.getInternalCompositeEvent()==null){
+					throw new RuntimeException("child.getInternalCompositeEvent() is null for StreamContainer "+streamContainer.getUniqueName());
 				}
 				//elementNames>=child.getCompositeEvent().getPropList();
 				List<EventProperty> propList=child.getInternalCompositeEvent().getPropList();
@@ -426,9 +429,9 @@ public class Processor implements ISubscriberObserver{
 					}
 				}
 				if(count!=propList.size()){
-					System.out.print("");
+					throw new RuntimeException(String.format("count!=propList.size(), count=%d, propList.size()=%d", count, propList.size()));
 				}
-				assert(count==propList.size());
+				//assert(count==propList.size());
 				
 				Map[] maps=new Map[events.length];
 				for(int i=0;i<events.length;i++){
@@ -448,7 +451,7 @@ public class Processor implements ISubscriberObserver{
 				
 			}
 			catch(Exception ex){
-				ex.printStackTrace();
+				log.error("error occur in Processor.updateSubscriberObserver()", ex);
 			}
 		}
 		long endProcTimestampNS=System.nanoTime();
@@ -470,7 +473,7 @@ public class Processor implements ISubscriberObserver{
 				}
 				queryResultLog.debug("eplId:%d, output: %s", stream.getEplId(), Arrays.asList(reds).toString());
 			}
-		}		
+		}
 	}
 	
 	class ResultElementData extends Tuple2D<String,Object>{

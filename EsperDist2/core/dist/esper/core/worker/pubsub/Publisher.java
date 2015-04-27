@@ -136,7 +136,7 @@ public class Publisher implements IProcessorObserver{
 					records);
 		}
 		catch(PropertyAccessException ex){
-			log.error("error occur when get selected elements", ex);
+			log.error("error occur when get selected elements: %s", ex.getMessage());
 			return;
 		}
 		finally{
