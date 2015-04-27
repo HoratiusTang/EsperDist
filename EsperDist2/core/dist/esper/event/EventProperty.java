@@ -3,8 +3,11 @@ package dist.esper.event;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.esotericsoftware.kryo.DefaultSerializer;
 
-//@JsonSerialize(using = EventJsonSerializerFactory.EventPropertyJsonSerializer.class)
+import dist.esper.event.io.EventPropertySerializer;
+
+@DefaultSerializer(value = EventPropertySerializer.class)
 public class EventProperty implements Serializable{	
 	private static final long serialVersionUID = 5765766750126884792L;
 	public Event event=null;
