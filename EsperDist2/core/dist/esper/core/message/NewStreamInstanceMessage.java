@@ -42,9 +42,9 @@ public class NewStreamInstanceMessage extends AbstractMessage{
 				NewStreamInstanceMessage nsim) {
 			kryo.writeObject(output, nsim.getPrimaryType());
 			kryo.writeObject(output, nsim.getSourceId());
-			StreamContainer.streamContainersLock.lock();
+			//StreamContainer.streamContainersLock.lock();
 			kryo.writeClassAndObject(output, nsim.getStreamContainer());
-			StreamContainer.streamContainersLock.unlock();
+			//StreamContainer.streamContainersLock.unlock();
 		}
 
 		@Override

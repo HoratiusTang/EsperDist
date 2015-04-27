@@ -186,9 +186,9 @@ public class StreamContainerFlowBuilder {
 	}
 	
 	public RootStreamContainer buildRootStreamContainerRecursively2(RootStream rs){
-		StreamContainer.streamContainersLock.lock();
+		//StreamContainer.streamContainersLock.lock();
 		RootStreamContainer rsc=(RootStreamContainer)buildStreamContainerRecursively2(rs, false);
-		StreamContainer.streamContainersLock.unlock();
+		//StreamContainer.streamContainersLock.unlock();
 		return rsc;
 	}
 	

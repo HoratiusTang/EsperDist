@@ -42,9 +42,9 @@ public class ModifyStreamInstanceMessage extends AbstractMessage{
 				ModifyStreamInstanceMessage msim) {
 			kryo.writeObject(output, msim.getPrimaryType());
 			kryo.writeObject(output, msim.getSourceId());
-			StreamContainer.streamContainersLock.lock();
+			//StreamContainer.streamContainersLock.lock();
 			kryo.writeClassAndObject(output, msim.getStreamContainer());
-			StreamContainer.streamContainersLock.unlock();
+			//StreamContainer.streamContainersLock.unlock();
 		}
 
 		@Override
