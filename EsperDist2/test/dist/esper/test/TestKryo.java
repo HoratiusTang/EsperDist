@@ -10,14 +10,15 @@ import com.esotericsoftware.kryo.io.Output;
 
 import dist.esper.core.message.NewStreamInstanceMessage;
 import dist.esper.event.Event;
+import dist.esper.event.EventProperty;
 import dist.esper.io.*;
 
 public class TestKryo {
 	public static void main(String[] args){
 		//test1();
 		//test2();
-		//test3();
-		test4();
+		test3();
+		//test4();
 	}
 	
 	public static void test1(){
@@ -57,10 +58,14 @@ public class TestKryo {
 		
 		KryoByteArraySerializer bas=new KryoByteArraySerializer();
 		KryoClassRegister.registerClasses(bas.getKryo());
-		byte[] bytes=bas.toBytes(a);
 		
+		byte[] bytes=bas.toBytes(a);
 		Event b=(Event)bas.fromBytes(bytes);
 		System.out.println(b);
+		
+		bytes=bas.toBytes(a.getProperty("id"));
+		EventProperty ep=(EventProperty)bas.fromBytes(bytes);
+		System.out.println(ep);
 	}
 	
 	public static void test4(){

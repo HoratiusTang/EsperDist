@@ -25,6 +25,9 @@ public class EventPropertySerializer extends Serializer<EventProperty> {
 		ep.name = kryo.readObject(input, String.class);
 		ep.type = kryo.readClassAndObject(input);
 		ep.event = kryo.readObject(input, Event.class);
+		if(ep.event!=null){
+			ep.event.addProperty(ep);
+		}
 		return ep;
 	}
 

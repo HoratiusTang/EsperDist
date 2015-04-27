@@ -29,8 +29,10 @@ public class EventSerializer extends Serializer<Event> {
 		event.setName(name);
 		event.setPropList(propList);
 		for(EventProperty prop: propList){
-			prop.setEvent(event);
-			event.put(prop.getName(), prop.getType());
+			if(prop!=null){
+				prop.setEvent(event);
+				event.put(prop.getName(), prop.getType());
+			}
 		}
 		return event;
 	}

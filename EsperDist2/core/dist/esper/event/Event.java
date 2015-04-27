@@ -41,14 +41,28 @@ public class Event extends TreeMap<String, Object>{
 	}
 	
 	public void addProperty(EventProperty property){
-		property.setEvent(this);
-		propList.add(property);
-		put(property.getName(), property.getType());
+		if(getProperty(property.name)==null){
+			property.setEvent(this);
+			int emptyIndex=-1;
+			for(int i=0;i<propList.size();i++){//find first empty location, for serialzation
+				if(propList.get(i)==null){
+					emptyIndex=i;
+					break;
+				}
+			}
+			if(emptyIndex>=0){
+				propList.set(emptyIndex, property);
+			}
+			else{
+				propList.add(property);
+			}
+			put(property.getName(), property.getType());
+		}
 	}
 	
 	public EventProperty getProperty(String propName){
 		for(EventProperty p: propList){
-			if(p.name.equals(propName)){
+			if(p!=null && p.name.equals(propName)){
 				return p;
 			}
 		}
