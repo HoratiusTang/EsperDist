@@ -64,7 +64,15 @@ public class KryoByteArraySerializer{
 			out.setBuffer(bytes);
 			out.setPosition(offset);
 			kryo.writeClassAndObject(out, obj);
-			return out.position()-offset;
+			int count=out.position()-offset;
+			try{
+				Object obj2=fromBytes(bytes, offset, count);
+				assert(obj2.getClass().getSimpleName().equals(obj.getClass().getSimpleName()));
+			}
+			catch(Exception e2){
+				log.getLogger().error("********* error occur in toBytes()->fromBytes() *********", e2);
+			}
+			return count;
 		}
 		catch(Exception ex){
 			log.getLogger().error("error occur in toBytes(object, byte[], int)", ex);
