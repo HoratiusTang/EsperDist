@@ -875,7 +875,7 @@ public class Kryo {
 		if (originalToCopy != null) originalToCopy.clear(2048);
 
 		if (TRACE) trace("kryo", "Object graph complete.");
-		System.out.println("invoked Kryo.reset()");
+		//System.out.println("invoked Kryo.reset()");
 	}
 
 	/** Returns a deep copy of the object. Serializers for the classes involved must support {@link Serializer#copy(Kryo, Object)}.
