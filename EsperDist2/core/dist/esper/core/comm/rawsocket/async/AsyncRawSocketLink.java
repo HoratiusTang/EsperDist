@@ -54,7 +54,7 @@ public class AsyncRawSocketLink extends RawSocketLink {
 			return 0;
 		}
 		//TODO: add lock
-		int size=sendBuffer.flush();
+		int size=sendBuffer.flush();			
 		return size;
 	}
 	

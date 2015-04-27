@@ -529,7 +529,8 @@ public class Kryo {
 			if (TRACE || (DEBUG && depth == 1)) log("Write", object);
 			getRegistration(object.getClass()).getSerializer().write(this, output, object);
 		} finally {
-			if (--depth == 0 && autoReset) reset();
+			if (--depth == 0 && autoReset) 
+				reset();
 		}
 	}
 
@@ -623,7 +624,8 @@ public class Kryo {
 			if (TRACE || (DEBUG && depth == 1)) log("Write", object);
 			registration.getSerializer().write(this, output, object);
 		} finally {
-			if (--depth == 0 && autoReset) reset();
+			if (--depth == 0 && autoReset) 
+				reset();
 		}
 	}
 
@@ -873,6 +875,7 @@ public class Kryo {
 		if (originalToCopy != null) originalToCopy.clear(2048);
 
 		if (TRACE) trace("kryo", "Object graph complete.");
+		System.out.println("invoked Kryo.reset()");
 	}
 
 	/** Returns a deep copy of the object. Serializers for the classes involved must support {@link Serializer#copy(Kryo, Object)}.
