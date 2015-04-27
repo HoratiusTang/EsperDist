@@ -428,7 +428,7 @@ public class Processor implements ISubscriberObserver{
 						}
 					}
 				}
-				if(count!=propList.size()){
+				if(count!=propList.size()){//Processor might be modified but data is old, ignore.
 					throw new RuntimeException(String.format("count!=propList.size(), count=%d, propList.size()=%d", count, propList.size()));
 				}
 				//assert(count==propList.size());
@@ -451,7 +451,8 @@ public class Processor implements ISubscriberObserver{
 				
 			}
 			catch(Exception ex){
-				log.error("error occur in Processor.updateSubscriberObserver()", ex);
+				log.error("error occur in Processor.updateSubscriberObserver(): %s", ex.getMessage());
+				return;
 			}
 		}
 		long endProcTimestampNS=System.nanoTime();
