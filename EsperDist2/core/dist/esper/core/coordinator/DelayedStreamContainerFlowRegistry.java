@@ -64,7 +64,7 @@ public class DelayedStreamContainerFlowRegistry {
 			//gc
 			cf.containerFlowFlag=null;
 		}
-		StreamContainer.streamContainersLock.writeLock().lock();
+		StreamContainer.streamContainersLock.writeLock().unlock();
 		containerFlowFlagSet.remove(cff.eqlId);
 		//gc
 		cff.containerFlags=null;
