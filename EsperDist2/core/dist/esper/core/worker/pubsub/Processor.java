@@ -402,21 +402,17 @@ public class Processor implements ISubscriberObserver{
 		}
 		else if(events[0] instanceof Object[]){
 			try{
-				if(this.streamContainer instanceof JoinDelayedStreamContainer){
-					System.out.print("");
-				}
-				
 				//might be RawStreamLocation or StreamLocationContainer
-				Stream child=this.streamContainer.getUpStreamByEventName(eventTypeName);
+				Stream upStream=this.streamContainer.getUpStreamByEventName(eventTypeName);
 				
-				if(child==null){
-					throw new RuntimeException("child is null for StreamContainer "+streamContainer.getUniqueName());
+				if(upStream==null){
+					throw new RuntimeException("upStream is null for StreamContainer "+streamContainer.getUniqueName());
 				}
-				if(child.getInternalCompositeEvent()==null){
-					throw new RuntimeException("child.getInternalCompositeEvent() is null for StreamContainer "+streamContainer.getUniqueName());
+				if(upStream.getInternalCompositeEvent()==null){
+					throw new RuntimeException("upStream.getInternalCompositeEvent() is null for StreamContainer "+streamContainer.getUniqueName());
 				}
 				//elementNames>=child.getCompositeEvent().getPropList();
-				List<EventProperty> propList=child.getInternalCompositeEvent().getPropList();
+				List<EventProperty> propList=upStream.getInternalCompositeEvent().getPropList();
 				int[] propIndeces=new int[propList.size()];
 				int count=0;
 				for(int k=0; k<propList.size(); k++){					
@@ -429,7 +425,7 @@ public class Processor implements ISubscriberObserver{
 					}
 				}
 				if(count!=propList.size()){//Processor might be modified but data is old, ignore.
-					throw new RuntimeException(String.format("count!=propList.size(), count=%d, propList.size()=%d", count, propList.size()));
+					throw new RuntimeException(String.format("count!=propList.size(): processorId=%d, count=%d, propList.size()=%d", id, count, propList.size()));
 				}
 				//assert(count==propList.size());
 				

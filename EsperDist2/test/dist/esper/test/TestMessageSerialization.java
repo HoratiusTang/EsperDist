@@ -11,8 +11,8 @@ public class TestMessageSerialization {
 	static KryoByteArraySerializer bas;
 	public static void main(String[] args){
 		String filePath="message/coordinator.0428134916.coordinator-Worker3.NewStreamInstanceMessage.1537.sended.bin";
-		run(new String[]{filePath});
-		//run(args);
+		//run(new String[]{filePath});
+		run(args);
 	}
 	public static void run(String[] args){
 		if(args.length<1){

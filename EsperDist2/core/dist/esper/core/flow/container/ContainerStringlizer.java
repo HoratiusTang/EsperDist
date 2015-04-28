@@ -16,7 +16,8 @@ public class ContainerStringlizer {
 	public static void toStringBuilder(FilterStreamContainer fsc, StringBuilder sw, int indent){
 		sw.append(StringUtil.getSpaces(indent));
 		sw.append(fsc.getClass().getSimpleName());
-		sw.append(String.format("(%d: %d-%s-%s)", fsc.getId(), fsc.getEplId(), 
+		sw.append(String.format("[%d][%s][%d]:%s-%s", fsc.getId(), 
+				fsc.getUniqueName()==null?"null":fsc.getUniqueName(), fsc.getEplId(), 
 				fsc.getDirectReuseStreamMapComparisonResultEplIdList().toString(),
 				fsc.getIndirectReuseStreamMapComparisonResultEplIdList().toString()));
 		if(fsc.getWorkerId()!=null){
@@ -45,7 +46,8 @@ public class ContainerStringlizer {
 	public static void toStringBuilder(FilterDelayedStreamContainer fcsc, StringBuilder sw, int indent){
 		sw.append(StringUtil.getSpaces(indent));
 		sw.append(fcsc.getClass().getSimpleName());
-		sw.append(String.format("(%d: %d-%s-%s)", fcsc.getId(), fcsc.getEplId(), 
+		sw.append(String.format("[%d][%s][%d]:%s-%s", fcsc.getId(), 
+				fcsc.getUniqueName()==null?"null":fcsc.getUniqueName(), fcsc.getEplId(), 
 				fcsc.getDirectReuseStreamMapComparisonResultEplIdList().toString(),
 				fcsc.getIndirectReuseStreamMapComparisonResultEplIdList().toString()));
 		if(fcsc.getWorkerId()!=null){
@@ -72,7 +74,8 @@ public class ContainerStringlizer {
 	public static void toStringBuilder(JoinStreamContainer jsc, StringBuilder sw, int indent){
 		sw.append(StringUtil.getSpaces(indent));
 		sw.append(jsc.getClass().getSimpleName());
-		sw.append(String.format("(%d: %d-%s-%s)", jsc.getId(), jsc.getEplId(), 
+		sw.append(String.format("[%d][%s][%d]:%s-%s", jsc.getId(), 
+				jsc.getUniqueName()==null?"null":jsc.getUniqueName(), jsc.getEplId(), 
 				jsc.getDirectReuseStreamMapComparisonResultEplIdList().toString(),
 				jsc.getIndirectReuseStreamMapComparisonResultEplIdList().toString()));
 		if(jsc.getWorkerId()!=null){
@@ -100,7 +103,8 @@ public class ContainerStringlizer {
 	public static void toStringBuilder(JoinDelayedStreamContainer jcsc, StringBuilder sw, int indent){
 		sw.append(StringUtil.getSpaces(indent));
 		sw.append(jcsc.getClass().getSimpleName());
-		sw.append(String.format("(%d: %d-%s-%s)", jcsc.getId(), jcsc.getEplId(), 
+		sw.append(String.format("[%d][%s][%d]:%s-%s", jcsc.getId(), 
+				jcsc.getUniqueName()==null?"null":jcsc.getUniqueName(), jcsc.getEplId(), 
 				jcsc.getDirectReuseStreamMapComparisonResultEplIdList().toString(),
 				jcsc.getIndirectReuseStreamMapComparisonResultEplIdList().toString()));
 		if(jcsc.getWorkerId()!=null){
@@ -126,7 +130,8 @@ public class ContainerStringlizer {
 	public static void toStringBuilder(RootStreamContainer rsc, StringBuilder sw, int indent){
 		sw.append(StringUtil.getSpaces(indent));
 		sw.append(rsc.getClass().getSimpleName());
-		sw.append(String.format("(%d: %d-%s-%s)", rsc.getId(), rsc.getEplId(), 
+		sw.append(String.format("[%d][%s][%d]:%s-%s", rsc.getId(), 
+				rsc.getUniqueName()==null?"null":rsc.getUniqueName(), rsc.getEplId(), 
 				rsc.getDirectReuseStreamMapComparisonResultEplIdList().toString(),
 				rsc.getIndirectReuseStreamMapComparisonResultEplIdList().toString()));
 		if(rsc.getWorkerId()!=null){
@@ -150,7 +155,8 @@ public class ContainerStringlizer {
 	public static void toStringBuilder(PatternStreamContainer psc, StringBuilder sw, int indent){
 		sw.append(StringUtil.getSpaces(indent));
 		sw.append(psc.getClass().getSimpleName());
-		sw.append(String.format("(%d: %d-%s-%s)", psc.getId(), psc.getEplId(), 
+		sw.append(String.format("[%d][%s][%d]:%s-%s", psc.getId(), 
+				psc.getUniqueName()==null?"null":psc.getUniqueName(), psc.getEplId(), 
 				psc.getDirectReuseStreamMapComparisonResultEplIdList().toString(),
 				psc.getIndirectReuseStreamMapComparisonResultEplIdList().toString()));
 		if(psc.getWorkerId()!=null){
