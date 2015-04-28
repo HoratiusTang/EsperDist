@@ -137,6 +137,8 @@ public class Processor implements ISubscriberObserver{
 	public void modify(DerivedStreamContainer newStreamContainer){
 		assert(this.state==State.STOPPED);
 		this.streamContainer=newStreamContainer;
+		log.info("Processor %d for %s %s is modified", id, 
+				streamContainer.getClass().getSimpleName(), streamContainer.getUniqueName());
 		init();
 	}
 	
@@ -406,7 +408,9 @@ public class Processor implements ISubscriberObserver{
 				Stream upStream=this.streamContainer.getUpStreamByEventName(eventTypeName);
 				
 				if(upStream==null){
-					throw new RuntimeException("upStream is null for StreamContainer "+streamContainer.getUniqueName());
+					throw new RuntimeException(
+							String.format("upStream %s with internal name '%s' is null for %s %s", 
+								streamName, eventTypeName, streamContainer.getClass().getSimpleName(), streamContainer.getUniqueName()));
 				}
 				if(upStream.getInternalCompositeEvent()==null){
 					throw new RuntimeException("upStream.getInternalCompositeEvent() is null for StreamContainer "+streamContainer.getUniqueName());
@@ -425,7 +429,8 @@ public class Processor implements ISubscriberObserver{
 					}
 				}
 				if(count!=propList.size()){//Processor might be modified but data is old, ignore.
-					throw new RuntimeException(String.format("count!=propList.size(): processorId=%d, count=%d, propList.size()=%d", id, count, propList.size()));
+					throw new RuntimeException(String.format("count!=propList.size(): upStream.name=%s, streamContainer.name=%s, count=%d, propList.size()=%d", 
+							streamName, streamContainer.getUniqueName(), count, propList.size()));
 				}
 				//assert(count==propList.size());
 				

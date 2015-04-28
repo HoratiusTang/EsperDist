@@ -395,16 +395,7 @@ public class Coordinator {
 	}
 	
 	public void submitStreamContainerToWorker(StreamContainer sc){		
-		Link link=null;
-//		if(sc.getWorkerId()==null){
-//			System.out.println("------------------------ sc.getWorkerId() is null");
-//		}
-//		try{
-			link=getWorkerLink(sc.getWorkerId().getId());
-//		}
-//		catch(Exception ex){
-//			log.error(ex.getMessage());
-//		}
+		Link link=getWorkerLink(sc.getWorkerId().getId());
 		DerivedStreamContainer psc=(DerivedStreamContainer)sc;
 		
 		if(psc.isNew()){

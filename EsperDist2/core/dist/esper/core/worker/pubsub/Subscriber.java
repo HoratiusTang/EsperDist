@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import dist.esper.core.comm.Link;
 import dist.esper.core.comm.LinkManager;
@@ -29,15 +30,16 @@ public class Subscriber{
 	
 	State state=State.NONE;
 	WorkerId targetId=null;
-	String streamName=null;
-	String internalEventTypeName=null;	
-	List<String> elementNameList=null;	
+	volatile String streamName=null;
+	volatile String internalEventTypeName=null;	
+	volatile List<String> elementNameList=null;	
 	ISubscriberObserver proc=null;
 	SubscribeRunnable runner=new SubscribeRunnable();
 	LinkHandler linkHandler=new LinkHandler();
 	InstanceStat instanceStat;
 	ProcessingScheduler2 procScheduler;
 	long windowTimeUS=0;
+	ReentrantReadWriteLock subModifyLock=new ReentrantReadWriteLock();
 	static AtomicLong UID=new AtomicLong(0L);
 	
 	class LinkHandler implements Link.Listener{
@@ -101,9 +103,16 @@ public class Subscriber{
 	
 	public void modify(String newStreamEventTypeName, List<String> newElementNameList){
 		assert(this.state==State.STOPPED);
+		log.info("Subscriber %d for upStream %s is modified: old internalEventTypeName=%s, new internalEventTypeName=%s, "
+				+ "old elementNameList.length=%d, new elementNameList.length=%d",
+				id, streamName, this.internalEventTypeName, newStreamEventTypeName,
+				this.elementNameList.size(), newElementNameList.size());
+		subModifyLock.writeLock().lock();
 		this.internalEventTypeName=newStreamEventTypeName;
 		this.elementNameList=newElementNameList;
 		this.state=State.INITTED;
+		subModifyLock.writeLock().unlock();
+		
 	}
 	
 	public void init(){
@@ -179,7 +188,9 @@ public class Subscriber{
 			return;
 		}
 		if(proc!=null){
+			subModifyLock.readLock().lock();
 			procScheduler.sumbit(this.id, streamName, elementNames, internalEventTypeName, events, proc);
+			subModifyLock.readLock().unlock();
 		}
 	}
 	

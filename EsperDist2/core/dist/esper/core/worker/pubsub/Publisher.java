@@ -18,11 +18,11 @@ public class Publisher implements IProcessorObserver{
 	String workerId;
 	long id;
 	Link link=null;
-	String streamName;
-	ReentrantReadWriteLock rwLock=new ReentrantReadWriteLock();
-	String[] selectElementNames;
+	volatile String streamName;	
+	volatile String[] selectElementNames;
 	InstanceStat instanceStat;
 	PublishDelegator pubDelegator;
+	ReentrantReadWriteLock pubModifyLock=new ReentrantReadWriteLock();
 	static AtomicLong UID=new AtomicLong(0L);
 	
 	public boolean isLocalPublisher(){
@@ -65,6 +65,10 @@ public class Publisher implements IProcessorObserver{
 				newSelectElementNameList.add(oldName);
 			}
 		}
+		log.info("Publisher %d for StreamContainer %s from %s to %s is modified: "
+				+ "old selectElementNames.length=%d, new selectElementNames.length=%d",
+				id, streamName, link.getMyId().getId(), link.getTargetId().getId(),
+				selectElementNames.length, newSelectElementNameList.size());
 		this.setSelectElementNames(newSelectElementNameList);
 	}
 
@@ -101,10 +105,10 @@ public class Publisher implements IProcessorObserver{
 	}
 	
 	public void setSelectElementNames(List<String> selectElementNameList) {
-		rwLock.writeLock().lock();{
+		pubModifyLock.writeLock().lock();{
 			this.selectElementNames=new String[selectElementNameList.size()];
 			this.selectElementNames = selectElementNameList.toArray(this.selectElementNames);
-		}rwLock.writeLock().unlock();
+		}pubModifyLock.writeLock().unlock();
 	}
 	
 	public InstanceStat getInstanceStat() {
@@ -124,7 +128,7 @@ public class Publisher implements IProcessorObserver{
 		Object[][] records=new Object[newEvents.length][];
 		DataMessage dataMsg=null;
 		try{
-			rwLock.readLock().lock();
+			pubModifyLock.readLock().lock();
 			for(int i=0; i<newEvents.length; i++){
 				records[i]=new Object[selectElementNames.length];
 				for(int j=0; j<selectElementNames.length; j++){
@@ -140,7 +144,7 @@ public class Publisher implements IProcessorObserver{
 			return;
 		}
 		finally{
-			rwLock.readLock().unlock();
+			pubModifyLock.readLock().unlock();
 		}
 		long endSerialTimeNS=System.nanoTime();
 		long startSendTimeNS=endSerialTimeNS;
