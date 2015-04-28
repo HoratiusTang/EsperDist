@@ -18,7 +18,8 @@ public class KryoByteArraySerializer{
 	Kryo writeKryo;
 	Output output;
 	byte[] buffer;
-	ReentrantLock lock=new ReentrantLock();
+	ReentrantLock readLock=new ReentrantLock();
+	ReentrantLock writeLock=new ReentrantLock();
 	
 	public KryoByteArraySerializer(){
 		this(DEFAULT_BASE_SIZE);
@@ -47,11 +48,11 @@ public class KryoByteArraySerializer{
 	}
 	
 	public byte[] toBytes(Object obj){
-		lock.lock();
+		writeLock.lock();
 		while(true){
 			try{
-				writeKryo.reset();
 				output.setBuffer(buffer);
+				writeKryo.reset();
 				writeKryo.writeClassAndObject(output, obj);
 				try{
 					Object obj2=fromBytes(buffer, 0, output.position());
@@ -68,7 +69,7 @@ public class KryoByteArraySerializer{
 				buffer=new byte[buffer.length+baseSize];
 			}
 		}
-		lock.unlock();
+		writeLock.unlock();
 		byte[] copy=Arrays.copyOf(buffer, output.position());
 		return copy;
 	}
@@ -80,9 +81,9 @@ public class KryoByteArraySerializer{
 	public int toBytes(Object obj, byte[] bytes, int offset){
 		Output out=new Output();
 		try{
-			writeKryo.reset();
 			out.setBuffer(bytes);
 			out.setPosition(offset);
+			writeKryo.reset();			
 			writeKryo.writeClassAndObject(out, obj);
 			int count=out.position()-offset;
 			try{
@@ -103,7 +104,10 @@ public class KryoByteArraySerializer{
 	public Object fromBytes(byte[] bytes, int offset, int count){
 		Input input=new Input();
 		input.setBuffer(bytes, offset, count);
+		readLock.lock();
+		readKryo.reset();
 		Object obj=readKryo.readClassAndObject(input);
+		readLock.unlock();
 		return obj;
 	}
 
