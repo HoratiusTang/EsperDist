@@ -122,11 +122,11 @@ public class GlobalStat implements Serializable{
 			kryo.writeClassAndObject(output, gs.gateWorkerStatMap);
 			kryo.writeClassAndObject(output, gs.rawStreamStatMap);
 			kryo.writeClassAndObject(output, gs.containerStatMap);
-			StreamContainer.streamContainersLock.lock();
+			StreamContainer.streamContainersLock.readLock().lock();
 			kryo.writeClassAndObject(output, gs.containerTreeMap);
 			kryo.writeClassAndObject(output, gs.containerNameMap);
 			kryo.writeClassAndObject(output, gs.containerIdMap);
-			StreamContainer.streamContainersLock.unlock();
+			StreamContainer.streamContainersLock.readLock().unlock();
 		}
 
 		@Override

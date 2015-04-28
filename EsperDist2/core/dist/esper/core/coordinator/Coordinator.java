@@ -257,10 +257,10 @@ public class Coordinator {
 			druList.add(dru);
 		}		
 		int index=costEval.chooseBestIndex(druList);
-		StreamContainer.streamContainersLock.lock();
+		StreamContainer.streamContainersLock.readLock().lock();
 		StreamContainerFlow sct=streamContainerFlowBuilder.buildStreamContainerFlow(sfList.get(index), druList.get(index));
 		this.submit(sct);
-		StreamContainer.streamContainersLock.unlock();
+		StreamContainer.streamContainersLock.readLock().unlock();
 		return eplId;
 	}
 	

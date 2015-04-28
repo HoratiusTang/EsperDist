@@ -57,12 +57,14 @@ public class DelayedStreamContainerFlowRegistry {
 	
 	public void registStreamContainerFlow(ContainerFlowFlag cff){
 		log.debug("regist StreamContainerFlow with eqlId="+cff.eqlId);
+		StreamContainer.streamContainersLock.writeLock().lock();
 		for(ContainerFlag cf: cff.containerFlags){
 			containerFlagMap.remove(cf.getContainerName());
 			coordinator.addToExistedStreamContainer(cf.container);
 			//gc
 			cf.containerFlowFlag=null;
 		}
+		StreamContainer.streamContainersLock.writeLock().lock();
 		containerFlowFlagSet.remove(cff.eqlId);
 		//gc
 		cff.containerFlags=null;
