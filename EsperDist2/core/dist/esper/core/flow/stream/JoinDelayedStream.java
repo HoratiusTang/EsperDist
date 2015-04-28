@@ -2,6 +2,7 @@ package dist.esper.core.flow.stream;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +16,7 @@ import dist.esper.epl.expr.util.BooleanExpressionComparisonResult;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult.BooleanExpressionComparisonPair;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult.State;
 import dist.esper.epl.expr.util.EventOrPropertySpecReferenceDumper;
+import dist.esper.event.Event;
 
 /**
  * the stream which performs a delayed filter/join,
@@ -104,6 +106,11 @@ public class JoinDelayedStream extends JoinStream{
 //			String childEventName) {
 //		return agent.getChildStreamLocationByEventName(childEventName);//ATT
 //	}
+	
+	@Override
+	public void dumpEvents(Collection<Event> events) {
+		agent.dumpEvents(events);
+	}
 	
 	@Override
 	public void dumpEventAlias(Set<EventAlias> eaSet) {

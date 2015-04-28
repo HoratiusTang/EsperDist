@@ -2,6 +2,7 @@ package dist.esper.core.flow.container;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +18,7 @@ import dist.esper.epl.expr.TimePeriod;
 import dist.esper.epl.expr.ViewSpecification;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult;
 import dist.esper.epl.expr.util.DeepReplaceFactory;
+import dist.esper.event.Event;
 
 /**
  * the container contains @JoinStream(s),
@@ -141,6 +143,13 @@ public class JoinStreamContainer extends DerivedStreamContainer{
 	public void dumpOwnBooleanExpressions(
 			List<AbstractBooleanExpression> ownCondList) {
 		ownCondList.addAll(joinExprList);
+	}
+	
+	@Override
+	public void dumpEvents(Collection<Event> events) {
+		for(Stream child: upContainerList){
+			((DerivedStreamContainer)child).dumpEvents(events);
+		}
 	}
 
 	@Override

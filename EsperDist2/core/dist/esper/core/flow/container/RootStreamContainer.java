@@ -2,6 +2,7 @@ package dist.esper.core.flow.container;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +17,7 @@ import dist.esper.epl.expr.RelationTypeEnum;
 import dist.esper.epl.expr.ViewSpecification;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult;
 import dist.esper.epl.expr.util.DeepReplaceFactory;
+import dist.esper.event.Event;
 
 /**
  * the container contains @RootStream(s),
@@ -108,6 +110,10 @@ public class RootStreamContainer extends DerivedStreamContainer{
 	public void dumpOwnBooleanExpressions(
 			List<AbstractBooleanExpression> ownCondList) {
 		ownCondList.addAll(whereExprList);
+	}
+	@Override
+	public void dumpEvents(Collection<Event> events) {
+		((DerivedStreamContainer)upContainer).dumpEvents(events);
 	}
 	@Override
 	public void dumpEventAlias(Set<EventAlias> eaSet) {

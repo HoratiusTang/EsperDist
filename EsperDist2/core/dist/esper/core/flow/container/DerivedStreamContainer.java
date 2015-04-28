@@ -3,6 +3,7 @@ package dist.esper.core.flow.container;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +24,7 @@ import dist.esper.epl.expr.util.DeepReplaceFactory;
 import dist.esper.epl.expr.util.ExpressionComparator;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult.State;
 import dist.esper.epl.expr.util.ExpressionComparator.CompareStrategy;
+import dist.esper.event.Event;
 import dist.esper.util.CollectionUtils;
 import dist.esper.util.ITuple3D;
 import dist.esper.util.Tuple2D;
@@ -207,6 +209,13 @@ public abstract class DerivedStreamContainer extends StreamContainer {
 			}
 		}
 		return this;
+	}
+	
+	public abstract void dumpEvents(Collection<Event> events);
+	public Collection<Event> dumpEvents(){
+		List<Event> events=new ArrayList<Event>(4);
+		this.dumpEvents(events);
+		return events;
 	}
 	
 	public abstract void dumpEventAlias(Set<EventAlias> eaSet);

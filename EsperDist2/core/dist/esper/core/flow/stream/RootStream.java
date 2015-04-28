@@ -2,6 +2,7 @@ package dist.esper.core.flow.stream;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -9,6 +10,7 @@ import dist.esper.epl.expr.AbstractBooleanExpression;
 import dist.esper.epl.expr.EventAlias;
 import dist.esper.epl.expr.EventOrPropertySpecification;
 import dist.esper.epl.expr.ViewSpecification;
+import dist.esper.event.Event;
 
 /**
  * the final stream in @StreamTree.
@@ -87,6 +89,11 @@ public class RootStream extends DerivedStream{
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public void dumpEvents(Collection<Event> events) {
+		((DerivedStream)upStream).dumpEvents(events);
 	}
 
 	@Override

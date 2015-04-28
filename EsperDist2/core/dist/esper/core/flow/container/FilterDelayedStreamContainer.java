@@ -2,6 +2,7 @@ package dist.esper.core.flow.container;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +17,7 @@ import dist.esper.epl.expr.RelationTypeEnum;
 import dist.esper.epl.expr.SelectClauseExpressionElement;
 import dist.esper.epl.expr.ViewSpecification;
 import dist.esper.epl.expr.util.DeepReplaceFactory;
+import dist.esper.event.Event;
 
 /**
  * the container contains @FilterDelayedStream(s),
@@ -158,6 +160,11 @@ public class FilterDelayedStreamContainer extends
 		for(AbstractBooleanExpression extraFilterCond: this.extraFilterCondList){
 			extraFilterCond.dumpConjunctionExpressions(ownCondList);
 		}
+	}
+	
+	@Override
+	public void dumpEvents(Collection<Event> events) {
+		agent.dumpEvents(events);
 	}
 	
 	@Override

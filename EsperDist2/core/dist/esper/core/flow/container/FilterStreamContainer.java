@@ -1,6 +1,7 @@
 package dist.esper.core.flow.container;
 
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +15,7 @@ import dist.esper.epl.expr.EventAlias;
 import dist.esper.epl.expr.EventSpecification;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult;
 import dist.esper.epl.expr.util.DeepReplaceFactory;
+import dist.esper.event.Event;
 
 /**
  * the container contains @FilterStream(s),
@@ -119,6 +121,11 @@ public class FilterStreamContainer extends BaseStreamContainer{
 		if(this.filterExpr!=null){
 			filterExpr.dumpConjunctionExpressions(ownCondList);
 		}
+	}
+	
+	@Override
+	public void dumpEvents(Collection<Event> events) {
+		events.add(this.rawStream.getEvent());
 	}
 
 	@Override

@@ -89,12 +89,12 @@ public class CoordinatorStatReportor implements Runnable{
 	public void refreshGlobalStat(){
 		gs.setEventMap(ServiceManager.getDefaultInstance().getEventRegistry().getEventMap());
 		gs.setWorkerIdMap(ServiceManager.getDefaultInstance().getWorkerIdMap());
-		gs.setRawStreamStatMap(coordinator.costEval.rawStats.getRawStreamStatMap());
-		//gs.setContainerNameMap(coordinator.costEval.containerNameMap);
+		gs.setRawStreamStatMap(coordinator.costEval.rawStats.getRawStreamStatMap());		
 		gs.setContainerStatMap(coordinator.costEval.containerStatMap);
 		gs.setProcWorkerStatMap(coordinator.costEval.procWorkerStatMap);
 		gs.setGateWorkerStatMap(coordinator.costEval.gateWorkerStatMap);
 		gs.setContainerTreeMap(coordinator.containerTreeMap);
+		//gs.setContainerNameMap(coordinator.costEval.containerNameMap);
 		//gs.setContainerIdMap(coordinator.containerIdMap);
 		
 		this.containerNameMap.putAll(coordinator.containerNameMap);

@@ -12,6 +12,7 @@ import dist.esper.core.flow.container.*;
 import dist.esper.core.flow.stream.*;
 import dist.esper.core.flow.stream.DerivedStream.ContainerAndMapAndBoolComparisonResult;
 import dist.esper.core.flow.stream.DerivedStream.ContainerAndMapAndBoolComparisonResultOfAgent;
+import dist.esper.core.util.ServiceManager;
 import dist.esper.epl.expr.*;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult.BooleanExpressionComparisonPair;
@@ -25,9 +26,13 @@ public class CostEvaluator {
 	static Logger2 log=Logger2.getLogger(CostEvaluator.class);
 	public static int INDIRECT_REUSE_MAX_COUNT=3;
 	public static int NEW_MAX_COUNT=2;
+	public static double SMOOTH_PARAM=0.5d;
 	public Map<String, WorkerStat> procWorkerStatMap=new ConcurrentSkipListMap<String, WorkerStat>();
 	public Map<String, WorkerStat> gateWorkerStatMap=new ConcurrentSkipListMap<String, WorkerStat>();
 	public Map<String, WorkerStat> allWorkerStatMap=new ConcurrentSkipListMap<String, WorkerStat>();
+	public Map<String, WorkerStat> procWorkerLastStatMap=new ConcurrentSkipListMap<String, WorkerStat>();
+	public Map<String, WorkerStat> gateWorkerLastStatMap=new ConcurrentSkipListMap<String, WorkerStat>();
+	public Map<String, WorkerStat> allWorkerLastStatMap=new ConcurrentSkipListMap<String, WorkerStat>();
 	public Map<String, InstanceStat> containerStatMap=new ConcurrentSkipListMap<String, InstanceStat>();
 	public Map<String, DerivedStreamContainer> containerNameMap;
 	FilterStats filterStats;
@@ -92,17 +97,57 @@ public class CostEvaluator {
 		}
 		return insStat;
 	}
+	
+	private void smoothenWorkerStat(Map<String, WorkerStat> wsMap, WorkerStat ws){
+		ConcurrentSkipListMap<String,WorkerStat> wsMap2=(ConcurrentSkipListMap<String,WorkerStat>)wsMap;
+		WorkerStat oldWS=wsMap2.putIfAbsent(ws.id, ws);
+		if(oldWS!=null){
+			oldWS.cpuUsage = (1.0d - SMOOTH_PARAM) * oldWS.cpuUsage + SMOOTH_PARAM * ws.cpuUsage;
+			oldWS.bwUsageUS = (1.0d - SMOOTH_PARAM) * oldWS.bwUsageUS + SMOOTH_PARAM * ws.bwUsageUS;
+			oldWS.memFree = (long)((1.0d - SMOOTH_PARAM) * oldWS.memFree + SMOOTH_PARAM * ws.memFree);
+			oldWS.memUsed = (long)((1.0d - SMOOTH_PARAM) * oldWS.memUsed + SMOOTH_PARAM * ws.memUsed);
+		}
+	}
+	
+	public static boolean checkWorkerOverload(WorkerStat ws){
+		return ws.cpuUsage>=0.9 || ((double)ws.bwUsageUS/ServiceManager.getOutputIntervalUS())>=0.9 ||
+				(double)ws.memFree/(double)ws.memUsed <= 1.0/8.0;
+	}
+	
+	public boolean isWorkerOverload(String workerId){
+		WorkerStat ws=allWorkerStatMap.get(workerId);
+		if(ws!=null){
+			return checkWorkerOverload(ws);
+		}
+		return false;
+	}
+	
+	public int getOverloadedWorkerCount(){
+		int count=0;
+		for(WorkerStat ws: allWorkerStatMap.values()){
+			if(checkWorkerOverload(ws)){
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	public double getOverloadedWorkerRatio(){
+		return (double)getOverloadedWorkerCount()/(double)allWorkerStatMap.size();
+	}
 
 	public void updateWorkerStat(WorkerStat ws){
 		if(ws.isGateway()){
-			gateWorkerStatMap.put(ws.id, ws);
-			procWorkerStatMap.remove(ws.id);
+			gateWorkerLastStatMap.put(ws.id, ws);
+			smoothenWorkerStat(gateWorkerStatMap, ws);
 		}
 		else{
-			procWorkerStatMap.put(ws.id, ws);
-			gateWorkerStatMap.remove(ws.id);
+			procWorkerLastStatMap.put(ws.id, ws);
+			smoothenWorkerStat(procWorkerStatMap, ws);
 		}
-		allWorkerStatMap.put(ws.id, ws);
+		allWorkerLastStatMap.put(ws.id, ws);
+		smoothenWorkerStat(allWorkerStatMap, ws);
+		
 		ws.getInsStatsLock().lock();
 		for(InstanceStat insStat: ws.insStats){
 			containerStatMap.put(insStat.uniqueName, insStat);
@@ -402,10 +447,12 @@ public class CostEvaluator {
 		//random choose
 		int n=workerStatMap.size();
 		int m=NEW_MAX_COUNT;
-		for(String workerId: workerStatMap.keySet()){
-			if(!workerIdSet.contains(workerId) && !ds.hasDirectOrIndirectReusableContainerOnWorker(workerId)){
+		for(WorkerStat ws: workerStatMap.values()){
+			if(!workerIdSet.contains(ws.id) && 
+				!ds.hasDirectOrIndirectReusableContainerOnWorker(ws.id) && 
+				!checkWorkerOverload(ws)){
 				if(Math.random() < (double)m/(double)n){
-					workerIdSet.add(workerId);
+					workerIdSet.add(ws.id);
 					m--;
 				}
 				if(m<=0)
@@ -424,16 +471,19 @@ public class CostEvaluator {
 			DeltaResourceUsage[] reusableDRUs=new DeltaResourceUsage[fsl.getDirectReusableContainerMapComparisonResultList().size()];
 			for(int i=0; i<fsl.getDirectReusableContainerMapComparisonResultList().size(); i++){
 				ContainerAndMapAndBoolComparisonResult cmcr=fsl.getDirectReusableContainerMapComparisonResultList().get(i);
-				reusableDRUs[i]=computeReusableDeltaResourceUsageRecursively(fsl, cmcr);
-				//FIXME: add all now
-				druList.add(reusableDRUs[i]);
+				if(!isWorkerOverload(cmcr.getFirst().getWorkerId().getId())){
+					reusableDRUs[i]=computeReusableDeltaResourceUsageRecursively(fsl, cmcr);
+					//FIXME: add all now
+					druList.add(reusableDRUs[i]);
+				}
 			}
 		}
 		if(fsl.getIndirectReusableContainerMapComparisonResultList().size()>0){
 			DeltaResourceUsage[] agentDRUs=new DeltaResourceUsage[fsl.getIndirectReusableContainerMapComparisonResultList().size()];
 			for(int i=0; i<fsl.getIndirectReusableContainerMapComparisonResultList().size(); i++){
 				ContainerAndMapAndBoolComparisonResult cmcr=fsl.getIndirectReusableContainerMapComparisonResultList().get(i);
-				if(cmcr.getFirst() instanceof FilterDelayedStreamContainer){
+				if(cmcr.getFirst() instanceof FilterDelayedStreamContainer ||
+					isWorkerOverload(cmcr.getFirst().getWorkerId().getId())){
 					agentDRUs[i]=null;
 				}
 				else{
@@ -493,16 +543,19 @@ public class CostEvaluator {
 			DeltaResourceUsage[] reusableDRUs=new DeltaResourceUsage[jsl.getDirectReusableContainerMapComparisonResultList().size()];
 			for(int i=0; i<jsl.getDirectReusableContainerMapComparisonResultList().size(); i++){
 				ContainerAndMapAndBoolComparisonResult cmcr=jsl.getDirectReusableContainerMapComparisonResultList().get(i);
-				reusableDRUs[i]=computeReusableDeltaResourceUsageRecursively(jsl, cmcr);
-				//FIXME: add all now
-				druList.add(reusableDRUs[i]);
+				if(!isWorkerOverload(cmcr.getFirst().getWorkerId().getId())){
+					reusableDRUs[i]=computeReusableDeltaResourceUsageRecursively(jsl, cmcr);
+					//FIXME: add all now
+					druList.add(reusableDRUs[i]);
+				}
 			}			
 		}
 		if(jsl.getIndirectReusableContainerMapComparisonResultList().size()>0){			
 			DeltaResourceUsage[] agentDRUs=new DeltaResourceUsage[jsl.getIndirectReusableContainerMapComparisonResultList().size()];
 			for(int i=0; i<jsl.getIndirectReusableContainerMapComparisonResultList().size(); i++){
 				ContainerAndMapAndBoolComparisonResult cmcr=jsl.getIndirectReusableContainerMapComparisonResultList().get(i);
-				if(cmcr.getFirst() instanceof JoinDelayedStreamContainer){
+				if(cmcr.getFirst() instanceof JoinDelayedStreamContainer ||
+					isWorkerOverload(cmcr.getFirst().getWorkerId().getId())){
 					agentDRUs[i]=null;
 				}
 				else{
@@ -575,9 +628,11 @@ public class CostEvaluator {
 			DeltaResourceUsage[] reusableDRUs=new DeltaResourceUsage[rsl.getDirectReusableContainerMapComparisonResultList().size()];
 			for(int i=0; i<rsl.getDirectReusableContainerMapComparisonResultList().size(); i++){
 				ContainerAndMapAndBoolComparisonResult cmcr=rsl.getDirectReusableContainerMapComparisonResultList().get(i);
-				reusableDRUs[i]=computeReusableDeltaResourceUsageRecursively(rsl, cmcr);
-				//FIXME: add all now
-				druList.add(reusableDRUs[i]);
+				if(!isWorkerOverload(cmcr.getFirst().getWorkerId().getId())){
+					reusableDRUs[i]=computeReusableDeltaResourceUsageRecursively(rsl, cmcr);
+					//FIXME: add all now
+					druList.add(reusableDRUs[i]);
+				}
 			}			
 		}
 //		else{

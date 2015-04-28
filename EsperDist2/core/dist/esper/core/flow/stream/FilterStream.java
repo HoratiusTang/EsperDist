@@ -1,6 +1,7 @@
 package dist.esper.core.flow.stream;
 
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -8,6 +9,7 @@ import dist.esper.epl.expr.AbstractBooleanExpression;
 import dist.esper.epl.expr.EventAlias;
 import dist.esper.epl.expr.EventOrPropertySpecification;
 import dist.esper.epl.expr.EventSpecification;
+import dist.esper.event.Event;
 
 /**
  * the stream presents a filter stream in 'FROM' clause,
@@ -83,6 +85,11 @@ public class FilterStream extends BaseStream{
 	}
 	
 	@Override
+	public void dumpEvents(Collection<Event> events) {
+		events.add(this.rawStream.getEvent());
+	}
+	
+	@Override
 	public void dumpEventAlias(Set<EventAlias> eaSet) {
 		eaSet.add(this.getEventSpec().getEventAlias());
 	}
@@ -108,5 +115,5 @@ public class FilterStream extends BaseStream{
 		if(this.filterExpr!=null){
 			filterExpr.dumpConjunctionExpressions(ownCondList);
 		}
-	}
+	}	
 }

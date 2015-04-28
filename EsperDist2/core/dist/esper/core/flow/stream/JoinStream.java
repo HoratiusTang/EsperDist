@@ -2,6 +2,7 @@ package dist.esper.core.flow.stream;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import dist.esper.epl.expr.EventAlias;
 import dist.esper.epl.expr.EventOrPropertySpecification;
 import dist.esper.epl.expr.TimePeriod;
 import dist.esper.epl.expr.ViewSpecification;
+import dist.esper.event.Event;
 
 /**
  * the join stream in @StreamTree
@@ -84,6 +86,13 @@ public class JoinStream extends DerivedStream {
 			count+=child.getRawStreamCount();
 		}
 		return count;
+	}
+	
+	@Override
+	public void dumpEvents(Collection<Event> events) {
+		for(Stream child: upStreamList){
+			((DerivedStream)child).dumpEvents(events);
+		}
 	}
 	
 	@Override

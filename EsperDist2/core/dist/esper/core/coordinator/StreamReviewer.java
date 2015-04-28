@@ -11,6 +11,7 @@ import dist.esper.epl.expr.AbstractBooleanExpression;
 import dist.esper.epl.expr.EventAlias;
 import dist.esper.epl.expr.util.*;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult.*;
+import dist.esper.event.Event;
 import dist.esper.util.CollectionUtils;
 import dist.esper.util.Logger2;
 import dist.esper.util.Tuple2D;
@@ -25,6 +26,7 @@ public class StreamReviewer {
 	RootStream rootStream;
 	ExpressionComparator exprComp=new ExpressionComparator();
 	BooleanExpressionComparator beComp=new BooleanExpressionComparator(exprComp);
+	StreamAndContainerEventsComparator eventsComparator=new StreamAndContainerEventsComparator();
 
 	public StreamReviewer(
 			List<FilterStreamContainer> existedFslcList,
@@ -103,7 +105,8 @@ public class StreamReviewer {
 			}
 		}
 		else{//cr=null
-			if(fsl.getEventSpec().getEventAlias().getEvent()==fsc.getEventSpec().getEventAlias().getEvent()){
+			//if(fsl.getEventSpec().getEventAlias().getEvent()==fsc.getEventSpec().getEventAlias().getEvent()){
+			if(fsl.getRawStream().getEvent()==fsc.getRawStream().getEvent()){
 				Map<EventAlias, EventAlias> fscToFslMap=new HashMap<EventAlias, EventAlias>(1);
 				fscToFslMap.put(fsc.getEventSpec().getEventAlias(), fsl.getEventSpec().getEventAlias());
 				exprComp.setEventAliasMap(fscToFslMap);				
@@ -144,22 +147,22 @@ public class StreamReviewer {
 		}
 		return condList;
 	}
-	public BooleanExpressionComparisonResult checkFsAndFdsc(FilterStream fsl, FilterDelayedStreamContainer fcsc, long parentContainerEplId,
+	public BooleanExpressionComparisonResult checkFsAndFdsc(FilterStream fsl, FilterDelayedStreamContainer fdsc, long parentContainerEplId,
 			Map<EventAlias, EventAlias> parentContainerMap){
-		BooleanExpressionComparisonResult cr=this.getBoolComparisonResult(fsl, fcsc);
+		BooleanExpressionComparisonResult cr=this.getBoolComparisonResult(fsl, fdsc);
 		if(cr!=null){
 			if(cr.getTotalState()==State.NONE){
 				return cr;
 			}
 			else{
-				StreamAndMapAndBoolComparisonResult lm=fcsc.getDirectOrIndirectReuseStreamMapComparisonResultByEplId(parentContainerEplId);//location->container, the location is container in parent
+				StreamAndMapAndBoolComparisonResult lm=fdsc.getDirectOrIndirectReuseStreamMapComparisonResultByEplId(parentContainerEplId);//location->container, the location is container in parent
 				ContainerAndMapAndBoolComparisonResult cm=null;
 				if(cr.getTotalState()==State.EQUIVALENT){
-					cm=fsl.getDirectReusableContainerMapBoolComparisonResultById(fcsc.getEplId());//container->location
+					cm=fsl.getDirectReusableContainerMapBoolComparisonResultById(fdsc.getEplId());//container->location
 				}
 				else if(cr.getTotalState()==State.IMPLYING){
 					//parent.eplId=0, jsc.eplId=1, jsl.eplId=4
-					cm=fsl.getIndirectReusableContainerMapBoolComparisonResultById(fcsc.getEplId());//container->location
+					cm=fsl.getIndirectReusableContainerMapBoolComparisonResultById(fdsc.getEplId());//container->location
 				}
 				CollectionUtils.merge(lm.getSecond(), //0->1
 						cm.getSecond(), //1->4
@@ -167,21 +170,22 @@ public class StreamReviewer {
 				return cr;
 			}
 		}
-		else if(fsl.getBaseStreamCount()==fcsc.getBaseStreamCount() && fsl.getRawStreamCount()==fcsc.getRawStreamCount() &&
-				!(fcsc.getAgent() instanceof FilterDelayedStreamContainer)){
+		//else if(fsl.getBaseStreamCount()==fcsc.getBaseStreamCount() && fsl.getRawStreamCount()==fcsc.getRawStreamCount() &&
+		else if(!(fdsc.getAgent() instanceof FilterDelayedStreamContainer) && 
+				fsl.getRawStream().getEvent()==fdsc.getAgent().getRawStream().getEvent()){
 			BooleanExpressionComparisonResult agentCr=null;
 			Map<EventAlias, EventAlias> fcscEplMap=new HashMap<EventAlias, EventAlias>(4);
-			agentCr=check(fsl, fcsc.getAgent(), fcsc.getEplId(), fcscEplMap);
+			agentCr=check(fsl, fdsc.getAgent(), fdsc.getEplId(), fcscEplMap);
 			if(agentCr!=null && agentCr.getTotalState()==State.IMPLYING){
 				exprComp.setEventAliasMap(fcscEplMap);
 				List<AbstractBooleanExpression> fslExtraFilterCondList=dumpImplyingAndSurplusConditionList(agentCr.getOwnPairList());
-				cr=beComp.compareConjunctionLists(fslExtraFilterCondList, fcsc.getExtraFilterCondList(), 0);
+				cr=beComp.compareConjunctionLists(fslExtraFilterCondList, fdsc.getExtraFilterCondList(), 0);
 				if(cr.getTotalState()==State.EQUIVALENT || cr.getTotalState()==State.IMPLYING){
 					Map<EventAlias, EventAlias> fcscAgentEplMap=new HashMap<EventAlias, EventAlias>(4);
-					agentCr=check(fsl, fcsc.getAgent(), fcsc.getAgent().getEplId(), fcscAgentEplMap);
+					agentCr=check(fsl, fdsc.getAgent(), fdsc.getAgent().getEplId(), fcscAgentEplMap);
 					
-					ContainerAndMapAndBoolComparisonResult cmcr=new ContainerAndMapAndBoolComparisonResult(fcsc, fcscEplMap, cr);
-					ContainerAndMapAndBoolComparisonResult agentCmcr=new ContainerAndMapAndBoolComparisonResult(fcsc.getAgent(), fcscAgentEplMap, agentCr);
+					ContainerAndMapAndBoolComparisonResult cmcr=new ContainerAndMapAndBoolComparisonResult(fdsc, fcscEplMap, cr);
+					ContainerAndMapAndBoolComparisonResult agentCmcr=new ContainerAndMapAndBoolComparisonResult(fdsc.getAgent(), fcscAgentEplMap, agentCr);
 					ContainerAndMapAndBoolComparisonResultOfAgent cmcr2=new ContainerAndMapAndBoolComparisonResultOfAgent(cmcr, agentCmcr);
 					
 					if(cr.getTotalState()==State.EQUIVALENT){
@@ -190,7 +194,7 @@ public class StreamReviewer {
 					else{
 						fsl.addIndirectReusableContainerMapComparisonResult(cmcr2);
 					}				
-					check(fsl, fcsc.getAgent(), parentContainerEplId, parentContainerMap);
+					check(fsl, fdsc.getAgent(), parentContainerEplId, parentContainerMap);
 				}
 			}
 		}
@@ -198,27 +202,27 @@ public class StreamReviewer {
 		if(cr==null){
 			cr=BooleanExpressionComparisonResultNone.getInstance();
 		}
-		addBoolComparisonResult(fsl, fcsc, cr);
+		addBoolComparisonResult(fsl, fdsc, cr);
 		return cr;
 	}
 	
-	public BooleanExpressionComparisonResult checkJsAndJdsc(JoinStream jsl, JoinDelayedStreamContainer jcsc, long parentContainerEplId,
+	public BooleanExpressionComparisonResult checkJsAndJdsc(JoinStream jsl, JoinDelayedStreamContainer jdsc, long parentContainerEplId,
 			Map<EventAlias, EventAlias> parentContainerMap){
-		BooleanExpressionComparisonResult cr=this.getBoolComparisonResult(jsl, jcsc);
+		BooleanExpressionComparisonResult cr=this.getBoolComparisonResult(jsl, jdsc);
 		
 		if(cr!=null){
 			if(cr.getTotalState()==State.NONE){
 				return cr;
 			}
 			else{
-				StreamAndMapAndBoolComparisonResult lm=jcsc.getDirectOrIndirectReuseStreamMapComparisonResultByEplId(parentContainerEplId);//location->container, the location is container in parent
+				StreamAndMapAndBoolComparisonResult lm=jdsc.getDirectOrIndirectReuseStreamMapComparisonResultByEplId(parentContainerEplId);//location->container, the location is container in parent
 				ContainerAndMapAndBoolComparisonResult cm=null;
 				if(cr.getTotalState()==State.EQUIVALENT){
-					cm=jsl.getDirectReusableContainerMapBoolComparisonResultById(jcsc.getEplId());//container->location
+					cm=jsl.getDirectReusableContainerMapBoolComparisonResultById(jdsc.getEplId());//container->location
 				}
 				else if(cr.getTotalState()==State.IMPLYING){
 					//parent.eplId=0, jsc.eplId=1, jsl.eplId=4
-					cm=jsl.getIndirectReusableContainerMapBoolComparisonResultById(jcsc.getEplId());//container->location
+					cm=jsl.getIndirectReusableContainerMapBoolComparisonResultById(jdsc.getEplId());//container->location
 				}
 				CollectionUtils.merge(lm.getSecond(), //0->1
 						cm.getSecond(), //1->4
@@ -226,27 +230,29 @@ public class StreamReviewer {
 				return cr;
 			}			
 		}
-		else if(jsl.getBaseStreamCount()==jcsc.getBaseStreamCount() && jsl.getRawStreamCount()==jcsc.getRawStreamCount() &&
-				!(jcsc.getAgent() instanceof JoinDelayedStreamContainer)){//FIXME: avoid two or more JoinCompatibleStreamLocationContainer
+//		else if(jsl.getBaseStreamCount()==jcsc.getBaseStreamCount() && jsl.getRawStreamCount()==jcsc.getRawStreamCount() &&
+//				!(jcsc.getAgent() instanceof JoinDelayedStreamContainer)){//FIXME: avoid two or more JoinCompatibleStreamLocationContainer
+		else if(!(jdsc.getAgent() instanceof JoinDelayedStreamContainer) &&
+				eventsComparator.compareEvents(jsl, jdsc)){
 			BooleanExpressionComparisonResult agentCr=null;
 			Map<EventAlias, EventAlias> jcscEplMap=new HashMap<EventAlias, EventAlias>(4);
-			agentCr=check(jsl, jcsc.getAgent(), jcsc.getEplId(), jcscEplMap);
+			agentCr=check(jsl, jdsc.getAgent(), jdsc.getEplId(), jcscEplMap);
 			if(agentCr!=null && agentCr.getTotalState()==State.IMPLYING){
 				exprComp.setEventAliasMap(jcscEplMap);
 				List<AbstractBooleanExpression> jslExtraJoinCondList=dumpImplyingAndSurplusConditionList(agentCr.getOwnPairList());
 				List<AbstractBooleanExpression> jslExtraChildCondList=dumpImplyingAndSurplusConditionList(agentCr.getChildPairList());
 				
-				cr=beComp.compareConjunctionLists(jslExtraJoinCondList, jcsc.getExtraJoinCondList(), 0);
+				cr=beComp.compareConjunctionLists(jslExtraJoinCondList, jdsc.getExtraJoinCondList(), 0);
 				if(cr.getOwnState()==State.EQUIVALENT || cr.getOwnState()==State.IMPLYING){
-					BooleanExpressionComparisonResult childCr=beComp.compareConjunctionLists(jslExtraChildCondList, jcsc.getExtraChildCondList(), 0);
+					BooleanExpressionComparisonResult childCr=beComp.compareConjunctionLists(jslExtraChildCondList, jdsc.getExtraChildCondList(), 0);
 					cr.addChildResult(childCr);
 				}
 				if(cr.getTotalState()==State.EQUIVALENT || cr.getTotalState()==State.IMPLYING){					
 					Map<EventAlias, EventAlias> jcscAgentEplMap=new HashMap<EventAlias, EventAlias>(4);
-					agentCr=check(jsl, jcsc.getAgent(), jcsc.getAgent().getEplId(), jcscAgentEplMap);
+					agentCr=check(jsl, jdsc.getAgent(), jdsc.getAgent().getEplId(), jcscAgentEplMap);
 					
-					ContainerAndMapAndBoolComparisonResult cmcr=new ContainerAndMapAndBoolComparisonResult(jcsc, jcscEplMap, cr);
-					ContainerAndMapAndBoolComparisonResult agentCmcr=new ContainerAndMapAndBoolComparisonResult(jcsc.getAgent(), jcscAgentEplMap, agentCr);
+					ContainerAndMapAndBoolComparisonResult cmcr=new ContainerAndMapAndBoolComparisonResult(jdsc, jcscEplMap, cr);
+					ContainerAndMapAndBoolComparisonResult agentCmcr=new ContainerAndMapAndBoolComparisonResult(jdsc.getAgent(), jcscAgentEplMap, agentCr);
 					ContainerAndMapAndBoolComparisonResultOfAgent cmcr2=new ContainerAndMapAndBoolComparisonResultOfAgent(cmcr, agentCmcr);
 					
 					if(cr.getTotalState()==State.EQUIVALENT){
@@ -255,7 +261,7 @@ public class StreamReviewer {
 					else{
 						jsl.addIndirectReusableContainerMapComparisonResult(cmcr2);
 					}
-					check(jsl, jcsc.getAgent(), parentContainerEplId, parentContainerMap);
+					check(jsl, jdsc.getAgent(), parentContainerEplId, parentContainerMap);
 				}
 			}
 		}
@@ -263,7 +269,7 @@ public class StreamReviewer {
 		if(cr==null){
 			cr=BooleanExpressionComparisonResultNone.getInstance();
 		}
-		addBoolComparisonResult(jsl, jcsc, cr);
+		addBoolComparisonResult(jsl, jdsc, cr);
 		return cr;
 	}
 	
@@ -290,7 +296,8 @@ public class StreamReviewer {
 				return cr;
 			}
 		}
-		else if(jsl.getBaseStreamCount()==jsc.getBaseStreamCount() && jsl.getRawStreamCount()==jsc.getRawStreamCount()){
+		//else if(jsl.getBaseStreamCount()==jsc.getBaseStreamCount() && jsl.getRawStreamCount()==jsc.getRawStreamCount()){
+		else if(eventsComparator.compareEvents(jsl, jsc)){
 			BooleanExpressionComparisonResult[] jslChildCrs=new BooleanExpressionComparisonResult[jsl.getUpStreamCount()];
 			int[] jscChildFlag=new int[jsc.getUpContainerCount()];
 			Arrays.fill(jscChildFlag, -1);
@@ -375,7 +382,8 @@ public class StreamReviewer {
 		assert(rsc.getEplId()==parentContainerEplId);
 		BooleanExpressionComparisonResult cr=this.getBoolComparisonResult(rsl, rsc);
 		if(cr==null){//no need to add to parentContainerMap
-			if(rsl.getBaseStreamCount()==rsc.getBaseStreamCount() && rsl.getRawStreamCount()==rsc.getRawStreamCount()){
+			//if(rsl.getBaseStreamCount()==rsc.getBaseStreamCount() && rsl.getRawStreamCount()==rsc.getRawStreamCount()){
+			if(eventsComparator.compareEvents(rsl, rsc)){
 				Map<EventAlias, EventAlias> rscToRslMap=new HashMap<EventAlias, EventAlias>(4);
 				BooleanExpressionComparisonResult childCr=check(rsl.getUpStream(), rsc.getUpContainer(), rsc.getEplId(), rscToRslMap);
 				if(childCr!=null &&(childCr.getTotalState()==State.EQUIVALENT)){ //|| childCr.getOwnState()==State.COMPATIBLE)){
@@ -528,6 +536,25 @@ public class StreamReviewer {
 			if(obj instanceof StreamAndContainer){
 				StreamAndContainer that=(StreamAndContainer)obj;
 				return this.first==that.first && this.second==that.second;
+			}
+			return false;
+		}
+	}
+	
+	static class StreamAndContainerEventsComparator{
+		List<Event> streamEventList=new ArrayList<Event>();
+		List<Event> containerEventList=new ArrayList<Event>();
+		//ATT: NOT thread safe
+		public boolean compareEvents(DerivedStream stream, DerivedStreamContainer container){
+			if(stream.getRawStreamCount()==container.getRawStreamCount() && 
+				stream.getBaseStreamCount()==container.getBaseStreamCount()){
+				streamEventList.clear();
+				containerEventList.clear();
+				stream.dumpEvents(streamEventList);
+				container.dumpEvents(containerEventList);
+				if(streamEventList.containsAll(containerEventList)){
+					return true;
+				}
 			}
 			return false;
 		}

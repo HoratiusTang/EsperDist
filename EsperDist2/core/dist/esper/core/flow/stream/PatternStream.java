@@ -2,6 +2,7 @@ package dist.esper.core.flow.stream;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +11,7 @@ import dist.esper.epl.expr.AbstractBooleanExpression;
 import dist.esper.epl.expr.EventAlias;
 import dist.esper.epl.expr.EventOrPropertySpecification;
 import dist.esper.epl.expr.pattern.AbstractPatternNode;
+import dist.esper.event.Event;
 import dist.esper.util.StringUtil;
 
 /**
@@ -84,6 +86,11 @@ public class PatternStream extends BaseStream{
 
 	@Override
 	public boolean tryAddResultElement(EventOrPropertySpecification eps) {
+		throw new RuntimeException("not implemented yet");
+	}
+	
+	@Override
+	public void dumpEvents(Collection<Event> events) {
 		throw new RuntimeException("not implemented yet");
 	}
 

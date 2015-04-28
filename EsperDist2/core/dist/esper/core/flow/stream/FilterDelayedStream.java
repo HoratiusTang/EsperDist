@@ -2,6 +2,7 @@ package dist.esper.core.flow.stream;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import dist.esper.epl.expr.util.BooleanExpressionComparisonResult;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult.BooleanExpressionComparisonPair;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult.State;
 import dist.esper.epl.expr.util.EventOrPropertySpecReferenceDumper;
+import dist.esper.event.Event;
 
 /**
  * the stream which performs a delayed-filter, 
@@ -88,6 +90,11 @@ public class FilterDelayedStream extends FilterStream {
 	
 	public int getLevel(){
 		return 2;
+	}
+	
+	@Override
+	public void dumpEvents(Collection<Event> events) {
+		agent.dumpEvents(events);
 	}
 	
 	@Override

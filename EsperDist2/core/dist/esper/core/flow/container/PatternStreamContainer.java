@@ -2,6 +2,7 @@ package dist.esper.core.flow.container;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +17,7 @@ import dist.esper.epl.expr.AbstractBooleanExpression;
 import dist.esper.epl.expr.EventAlias;
 import dist.esper.epl.expr.pattern.AbstractPatternNode;
 import dist.esper.epl.expr.util.BooleanExpressionComparisonResult;
+import dist.esper.event.Event;
 import dist.esper.util.StringUtil;
 
 /**
@@ -100,6 +102,11 @@ public class PatternStreamContainer extends BaseStreamContainer{
 	@Override
 	public void dumpOwnBooleanExpressions(
 			List<AbstractBooleanExpression> ownCondList) {
+		throw new RuntimeException("not implemented yet");
+	}
+	
+	@Override
+	public void dumpEvents(Collection<Event> events) {
 		throw new RuntimeException("not implemented yet");
 	}
 
