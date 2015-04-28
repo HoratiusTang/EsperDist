@@ -795,8 +795,9 @@ public class Kryo {
 			return object;
 		}
 		catch(RuntimeException ex){
-			throw new RuntimeException(
-					String.format("error ocurr in Kryo.readClassAndObject(): class=%s", type==null?"null":type), ex);
+//			throw new RuntimeException(
+//					String.format("error ocurr in Kryo.readClassAndObject(): class=%s", type==null?"null":type.getSimpleName()), ex);
+			throw new RuntimeException(type==null?"null":type.getSimpleName(), ex);
 		}
 		finally {
 			if (--depth == 0 && autoReset) reset();

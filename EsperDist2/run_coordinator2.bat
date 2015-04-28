@@ -1,0 +1,1 @@
+start run_coordinator.bat -this.id Coordinator -this.port 7123 -qf ./query/queries.txt

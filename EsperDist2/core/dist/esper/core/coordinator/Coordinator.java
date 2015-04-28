@@ -37,7 +37,9 @@ import dist.esper.io.GlobalStat;
 import dist.esper.proxy.EPAdministratorImplProxy;
 import dist.esper.util.AsyncFileWriter;
 import dist.esper.util.AsyncLogger2;
+import dist.esper.util.BytesFileSerializer;
 import dist.esper.util.CollectionUtils;
+import dist.esper.util.DateUtil;
 import dist.esper.util.Logger2;
 import dist.esper.util.ThreadUtil;
 
@@ -407,7 +409,7 @@ public class Coordinator {
 		
 		if(psc.isNew()){
 			NewStreamInstanceMessage nsiMsg=new NewStreamInstanceMessage(id,sc);
-			link.send(nsiMsg);
+			link.send(nsiMsg);			
 		}
 		else{
 			ModifyStreamInstanceMessage msiMsg=new ModifyStreamInstanceMessage(id,sc);

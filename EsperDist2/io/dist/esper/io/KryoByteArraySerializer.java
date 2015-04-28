@@ -33,6 +33,10 @@ public class KryoByteArraySerializer{
 		return kryo;
 	}
 	
+	public byte[] getBuffer(){
+		return buffer;
+	}
+	
 	public byte[] toBytes(Object obj){
 		lock.lock();
 		while(true){
@@ -40,6 +44,13 @@ public class KryoByteArraySerializer{
 				kryo.reset();
 				output.setBuffer(buffer);
 				kryo.writeClassAndObject(output, obj);
+				try{
+					Object obj2=fromBytes(buffer, 0, output.position());
+					assert(obj2.getClass().getSimpleName().equals(obj.getClass().getSimpleName()));
+				}
+				catch(Exception e2){
+					log.getLogger().error("********* error occur in toBytes()->fromBytes() *********", e2);
+				}
 				break;
 			}
 			catch(IndexOutOfBoundsException ex){
