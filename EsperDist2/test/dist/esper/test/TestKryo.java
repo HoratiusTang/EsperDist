@@ -57,7 +57,7 @@ public class TestKryo {
 		a.addProperty("clientIds", int[].class);
 		
 		KryoByteArraySerializer bas=new KryoByteArraySerializer();
-		KryoClassRegister.registerClasses(bas.getKryo());
+		KryoClassRegister.registerClasses(bas.getReadKryo());
 		
 		byte[] bytes=bas.toBytes(a);
 		Event b=(Event)bas.fromBytes(bytes);
@@ -70,8 +70,8 @@ public class TestKryo {
 	
 	public static void test4(){
 		KryoByteArraySerializer bas=new KryoByteArraySerializer();
-		bas.getKryo().register(A.class);
-		bas.getKryo().register(B.class);
+		bas.getReadKryo().register(A.class);
+		bas.getReadKryo().register(B.class);
 		
 		A a=new A(1);
 		B b=new B(2);

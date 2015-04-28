@@ -79,14 +79,14 @@ public class RawSocketLink extends Link{
 				RawSocketLinkUtil.writeLength(bos, bytes.length);
 				bos.write(bytes);
 				bos.flush();
-				if(obj instanceof NewStreamInstanceMessage || obj instanceof ModifyStreamInstanceMessage){
-					BytesFileSerializer.writeBytes(bytes, 0, bytes.length, 
-							String.format("message/%s.%s.%s-%s.%s.%d.%s.bin", 
-								getMyId().getId(), DateUtil.formatDate(), 
-								getMyId().getId(), getTargetId().getId(),
-								obj.getClass().getSimpleName(), //class type 
-								bytes.length, "sended"));
-				}
+//				if(obj instanceof NewStreamInstanceMessage || obj instanceof ModifyStreamInstanceMessage){
+//					BytesFileSerializer.writeBytes(bytes, 0, bytes.length, 
+//							String.format("message/%s.%s.%s-%s.%s.%d.%s.bin", 
+//								getMyId().getId(), DateUtil.formatDate(), 
+//								getMyId().getId(), getTargetId().getId(),
+//								obj.getClass().getSimpleName(), //class type 
+//								bytes.length, "sended"));
+//				}
 				return bytes.length;
 			}
 			catch(Exception ex){				

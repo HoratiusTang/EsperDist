@@ -14,10 +14,11 @@ public class KryoByteArraySerializer{
 	static Logger2 log=Logger2.getLogger(KryoByteArraySerializer.class);
 	public static final int DEFAULT_BASE_SIZE=4096000;
 	int baseSize;
-	Kryo kryo=new Kryo();;
-	ReentrantLock lock=new ReentrantLock();
+	Kryo readKryo;
+	Kryo writeKryo;
 	Output output;
 	byte[] buffer;
+	ReentrantLock lock=new ReentrantLock();
 	
 	public KryoByteArraySerializer(){
 		this(DEFAULT_BASE_SIZE);
@@ -27,10 +28,18 @@ public class KryoByteArraySerializer{
 		this.baseSize=baseSize;
 		this.buffer=new byte[baseSize];
 		this.output=new Output();
+		this.readKryo=new Kryo();
+		this.writeKryo=new Kryo();
+		KryoClassRegister.registerClasses(readKryo);
+		KryoClassRegister.registerClasses(writeKryo);
 	}
 	
-	public Kryo getKryo() {
-		return kryo;
+	public Kryo getReadKryo() {
+		return readKryo;
+	}
+	
+	public Kryo getWriteKryo() {
+		return writeKryo;
 	}
 	
 	public byte[] getBuffer(){
@@ -41,9 +50,9 @@ public class KryoByteArraySerializer{
 		lock.lock();
 		while(true){
 			try{
-				kryo.reset();
+				writeKryo.reset();
 				output.setBuffer(buffer);
-				kryo.writeClassAndObject(output, obj);
+				writeKryo.writeClassAndObject(output, obj);
 				try{
 					Object obj2=fromBytes(buffer, 0, output.position());
 					assert(obj2.getClass().getSimpleName().equals(obj.getClass().getSimpleName()));
@@ -71,10 +80,10 @@ public class KryoByteArraySerializer{
 	public int toBytes(Object obj, byte[] bytes, int offset){
 		Output out=new Output();
 		try{
-			kryo.reset();
+			writeKryo.reset();
 			out.setBuffer(bytes);
 			out.setPosition(offset);
-			kryo.writeClassAndObject(out, obj);
+			writeKryo.writeClassAndObject(out, obj);
 			int count=out.position()-offset;
 			try{
 				Object obj2=fromBytes(bytes, offset, count);
@@ -94,7 +103,7 @@ public class KryoByteArraySerializer{
 	public Object fromBytes(byte[] bytes, int offset, int count){
 		Input input=new Input();
 		input.setBuffer(bytes, offset, count);
-		Object obj=kryo.readClassAndObject(input);
+		Object obj=readKryo.readClassAndObject(input);
 		return obj;
 	}
 

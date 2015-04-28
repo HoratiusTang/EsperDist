@@ -10,9 +10,9 @@ import dist.esper.util.BytesFileSerializer;
 public class TestMessageSerialization {
 	static KryoByteArraySerializer bas;
 	public static void main(String[] args){
-		String filePath="message/coordinator.0428132753.coordinator-Worker4.NewStreamInstanceMessage.1844.sended.bin";
-		//run(new String[]{filePath});
-		run(args);
+		String filePath="message/coordinator.0428134916.coordinator-Worker3.NewStreamInstanceMessage.1537.sended.bin";
+		run(new String[]{filePath});
+		//run(args);
 	}
 	public static void run(String[] args){
 		if(args.length<1){
@@ -25,7 +25,8 @@ public class TestMessageSerialization {
 			return;
 		}
 		bas=new KryoByteArraySerializer(20480000);
-		KryoClassRegister.registerClasses(bas.getKryo());
+		KryoClassRegister.registerClasses(bas.getReadKryo());
+		KryoClassRegister.registerClasses(bas.getWriteKryo());
 		if(file.isDirectory()){
 			File[] files=file.listFiles();
 			for(File f: files){
