@@ -7,7 +7,7 @@ import dist.esper.io.KryoByteArraySerializer;
 import dist.esper.io.KryoClassRegister;
 import dist.esper.util.BytesFileSerializer;
 
-public class TestMessageSeralization {
+public class TestMessageSerialization {
 	static KryoByteArraySerializer bas;
 	public static void main(String[] args){
 		String filePath="message/coordinator.0428132753.coordinator-Worker4.NewStreamInstanceMessage.1844.sended.bin";
