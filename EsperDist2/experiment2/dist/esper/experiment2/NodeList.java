@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class NodeList{
+public class NodeList{	
 	public List<EventPropOpType> typeList=new ArrayList<EventPropOpType>(5);
+	public List<PropOpType> joinPropOpList=new ArrayList<PropOpType>(4);
 	public List<NodeList> filterNodeLists=new ArrayList<NodeList>(5);
 	public List<Node> nodeList=new ArrayList<Node>();
 	public List<Node> orderedNodeList=new ArrayList<Node>();
@@ -39,7 +40,12 @@ class NodeList{
 		}
 		return false;
 	}
-	
+	public void addJoinPropOp(PropOpType joinPropOp){
+		joinPropOpList.add(joinPropOp);
+	}
+	public List<PropOpType> getJoinPropOpList(){
+		return this.joinPropOpList;
+	}
 	public void addType(EventPropOpType type){
 		typeList.add(type);
 	}

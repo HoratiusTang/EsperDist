@@ -17,6 +17,6 @@ public class FilterNode extends Node {
 	
 	@Override
 	public String toString(){
-		return String.format("FN(%d-%d-[%d,%d,%d])", id, tag, type.eventType, type.propType, type.opType);
+		return String.format("FN(%d-%d-[%d,%d,%d,%d])", id, tag, type.eventType, type.propType, type.opType, type.window);
 	}
 }

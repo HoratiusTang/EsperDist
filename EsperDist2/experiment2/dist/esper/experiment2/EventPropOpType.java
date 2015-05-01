@@ -1,19 +1,21 @@
 package dist.esper.experiment2;
 
-class EventPropOpType{
+public class EventPropOpType{
 	public int eventType;
 	public int propType;
 	public int opType;
-	public EventPropOpType(int eventType, int propType, int opType) {
+	public int window;
+	public EventPropOpType(int eventType, int propType, int opType, int window) {
 		super();
 		this.eventType = eventType;
 		this.propType = propType;
 		this.opType = opType;
+		this.window = window;
 	}
 	
 	@Override
 	public int hashCode(){
-		return eventType*100 + propType*10 + opType;
+		return eventType*1000 + propType*100 + opType*10;// + window;
 	}
 	
 	@Override
@@ -22,13 +24,14 @@ class EventPropOpType{
 			EventPropOpType that=(EventPropOpType)obj;
 			return this.eventType == that.eventType &&
 					this.propType == that.propType &&
-					  this.opType == that.opType;
+					  this.opType == that.opType &&
+					  this.window == that.window;
 		}
 		return false;
 	}
 	
 	@Override
 	public String toString(){
-		return String.format("(%d,%d,%d)", eventType, propType, opType);
+		return String.format("(%d,%d,%d,%d)", eventType, propType, opType, window);
 	}
 }
