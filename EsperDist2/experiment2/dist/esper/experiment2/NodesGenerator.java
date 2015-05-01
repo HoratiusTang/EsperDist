@@ -12,7 +12,7 @@ public class NodesGenerator {
 	public int numFilterOpTypes=2;
 	public int numJoinOpTypes=3;
 	public int numWindowTypes=3;
-	//public int numNodePerType=20;
+	public int numSelectElementsPerFilter=3;
 
 	NodesParameter[] nodeParams=new NodesParameter[MAX_WAYS+1];
 	EventPropOpTypeCountRandomChooser chooser=new EventPropOpTypeCountRandomChooser();
@@ -21,12 +21,17 @@ public class NodesGenerator {
 	NodeList2[] nodeList2s=new NodeList2[MAX_WAYS+1];
 	
 	public NodesGenerator(int numEventTypes, int numPropTypes,
-			int numFilterOpTypes, int numJoinOpTypes, int numWindowTypes,
+			int numFilterOpTypes, int numJoinOpTypes, 
+			int numWindowTypes, int numSelectElementsPerFilter,
 			NodesParameter[] nps) {
 		super();
 		this.numEventTypes = numEventTypes;
 		this.numPropTypes = numPropTypes;
-		//this.numNodePerType = numNodePerType;
+		this.numFilterOpTypes = numFilterOpTypes;
+		this.numJoinOpTypes = numJoinOpTypes;
+		this.numWindowTypes = numWindowTypes;
+		this.numSelectElementsPerFilter = numSelectElementsPerFilter;
+		
 		for(NodesParameter np: nps){
 			if(np.numWay>0 && np.numWay<=MAX_WAYS){
 				nodeParams[np.numWay]=np;
@@ -57,7 +62,7 @@ public class NodesGenerator {
 			chooser.reset();
 			NodeList nl=new NodeList();
 			while(nl.getTypeCount()<numWay){
-				EventPropOpType type=chooser.next();
+				FilterEventPropOpType type=chooser.next();
 				if(!nl.isEventExisted(type.eventType)){
 					nl.addType(type);
 				}
@@ -65,7 +70,7 @@ public class NodesGenerator {
 			for(int i=0; i<numWay-1; i++){
 				int joinPropType=rand.nextInt(numPropTypes);
 				int opType=rand.nextInt(numJoinOpTypes);//>,<,=
-				nl.addJoinPropOp(new PropOpType(joinPropType, opType));
+				nl.addJoinPropOp(new JoinPropOpType(joinPropType, opType));
 			}
 			
 			//int count=getNormalRandomNumber(nodeParams[numWay].nodeCountPerType);
@@ -84,12 +89,14 @@ public class NodesGenerator {
 			
 			/* init first */
 			jns[0]=new JoinNode(nl.getJoinPropOpList());
+			jns[0].setSelectElementList(genSelectElements(numWay));
 			for(int j=0;j<numWay;j++){
 				jns[0].addUpNode(fnLists.get(j).getLastNode());
 			}
 			
 			for(int i=1; i<neqCount; i++){
 				jns[i]=new JoinNode(nl.getJoinPropOpList());
+				jns[i].setSelectElementList(genSelectElements(numWay));
 				int k=rand.nextInt(numWay);
 				fnLists.get(k).addNode(new FilterNode(nl.getType(k)));
 				for(int j=0; j<numWay; j++){
@@ -99,6 +106,7 @@ public class NodesGenerator {
 			
 			for(int i=neqCount; i<count; i++){
 				jns[i]=new JoinNode(nl.getJoinPropOpList());
+				jns[i].setSelectElementList(genSelectElements(numWay));
 				int k=rand.nextInt(neqCount);
 				jns[i].setTag(jns[k].getTag());
 				jns[i].setUpNodeList(jns[k].getUpNodeList());
@@ -117,7 +125,7 @@ public class NodesGenerator {
 		int curCount=0;
 		NodeList2 nl2=new NodeList2(1);
 		while(curCount < nodeParams[1].nodeCount){
-			EventPropOpType type=chooser.next();
+			FilterEventPropOpType type=chooser.next();
 			NodeList nl=new NodeList(type);
 			//int count=getNormalRandomNumber(nodeParams[1].nodeCountPerType);
 			int count=nodeParams[1].nodeCountPerType;
@@ -141,6 +149,17 @@ public class NodesGenerator {
 		nodeList2s[1]=nl2;
 	}
 	
+	public List<SelectElement> genSelectElements(int numWay){
+		int count=numWay * numSelectElementsPerFilter;
+		List<SelectElement> seList=new ArrayList<SelectElement>(count);
+		int filterNodeIndex, propType;
+		for(int i=0; i<count; i++){
+			filterNodeIndex = rand.nextInt(numWay);
+			propType = rand.nextInt(numPropTypes);
+			seList.add(new SelectElement(filterNodeIndex, propType));
+		}
+		return seList;
+	}
 	
 	public int getNormalRandomNumber(double expect){
 		return getNormalRandomNumber(expect, 1.0d, (expect+1.0)/2.0, Integer.MAX_VALUE);
@@ -159,15 +178,15 @@ public class NodesGenerator {
 		public double std=1.0; //standard devition
 		public Set<Integer> set=new TreeSet<Integer>();
 		
-		public EventPropOpType next(){
+		public FilterEventPropOpType next(){
 			int et, pt, op, win;
-			EventPropOpType type;
+			FilterEventPropOpType type;
 			while(true){
 				et=rand.nextInt(numEventTypes);
 				pt=rand.nextInt(numPropTypes);
 				op=rand.nextInt(numFilterOpTypes);
 				win=rand.nextInt(numWindowTypes);
-				type=new EventPropOpType(et, pt, op, win);
+				type=new FilterEventPropOpType(et, pt, op, win);
 				if(!set.contains(type.hashCode())){
 					return type;
 				}

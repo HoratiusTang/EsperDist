@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class NodeList{	
-	public List<EventPropOpType> typeList=new ArrayList<EventPropOpType>(5);
-	public List<PropOpType> joinPropOpList=new ArrayList<PropOpType>(4);
+	public List<FilterEventPropOpType> typeList=new ArrayList<FilterEventPropOpType>(5);
+	public List<JoinPropOpType> joinPropOpList=new ArrayList<JoinPropOpType>(4);
 	public List<NodeList> filterNodeLists=new ArrayList<NodeList>(5);
 	public List<Node> nodeList=new ArrayList<Node>();
 	public List<Node> orderedNodeList=new ArrayList<Node>();
@@ -14,12 +14,12 @@ public class NodeList{
 	public NodeList(){
 	}
 	
-	public NodeList(EventPropOpType type) {
+	public NodeList(FilterEventPropOpType type) {
 		super();
 		this.typeList.add(type);
 	}
 	
-	public NodeList(List<EventPropOpType> typeList) {
+	public NodeList(List<FilterEventPropOpType> typeList) {
 		super();
 		this.typeList = typeList;
 	}
@@ -28,25 +28,25 @@ public class NodeList{
 		return typeList.size();
 	}
 	
-	public EventPropOpType getType(int index){
+	public FilterEventPropOpType getType(int index){
 		return typeList.get(index);
 	}
 	
 	public boolean isEventExisted(int eventType){
-		for(EventPropOpType type: typeList){
+		for(FilterEventPropOpType type: typeList){
 			if(type.eventType == eventType){
 				return true;
 			}
 		}
 		return false;
 	}
-	public void addJoinPropOp(PropOpType joinPropOp){
+	public void addJoinPropOp(JoinPropOpType joinPropOp){
 		joinPropOpList.add(joinPropOp);
 	}
-	public List<PropOpType> getJoinPropOpList(){
+	public List<JoinPropOpType> getJoinPropOpList(){
 		return this.joinPropOpList;
 	}
-	public void addType(EventPropOpType type){
+	public void addType(FilterEventPropOpType type){
 		typeList.add(type);
 	}
 

@@ -1,9 +1,9 @@
 package dist.esper.experiment2;
 
-public class PropOpType {
+public class JoinPropOpType {
 	public int propType;
 	public int opType;
-	public PropOpType(int propType, int opType) {
+	public JoinPropOpType(int propType, int opType) {
 		super();
 		
 		this.propType = propType;
@@ -17,8 +17,8 @@ public class PropOpType {
 	
 	@Override
 	public boolean equals(Object obj){
-		if(obj instanceof EventPropOpType){
-			EventPropOpType that=(EventPropOpType)obj;
+		if(obj instanceof FilterEventPropOpType){
+			FilterEventPropOpType that=(FilterEventPropOpType)obj;
 			return this.propType == that.propType &&
 					  this.opType == that.opType;
 		}

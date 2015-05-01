@@ -15,6 +15,7 @@ public class TestNodeGenerator {
 		int numFilterOpTypes=2;
 		int numJoinOpTypes=3;
 		int numWindowTypes=3;
+		int numSelectElementsPerFilter=3;
 		
 		NodesParameter[] nps=new NodesParameter[]{
 			new NodesParameter(1, 60, 15, 0.3, 0.2),
@@ -25,7 +26,8 @@ public class TestNodeGenerator {
 		};
 		
 		NodesGenerator ng=new NodesGenerator(numEventTypes, numPropTypes, 
-				numFilterOpTypes, numJoinOpTypes, numWindowTypes, nps);
+				numFilterOpTypes, numJoinOpTypes, numWindowTypes, 
+				numSelectElementsPerFilter, nps);
 		NodeList2[] nl2s=ng.genearteNodeList2s();
 		
 		for(NodeList2 nl2: nl2s){

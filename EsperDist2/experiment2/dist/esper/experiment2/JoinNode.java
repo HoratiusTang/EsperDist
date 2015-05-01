@@ -3,12 +3,12 @@ package dist.esper.experiment2;
 import java.util.*;
 
 public class JoinNode extends Node {
-	public List<PropOpType> joinPropOpList=new ArrayList<PropOpType>(4);
+	public List<JoinPropOpType> joinPropOpList=new ArrayList<JoinPropOpType>(4);
 	List<Node> upNodeList=new ArrayList<Node>(5);
-	
+	List<SelectElement> selectElementList=new ArrayList<SelectElement>(10);
 	public JoinNode() {
 	}
-	public JoinNode(List<PropOpType> joinPropOpList) {
+	public JoinNode(List<JoinPropOpType> joinPropOpList) {
 		super();
 		this.joinPropOpList = joinPropOpList;
 	}
@@ -23,13 +23,24 @@ public class JoinNode extends Node {
 	}
 	public void setUpNodeList(List<Node> upNodeList) {
 		this.upNodeList = upNodeList;
-	}	
+	}
 	
-	public List<PropOpType> getJoinPropOpList() {
+	public List<JoinPropOpType> getJoinPropOpList() {
 		return joinPropOpList;
 	}
-	public void setJoinPropOpList(List<PropOpType> joinPropOpList) {
+	public void setJoinPropOpList(List<JoinPropOpType> joinPropOpList) {
 		this.joinPropOpList = joinPropOpList;
+	}
+	
+	public void addSelectElement(SelectElement se){
+		selectElementList.add(se);
+	}
+	
+	public List<SelectElement> getSelectElementList() {
+		return selectElementList;
+	}
+	public void setSelectElementList(List<SelectElement> selectElementList) {
+		this.selectElementList = selectElementList;
 	}
 	@Override
 	public String toString(){
@@ -39,7 +50,7 @@ public class JoinNode extends Node {
 		for(int i=0; i<upNodeList.size(); i++){
 			sb.append(upNodeList.get(i).toString());
 			if(i<upNodeList.size()-1){
-				PropOpType p=joinPropOpList.get(i);
+				JoinPropOpType p=joinPropOpList.get(i);
 				sb.append(String.format("~ %d-%d ~", p.propType, p.opType));
 			}
 		}
