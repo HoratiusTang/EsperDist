@@ -4,16 +4,17 @@ import java.util.Random;
 
 public class NodeRandomSorter {
 	Random rand=new Random();
-	double avgImplyCount=3;
-	double deltaImplyCount=0.2d;
+	double implyRatio=3;
+	double deltaImplyRatio=0.2d;
 	int[] bc; //bigger count
 	int[] sc; //smaller count
 	
-	public void randomSort(Node[] n, double avgImplyCount, double deltaImplyCount){
-		if(n==null || n.length==1){
+	public void randomSort(Node[] n, double implyRatio, double deltaImplyRatio){
+		if(n==null || n.length<=1){
 			return;
 		}
-		
+		this.implyRatio = implyRatio;
+		this.deltaImplyRatio = deltaImplyRatio;
 		bc=new int[n.length];
 		sc=new int[n.length];
 		
@@ -28,7 +29,7 @@ public class NodeRandomSorter {
 	public void randomSortOnce(Node[] n){
 		Node temp;
 		int j,k;
-		for(int i=0; i<n.length*2; i++){
+		for(int i=0; i<n.length; i++){
 			j=rand.nextInt(n.length);
 			k=rand.nextInt(n.length);
 			if(j!=k){
@@ -54,8 +55,8 @@ public class NodeRandomSorter {
 		}
 		tbc = tbc/(n.length-1);
 		
-		if(tbc>avgImplyCount-deltaImplyCount && 
-			tbc<avgImplyCount+deltaImplyCount){
+		if(tbc>implyRatio-deltaImplyRatio && 
+			tbc<implyRatio+deltaImplyRatio){
 			return true;
 		}
 		return false;

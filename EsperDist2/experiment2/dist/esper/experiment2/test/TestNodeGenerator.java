@@ -12,17 +12,16 @@ public class TestNodeGenerator {
 	public static void test1(){
 		int numEventTypes=10;
 		int numPropTypes=6;
-		int numNodePerType=20;
 		
 		NodesParameter[] nps=new NodesParameter[]{
-			new NodesParameter(1, 10, 0.3, 0.3),
-			new NodesParameter(2, 10, 0.3, 0.3),
-			new NodesParameter(3, 10, 0.3, 0.3),
-			new NodesParameter(4, 10, 0.3, 0.3),
-			new NodesParameter(5, 10, 0.3, 0.3),
+			new NodesParameter(1, 60, 15, 0.3, 0.2),
+			new NodesParameter(2, 36, 12, 0.3, 0.2),
+			new NodesParameter(3, 24, 8, 0.3, 0.2),
+			new NodesParameter(4, 10, 5, 0.3, 0.2),
+			new NodesParameter(5, 10, 5, 0.5, 0.2),
 		};
 		
-		NodesGenerator ng=new NodesGenerator(numEventTypes, numPropTypes, numNodePerType, nps);
+		NodesGenerator ng=new NodesGenerator(numEventTypes, numPropTypes, nps);
 		NodeList2[] nl2s=ng.genearteNodeList2s();
 		
 		for(NodeList2 nl2: nl2s){

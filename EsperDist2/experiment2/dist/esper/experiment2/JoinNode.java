@@ -21,12 +21,14 @@ public class JoinNode extends Node {
 	@Override
 	public String toString(){
 		StringBuilder sb=new StringBuilder();
-		sb.append(String.format("JN(%d-%d-%d): ", id, tag, upNodeList));
+		sb.append(String.format("JN(%d-%d-%d): ", id, tag, upNodeList.size()));
 		for(Node n: upNodeList){
 			sb.append(n.toString());
 			sb.append(", ");
 		}
-		sb.setLength(sb.length()-2);
+		if(upNodeList.size()>0){
+			sb.setLength(sb.length()-2);
+		}
 		return sb.toString();
 	}
 }

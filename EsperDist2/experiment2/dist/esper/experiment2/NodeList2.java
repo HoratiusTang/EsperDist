@@ -36,7 +36,7 @@ public class NodeList2{
 	@Override
 	public String toString(){
 		StringBuilder sb=new StringBuilder();
-		sb.append(String.format("=================== NodeList2 (%d)  ====================", numWay));
+		sb.append(String.format("=================== NodeList2 (%d) ====================\n", numWay));
 		for(NodeList n: nodeListList){
 			sb.append(n.toString());
 			sb.append("\n");

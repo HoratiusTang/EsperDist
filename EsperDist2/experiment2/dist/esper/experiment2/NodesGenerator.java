@@ -9,7 +9,7 @@ public class NodesGenerator {
 
 	public int numEventTypes=10;
 	public int numPropTypes=6;
-	public int numNodePerType=20;
+	//public int numNodePerType=20;
 
 	NodesParameter[] nodeParams=new NodesParameter[MAX_WAYS+1];
 	EventPropOpTypeCountRandomChooser chooser=new EventPropOpTypeCountRandomChooser();
@@ -18,11 +18,11 @@ public class NodesGenerator {
 	NodeList2[] nodeList2s=new NodeList2[MAX_WAYS+1];
 	
 	public NodesGenerator(int numEventTypes, int numPropTypes,
-			int numNodePerType, NodesParameter[] nps) {
+			NodesParameter[] nps) {
 		super();
 		this.numEventTypes = numEventTypes;
 		this.numPropTypes = numPropTypes;
-		this.numNodePerType = numNodePerType;
+		//this.numNodePerType = numNodePerType;
 		for(NodesParameter np: nps){
 			if(np.numWay>0 && np.numWay<=MAX_WAYS){
 				nodeParams[np.numWay]=np;
@@ -33,7 +33,9 @@ public class NodesGenerator {
 	public NodeList2[] genearteNodeList2s(){
 		for(int i=1;i<=MAX_WAYS;i++){
 			if(nodeParams[i]!=null){
+				System.out.format("generate %d-way nodes starting...\n",i);
 				generateNWayNodeList2(i);
+				System.out.format("generate %d-way nodes finished\n",i);
 			}
 		}
 		return nodeList2s;
@@ -56,7 +58,8 @@ public class NodesGenerator {
 					nl.addType(type);
 				}
 			}
-			int count=getNormalRandomNumber(numNodePerType/numWay);
+			//int count=getNormalRandomNumber(nodeParams[numWay].nodeCountPerType);
+			int count=nodeParams[numWay].nodeCountPerType;
 			JoinNode[] jns=new JoinNode[count];
 			
 			int eqCount=(int)(count*nodeParams[numWay].equalRatio);
@@ -85,6 +88,7 @@ public class NodesGenerator {
 			}
 			
 			for(int i=neqCount; i<count; i++){
+				jns[i]=new JoinNode();
 				int k=rand.nextInt(neqCount);
 				jns[i].setTag(jns[k].getTag());
 				jns[i].setUpNodeList(jns[k].getUpNodeList());
@@ -105,7 +109,8 @@ public class NodesGenerator {
 		while(curCount < nodeParams[1].nodeCount){
 			EventPropOpType type=chooser.next();
 			NodeList nl=new NodeList(type);
-			int count=getNormalRandomNumber(numNodePerType);
+			//int count=getNormalRandomNumber(nodeParams[1].nodeCountPerType);
+			int count=nodeParams[1].nodeCountPerType;
 			FilterNode[] fns=new FilterNode[count];
 			for(int i=0; i<count; i++){
 				FilterNode fn=new FilterNode(type);
@@ -118,7 +123,7 @@ public class NodesGenerator {
 				fns[i].setTag(fns[j].getTag());
 			}
 			nl.copySortedNodes(fns);
-			nodeSorter.randomSort(fns, nodeParams[0].implyRatio, nodeParams[0].implyRatio/5.0);
+			nodeSorter.randomSort(fns, nodeParams[1].implyRatio, nodeParams[1].implyRatio/5.0);
 			nl.setNodes(fns);
 			nl2.addNodeList(nl);
 			curCount+=fns.length;
@@ -127,11 +132,8 @@ public class NodesGenerator {
 	}
 	
 	
-	
-	
-	
 	public int getNormalRandomNumber(double expect){
-		return getNormalRandomNumber(expect, 1.0d, expect/2.0, Integer.MAX_VALUE);
+		return getNormalRandomNumber(expect, 1.0d, (expect+1.0)/2.0, Integer.MAX_VALUE);
 	}
 	
 	public int getNormalRandomNumber(double expect, double std, double min, double max){

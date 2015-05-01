@@ -34,10 +34,10 @@ class NodeList{
 	public boolean isEventExisted(int eventType){
 		for(EventPropOpType type: typeList){
 			if(type.eventType == eventType){
-				return false;
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 	
 	public void addType(EventPropOpType type){
@@ -79,7 +79,7 @@ class NodeList{
 	@Override
 	public String toString(){
 		StringBuilder sb=new StringBuilder();
-		sb.append(String.format("=================== NodeLis %s  ====================", typeList.toString()));
+		sb.append(String.format("------------------ NodeList %s  ------------------\n", typeList.toString()));
 		for(Node n: nodeList){
 			sb.append(n.toString());
 			sb.append("\n");
