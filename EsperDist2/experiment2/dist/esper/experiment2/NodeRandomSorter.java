@@ -10,6 +10,10 @@ public class NodeRandomSorter {
 	int[] sc; //smaller count
 	
 	public void randomSort(Node[] n, double avgImplyCount, double deltaImplyCount){
+		if(n==null || n.length==1){
+			return;
+		}
+		
 		bc=new int[n.length];
 		sc=new int[n.length];
 		
@@ -45,10 +49,10 @@ public class NodeRandomSorter {
 			}
 		}
 		double tbc=0.0;
-		for(int i=0; i<n.length; i++){
-			tbc += bc[i];
+		for(int i=1; i<n.length; i++){
+			tbc += bc[i]/(double)i;
 		}
-		tbc = tbc/n.length;
+		tbc = tbc/(n.length-1);
 		
 		if(tbc>avgImplyCount-deltaImplyCount && 
 			tbc<avgImplyCount+deltaImplyCount){

@@ -3,9 +3,9 @@ package dist.esper.experiment2.test;
 import java.util.Random;
 
 public class TestPermunation {
-	static int length=20;
-	static int k=3;
-	static double dk=0.2d;
+	static int length=10;
+	static double k=0.2d;
+	static double dk=0.05d;
 	static int dk2=2;
 	static int[] b=new int[length];
 	static int[] s=new int[length];
@@ -51,10 +51,12 @@ public class TestPermunation {
 		}
 		
 		double tb=0; 
-		for(int i=0;i<a.length;i++){
-			tb+=b[i];
+		for(int i=1;i<a.length;i++){
+			//System.out.format("%d/%d ", b[i], i);
+			tb+=b[i]/(double)i;
 		}
-		tb=tb/a.length;
+		//System.out.println();
+		tb=tb/(a.length-1);
 		//----------------------------------------
 		for(int i=0;i<a.length;i++){
 			s[i]=0;
@@ -69,13 +71,14 @@ public class TestPermunation {
 		}
 		
 		double ts=0; 
-		for(int i=0;i<a.length;i++){
-			ts+=s[i];
+		for(int i=1;i<a.length;i++){
+			ts+=s[i]/(double)i;
 		}
-		ts=ts/a.length;
+		ts=ts/(a.length-1);
 		//-----------------------------------------		
 		
-		if(tb>=k-dk && tb<=k+dk && ts>=k-dk && ts<=k+dk){
+		if(tb>=k-dk && tb<=k+dk){ 
+			//&& ts>=k-dk && ts<=k+dk){
 			sb.setLength(0);
 			for(int i=0;i<a.length;i++){
 				sb.append(String.format("%d[%d][%d] ",a[i],b[i],s[i]));

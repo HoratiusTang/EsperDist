@@ -26,4 +26,9 @@ class EventPropOpType{
 		}
 		return false;
 	}
+	
+	@Override
+	public String toString(){
+		return String.format("[%d,%d,%d]", eventType, propType, opType);
+	}
 }

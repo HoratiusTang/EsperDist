@@ -3,7 +3,6 @@ package dist.esper.experiment2;
 import java.util.*;
 
 public class JoinNode extends Node {
-	
 	List<Node> upNodeList=new ArrayList<Node>(5);
 	public JoinNode() {
 	}
@@ -17,5 +16,17 @@ public class JoinNode extends Node {
 	}
 	public void setUpNodeList(List<Node> upNodeList) {
 		this.upNodeList = upNodeList;
+	}
+	
+	@Override
+	public String toString(){
+		StringBuilder sb=new StringBuilder();
+		sb.append(String.format("JN(%d-%d-%d): ", id, tag, upNodeList));
+		for(Node n: upNodeList){
+			sb.append(n.toString());
+			sb.append(", ");
+		}
+		sb.setLength(sb.length()-2);
+		return sb.toString();
 	}
 }

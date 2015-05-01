@@ -13,5 +13,10 @@ public class FilterNode extends Node {
 	public FilterNode(EventPropOpType type) {
 		super();
 		this.type = type;
-	}	
+	}
+	
+	@Override
+	public String toString(){
+		return String.format("FN(%d-%d-[%d,%d,%d])", id, tag, type.eventType, type.propType, type.opType);
+	}
 }
