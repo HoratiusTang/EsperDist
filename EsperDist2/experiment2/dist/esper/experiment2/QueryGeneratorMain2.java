@@ -3,6 +3,7 @@ package dist.esper.experiment2;
 import java.util.List;
 
 import dist.esper.epl.expr.OperatorTypeEnum;
+import dist.esper.experiment.util.MultiLineFileWriter;
 import dist.esper.experiment2.data.NodesParameter;
 import dist.esper.external.event.EventInstanceGenerator;
 
@@ -21,6 +22,8 @@ public class QueryGeneratorMain2 {
 		};
 		int[] windowTimes={60, 120, 180};
 		int numSelectElementsPerFilter=3;
+		
+		String filePath="query/queries2.txt";
 		NodesParameter[] nodeParams=new NodesParameter[]{
 			new NodesParameter(1, 60, 15, 0.3, 0.2),
 			new NodesParameter(2, 36, 12, 0.3, 0.3),
@@ -35,9 +38,15 @@ public class QueryGeneratorMain2 {
 		);
 		
 		List<String> queryList=queryGen2.generateQueries();
-		
+		try {
+			MultiLineFileWriter.writeToFile(filePath, queryList);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}		
 		for(String query: queryList){
 			System.out.println(query);
+			System.out.println();
 		}
 	}
 }

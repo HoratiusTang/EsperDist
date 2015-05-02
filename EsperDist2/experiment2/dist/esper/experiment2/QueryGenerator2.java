@@ -4,6 +4,7 @@ import java.util.*;
 
 import dist.esper.core.util.NumberFormatter;
 import dist.esper.epl.expr.OperatorTypeEnum;
+import dist.esper.experiment2.NodesGenerator.IOpTypeValidator;
 import dist.esper.experiment2.data.AbstractNodeList;
 import dist.esper.experiment2.data.FilterEventPropOpType;
 import dist.esper.experiment2.data.FilterNode;
@@ -32,6 +33,7 @@ public class QueryGenerator2 {
 	NodesGenerator nodesGen;
 	QueryBuilder queryBuilder=new QueryBuilder();
 	NumberComparator numberComparator=new NumberComparator();
+	IOpTypeValidator opTypeValidator=new OpTypeValidator();
 	
 	public QueryGenerator2(EventInstanceGenerator[] eigs,
 			OperatorTypeEnum[] filterOpTypes, OperatorTypeEnum[] joinOpTypes,
@@ -50,17 +52,18 @@ public class QueryGenerator2 {
 	}
 
 	public List<String> generateQueries(){
-		generateNodeList2s();
+		generateNodeListContainers();
 		generateValues();
 		mergeAllNodes();
 		buildQueries();
 		return queryList;
 	}
 	
-	public void generateNodeList2s(){
+	public void generateNodeListContainers(){
 		nodesGen=new NodesGenerator(numEventTypes, numPropTypes, 
 				filterOpTypes.length, joinOpTypes.length,
 				windowTimes.length, numSelectElementsPerFilter, nodeParams);
+		nodesGen.setOpTypeValidator(opTypeValidator);
 		nodeListCnts=nodesGen.genearteNodeList2s();
 	}
 	
@@ -297,7 +300,7 @@ public class QueryGenerator2 {
 					dem=" and ";
 				}
 			}
-			sb.append("\n");
+			//sb.append("\n");
 			String query=sb.toString();
 			return query;
 		}
@@ -343,6 +346,30 @@ public class QueryGenerator2 {
 			}
 		}
 		return null;
+	}
+	
+	class OpTypeValidator implements IOpTypeValidator{
+		public boolean validate(int propType, OperatorTypeEnum opType) {
+			FieldGenerator fg=eigs[0].getFieldGeneratorByIndex(propType);
+			Class<?> clazz=fg.getFieldClassType();
+			if(clazz.isArray() || clazz.equals(String.class)){
+				return false;
+			}
+			if(opType==OperatorTypeEnum.EQUAL && clazz.equals(Double.class)){
+				return false;
+			}
+			return true;
+		}
+		@Override
+		public boolean validateFilterOperation(int propType, int opType) {
+			OperatorTypeEnum op=filterOpTypes[opType];
+			return validate(propType, op);
+		}
+		@Override
+		public boolean validateJoinOperation(int propType, int opType) {
+			OperatorTypeEnum op=joinOpTypes[opType];
+			return validate(propType, op);
+		}
 	}
 	
 	class Index{

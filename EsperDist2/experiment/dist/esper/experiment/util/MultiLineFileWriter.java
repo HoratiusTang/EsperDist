@@ -45,6 +45,7 @@ public class MultiLineFileWriter {
 	public static void writeToFile(String filePath, List<String> strList) throws Exception{		
 		BufferedWriter bw=new BufferedWriter(new FileWriter(filePath));
 		for(String str: strList){
+			str=str.trim();
 			bw.write(str);
 			bw.write('\n');
 			bw.write('\n');

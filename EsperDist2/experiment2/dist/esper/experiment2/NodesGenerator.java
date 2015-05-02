@@ -25,9 +25,11 @@ public class NodesGenerator {
 	public int numSelectElementsPerFilter=3;
 
 	NodesParameter[] nodeParams=new NodesParameter[MAX_WAYS+1];
-	EventPropOpTypeCountRandomChooser chooser=new EventPropOpTypeCountRandomChooser();
+	FilterTypeRandomChooser ftRand=new FilterTypeRandomChooser();
+	JoinTypeRandomChooser jtRand=new JoinTypeRandomChooser();
 	NodeRandomSorter nodeSorter=new NodeRandomSorter();
 	Random rand=new Random();
+	IOpTypeValidator opTypeValidator=null;
 	NodeListContainer[] nodeListCnts=new NodeListContainer[MAX_WAYS+1];
 	
 	public NodesGenerator(int numEventTypes, int numPropTypes,
@@ -53,14 +55,14 @@ public class NodesGenerator {
 		for(int i=1;i<=MAX_WAYS;i++){
 			if(nodeParams[i]!=null){
 				System.out.format("generate %d-way nodes starting...\n",i);
-				generateJoinNodeList2(i);
+				generateJoinNodeListContainer(i);
 				System.out.format("generate %d-way nodes finished\n",i);
 			}
 		}
 		return nodeListCnts;
 	}
 	
-	public void generateJoinNodeList2(int numWay){
+	public void generateJoinNodeListContainer(int numWay){
 		if(numWay==1){
 			generateFilterNodeList2();
 			return;
@@ -69,18 +71,16 @@ public class NodesGenerator {
 		
 		int curCount=0;
 		while(curCount<nodeParams[numWay].nodeCount){
-			chooser.reset();
+			ftRand.reset();
 			JoinNodeList nl=new JoinNodeList();
 			while(nl.getTypeCount()<numWay){
-				FilterEventPropOpType type=chooser.next();
-				if(!nl.isEventExisted(type.eventType)){
-					nl.addType(type);
+				FilterEventPropOpType filterType=ftRand.next();
+				if(!nl.isEventExisted(filterType.eventType)){
+					nl.addType(filterType);
 				}
 			}
 			for(int i=0; i<numWay-1; i++){
-				int joinPropType=rand.nextInt(numPropTypes);
-				int opType=rand.nextInt(numJoinOpTypes);//>,<,=
-				nl.addJoinPropOp(new JoinPropOpType(joinPropType, opType));
+				nl.addJoinPropOp(jtRand.next());
 			}
 			
 			//int count=getNormalRandomNumber(nodeParams[numWay].nodeCountPerType);
@@ -140,13 +140,13 @@ public class NodesGenerator {
 		int curCount=0;
 		NodeListContainer nl2=new NodeListContainer(1);
 		while(curCount < nodeParams[1].nodeCount){
-			FilterEventPropOpType type=chooser.next();
-			FilterNodeList nl=new FilterNodeList(type);
+			FilterEventPropOpType filterType=ftRand.next();
+			FilterNodeList nl=new FilterNodeList(filterType);
 			//int count=getNormalRandomNumber(nodeParams[1].nodeCountPerType);
 			int count=nodeParams[1].nodeCountPerType;
 			FilterNode[] fns=new FilterNode[count];
 			for(int i=0; i<count; i++){
-				FilterNode fn=new FilterNode(type);
+				FilterNode fn=new FilterNode(filterType);
 				fn.setSelectElementList(genSelectElements(1));
 				fns[i]=fn;
 			}
@@ -176,41 +176,81 @@ public class NodesGenerator {
 			seList.add(new SelectElement(filterNodeIndex, propType));
 		}
 		return seList;
-	}
+	}	
 	
-	public int getNormalRandomNumber(double expect){
-		return getNormalRandomNumber(expect, 1.0d, (expect+1.0)/2.0, Integer.MAX_VALUE);
-	}
+//	public int getNormalRandomNumber(double expect){
+//		return getNormalRandomNumber(expect, 1.0d, (expect+1.0)/2.0, Integer.MAX_VALUE);
+//	}
+//	
+//	public int getNormalRandomNumber(double expect, double std, double min, double max){
+//		double num=rand.nextGaussian()*std+expect;
+//		if(num<min)
+//			return (int)min;		
+//		if(num>max)
+//			return (int)max;		
+//		return (int)num;
+//	}
 	
-	public int getNormalRandomNumber(double expect, double std, double min, double max){
-		double num=rand.nextGaussian()*std+expect;
-		if(num<min)
-			return (int)min;		
-		if(num>max)
-			return (int)max;		
-		return (int)num;
+	public IOpTypeValidator getOpTypeValidator() {
+		return opTypeValidator;
 	}
-	
-	class EventPropOpTypeCountRandomChooser{
+
+	public void setOpTypeValidator(IOpTypeValidator opTypeValidator) {
+		this.opTypeValidator = opTypeValidator;
+	}
+
+	class FilterTypeRandomChooser{
 		public double std=1.0; //standard devition
 		public Set<Integer> set=new TreeSet<Integer>();
 		
 		public FilterEventPropOpType next(){
-			int et, pt, op, win;
+			int eventType, propType, opType, windowType;
 			FilterEventPropOpType type;
 			while(true){
-				et=rand.nextInt(numEventTypes);
-				pt=rand.nextInt(numPropTypes);
-				op=rand.nextInt(numFilterOpTypes);
-				win=rand.nextInt(numWindowTypes);
-				type=new FilterEventPropOpType(et, pt, op, win);
+				eventType=rand.nextInt(numEventTypes);
+				propType=rand.nextInt(numPropTypes);
+				opType=rand.nextInt(numFilterOpTypes);
+				windowType=rand.nextInt(numWindowTypes);
+				type=new FilterEventPropOpType(eventType, propType, opType, windowType);
 				if(!set.contains(type.hashCode())){
-					return type;
+					if(opTypeValidator!=null){
+						if(opTypeValidator.validateFilterOperation(propType, opType)){
+							return type;
+						}
+					}
+					else{
+						return type;
+					}
 				}
 			}
 		}		
 		public void reset(){
 			set.clear();
 		}
+	}
+	
+	class JoinTypeRandomChooser{
+		public JoinPropOpType next(){
+			int joinPropType;
+			int opType;
+			while(true){
+				joinPropType=rand.nextInt(numPropTypes);
+				opType=rand.nextInt(numJoinOpTypes);//>,<,=
+				if(opTypeValidator!=null){
+					if(opTypeValidator.validateJoinOperation(joinPropType, opType)){
+						break;
+					}
+				}
+				else{
+					break;
+				}
+			}
+			return new JoinPropOpType(joinPropType, opType);
+		}		
+	}
+	
+	public static interface IOpTypeValidator{
+		public boolean validateFilterOperation(int propType, int opType);
+		public boolean validateJoinOperation(int propType, int opType);
 	}
 }

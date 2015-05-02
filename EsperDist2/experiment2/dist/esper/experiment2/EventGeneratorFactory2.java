@@ -26,8 +26,8 @@ public class EventGeneratorFactory2 {
 		eventGen.addProperty("dn1", new FieldGeneratorFactory.DoubleNormalGenerator(300, 30, 0, 600));
 		eventGen.addProperty("du0", new FieldGeneratorFactory.DoubleUniformGenerator(200, 300));
 		eventGen.addProperty("du1", new FieldGeneratorFactory.DoubleUniformGenerator(300, 800));
-		//eventGen.addProperty("sr0", new FieldGeneratorFactory.StringRandomChooser(genRandomStrings(100)));		
-		//eventGen.addProperty("ia0", new FieldGeneratorFactory.IntArrayGenerator(10));
+		eventGen.addProperty("sr0", new FieldGeneratorFactory.StringRandomChooser(genRandomStrings(100)));		
+		eventGen.addProperty("ia0", new FieldGeneratorFactory.IntArrayGenerator(10));
 		return eventGen;
 	}
 	
