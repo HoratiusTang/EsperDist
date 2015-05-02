@@ -2,6 +2,8 @@ package dist.esper.experiment2;
 
 import java.util.Random;
 
+import dist.esper.experiment2.data.Node;
+
 public class NodeRandomSorter {
 	Random rand=new Random();
 	double implyRatio=3;

@@ -1,4 +1,4 @@
-package dist.esper.experiment2;
+package dist.esper.experiment2.data;
 
 import java.util.ArrayList;
 import java.util.List;

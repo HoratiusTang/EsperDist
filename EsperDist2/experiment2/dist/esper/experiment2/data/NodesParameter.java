@@ -1,11 +1,11 @@
-package dist.esper.experiment2;
+package dist.esper.experiment2.data;
 
 public class NodesParameter {
-	int	numWay;
-	int nodeCount;
-	int nodeCountPerType;
-	double equalRatio;
-	double implyRatio;
+	public int	numWay;
+	public int nodeCount;
+	public int nodeCountPerType;
+	public double equalRatio;
+	public double implyRatio;
 	
 	public NodesParameter(int numWay, int nodeCount, int nodeCountPerType, 
 			double equalRatio, double implyRatio) {

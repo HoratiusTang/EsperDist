@@ -3,6 +3,16 @@ package dist.esper.experiment2;
 import java.util.*;
 
 import dist.esper.epl.expr.OperatorTypeEnum;
+import dist.esper.experiment2.data.FilterEventPropOpType;
+import dist.esper.experiment2.data.FilterNode;
+import dist.esper.experiment2.data.FilterNodeList;
+import dist.esper.experiment2.data.JoinFilterNodeList;
+import dist.esper.experiment2.data.JoinNode;
+import dist.esper.experiment2.data.JoinNodeList;
+import dist.esper.experiment2.data.JoinPropOpType;
+import dist.esper.experiment2.data.NodeListContainer;
+import dist.esper.experiment2.data.NodesParameter;
+import dist.esper.experiment2.data.SelectElement;
 
 public class NodesGenerator {
 	public static final int MAX_WAYS=5;

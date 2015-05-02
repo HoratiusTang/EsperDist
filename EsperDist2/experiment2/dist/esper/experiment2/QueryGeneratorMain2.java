@@ -3,6 +3,7 @@ package dist.esper.experiment2;
 import java.util.List;
 
 import dist.esper.epl.expr.OperatorTypeEnum;
+import dist.esper.experiment2.data.NodesParameter;
 import dist.esper.external.event.EventInstanceGenerator;
 
 public class QueryGeneratorMain2 {

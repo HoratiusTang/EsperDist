@@ -4,6 +4,17 @@ import java.util.*;
 
 import dist.esper.core.util.NumberFormatter;
 import dist.esper.epl.expr.OperatorTypeEnum;
+import dist.esper.experiment2.data.AbstractNodeList;
+import dist.esper.experiment2.data.FilterEventPropOpType;
+import dist.esper.experiment2.data.FilterNode;
+import dist.esper.experiment2.data.FilterNodeList;
+import dist.esper.experiment2.data.JoinNode;
+import dist.esper.experiment2.data.JoinNodeList;
+import dist.esper.experiment2.data.JoinPropOpType;
+import dist.esper.experiment2.data.Node;
+import dist.esper.experiment2.data.NodeListContainer;
+import dist.esper.experiment2.data.NodesParameter;
+import dist.esper.experiment2.data.SelectElement;
 import dist.esper.external.event.*;
 
 public class QueryGenerator2 {
@@ -56,10 +67,10 @@ public class QueryGenerator2 {
 	public void generateValues(){
 		for(int i=0; i<nodeListCnts.length; i++){
 			if(nodeListCnts[i]!=null){
-				NodeListContainer nl2=nodeListCnts[i];
-				for(int j=0; j<nl2.getNodeListsCount(); j++){
+				NodeListContainer nlc=nodeListCnts[i];
+				for(int j=0; j<nlc.getNodeListsCount(); j++){
 					System.out.format("begin generateValues(): [%d][%d]\n", i, j);
-					generateValues(nl2.nodeListList.get(j));
+					generateValues(nlc.getNodeListList().get(j));
 					System.out.format("end   generateValues(): [%d][%d]\n", i, j);
 				}
 			}

@@ -1,8 +1,8 @@
 package dist.esper.experiment2.test;
 
-import dist.esper.experiment2.NodeListContainer;
 import dist.esper.experiment2.NodesGenerator;
-import dist.esper.experiment2.NodesParameter;
+import dist.esper.experiment2.data.NodeListContainer;
+import dist.esper.experiment2.data.NodesParameter;
 
 public class TestNodeGenerator {
 	public static void main(String[] args){

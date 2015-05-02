@@ -1,4 +1,4 @@
-package dist.esper.experiment2;
+package dist.esper.experiment2.data;
 
 public class FilterEventPropOpType{
 	public int eventType;

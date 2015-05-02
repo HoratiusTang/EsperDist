@@ -1,4 +1,4 @@
-package dist.esper.experiment2;
+package dist.esper.experiment2.data;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
