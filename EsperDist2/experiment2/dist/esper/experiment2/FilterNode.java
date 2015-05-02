@@ -6,19 +6,35 @@ import dist.esper.epl.expr.OperatorTypeEnum;
 import dist.esper.epl.expr.Value;
 
 public class FilterNode extends Node {
-	FilterEventPropOpType type;
-	Value val;
+	FilterEventPropOpType filterType;
+	Number value;
 	public FilterNode() {
 		super();
 	}
 	
 	public FilterNode(FilterEventPropOpType type) {
 		super();
-		this.type = type;
-	}
+		this.filterType = type;
+	}	
 	
+	public Number getValue() {
+		return value;
+	}
+
+	public void setValue(Number value) {
+		this.value = value;
+	}
+
+	public FilterEventPropOpType getFilterType() {
+		return filterType;
+	}
+
+	public void setFilterType(FilterEventPropOpType filterType) {
+		this.filterType = filterType;
+	}
+
 	@Override
 	public String toString(){
-		return String.format("FN(%d-%d-[%d,%d,%d,%d])", id, tag, type.eventType, type.propType, type.opType, type.windowType);
+		return String.format("FN(%d-%d-[%d,%d,%d,%d])", id, tag, filterType.eventType, filterType.propType, filterType.opType, filterType.windowType);
 	}
 }

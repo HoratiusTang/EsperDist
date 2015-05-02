@@ -10,6 +10,7 @@ public class NodeList{
 	public List<NodeList> filterNodeLists=new ArrayList<NodeList>(5);
 	public List<Node> nodeList=new ArrayList<Node>();
 	public List<Node> orderedNodeList=new ArrayList<Node>();
+	public int popIndex;
 	
 	public NodeList(){
 	}
@@ -80,6 +81,19 @@ public class NodeList{
 	public <T extends Node> void copySortedNodes(T[] nodes){
 		T[] orderedNodes=nodes.clone();
 		this.orderedNodeList=(List<Node>)Arrays.asList(orderedNodes);
+	}
+	
+	public void resetPop(){
+		this.popIndex=0;
+	}
+	
+	public Node popNode(){
+		if(popIndex < nodeList.size()){
+			Node n=nodeList.get(popIndex);
+			popIndex++;
+			return n;
+		}
+		return null;
 	}
 	
 	@Override

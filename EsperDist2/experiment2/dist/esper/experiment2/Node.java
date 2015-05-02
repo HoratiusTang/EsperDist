@@ -15,10 +15,20 @@ public class Node {
 	public Set<Node> implyNodeSet=new TreeSet<Node>(nodeComp);	
 	static AtomicInteger UID=new AtomicInteger(0);
 	
+	List<SelectElement> selectElementList=new ArrayList<SelectElement>(10);
+	
 	public Node() {
 		super();		
 		this.id = UID.getAndIncrement();
 		this.tag = this.id;
+	}	
+	
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
 	}
 	
 	public int getTag() {
@@ -60,6 +70,19 @@ public class Node {
 	public void addImplyNode(Node n){
 		implyNodeSet.add(n);
 	}
+	
+	public void addSelectElement(SelectElement se){
+		selectElementList.add(se);
+	}
+	
+	public List<SelectElement> getSelectElementList() {
+		return selectElementList;
+	}
+	
+	public void setSelectElementList(List<SelectElement> selectElementList) {
+		this.selectElementList = selectElementList;
+	}
+	
 	//	public static enum NodeType{
 //		NONE("none"),
 //		FITLER("filter"),

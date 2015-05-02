@@ -25,12 +25,18 @@ public class NodeList2{
 		return nodeListList.size();
 	}
 	
-	public int getNodesTotalCount(){
-		int count=0;
+//	public int getNodesTotalCount(){
+//		int count=0;
+//		for(NodeList nodeList: nodeListList){
+//			count+=nodeList.getNodesCount();
+//		}
+//		return count;
+//	}
+	
+	public void resetPop(){
 		for(NodeList nodeList: nodeListList){
-			count+=nodeList.getNodesCount();
+			nodeList.resetPop();
 		}
-		return count;
 	}
 	
 	@Override

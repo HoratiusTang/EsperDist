@@ -91,7 +91,7 @@ public class NodesGenerator {
 			jns[0]=new JoinNode(nl.getJoinPropOpList());
 			jns[0].setSelectElementList(genSelectElements(numWay));
 			for(int j=0;j<numWay;j++){
-				jns[0].addUpNode(fnLists.get(j).getLastNode());
+				jns[0].addFilterNode((FilterNode)fnLists.get(j).getLastNode());
 			}
 			
 			for(int i=1; i<neqCount; i++){
@@ -100,7 +100,7 @@ public class NodesGenerator {
 				int k=rand.nextInt(numWay);
 				fnLists.get(k).addNode(new FilterNode(nl.getType(k)));
 				for(int j=0; j<numWay; j++){
-					jns[i].addUpNode(fnLists.get(j).getLastNode());
+					jns[i].addFilterNode((FilterNode)fnLists.get(j).getLastNode());
 				}
 			}
 			
@@ -109,7 +109,7 @@ public class NodesGenerator {
 				jns[i].setSelectElementList(genSelectElements(numWay));
 				int k=rand.nextInt(neqCount);
 				jns[i].setTag(jns[k].getTag());
-				jns[i].setUpNodeList(jns[k].getUpNodeList());
+				jns[i].setFilterNodeList(jns[k].getFilterNodeList());
 			}
 			nl.copySortedNodes(jns);
 			nodeSorter.randomSort(jns, nodeParams[numWay].implyRatio, nodeParams[numWay].implyRatio/5.0);
@@ -132,6 +132,7 @@ public class NodesGenerator {
 			FilterNode[] fns=new FilterNode[count];
 			for(int i=0; i<count; i++){
 				FilterNode fn=new FilterNode(type);
+				fn.setSelectElementList(genSelectElements(1));
 				fns[i]=fn;
 			}
 			int eqCount=(int)(count*nodeParams[1].equalRatio);

@@ -3,6 +3,7 @@ package dist.esper.external.event;
 import java.util.*;
 
 import dist.esper.event.Event;
+import dist.esper.event.EventProperty;
 
 public class EventInstanceGenerator {
 	String categoryName;//different event may share the same prototype(category).
@@ -58,6 +59,16 @@ public class EventInstanceGenerator {
 	
 	public String getEventName(){
 		return event.getName();
+	}
+	
+	public String getPropertyNameByIndex(int propIndex){
+		EventProperty prop=event.getPropList().get(propIndex);
+		return prop.getName();
+	}
+	
+	public FieldGenerator getFieldGeneratorByIndex(int propIndex){
+		String propName=getPropertyNameByIndex(propIndex);
+		return fgMap.get(propName);
 	}
 	
 }

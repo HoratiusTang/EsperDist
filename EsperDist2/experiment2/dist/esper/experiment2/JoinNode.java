@@ -4,8 +4,8 @@ import java.util.*;
 
 public class JoinNode extends Node {
 	public List<JoinPropOpType> joinPropOpList=new ArrayList<JoinPropOpType>(4);
-	List<Node> upNodeList=new ArrayList<Node>(5);
-	List<SelectElement> selectElementList=new ArrayList<SelectElement>(10);
+	public List<FilterNode> filterNodeList=new ArrayList<FilterNode>(5);
+	
 	public JoinNode() {
 	}
 	public JoinNode(List<JoinPropOpType> joinPropOpList) {
@@ -13,16 +13,16 @@ public class JoinNode extends Node {
 		this.joinPropOpList = joinPropOpList;
 	}
 
-	public void addUpNode(Node n){
-		if(!upNodeList.contains(n)){
-			upNodeList.add(n);
+	public void addFilterNode(FilterNode n){
+		if(!filterNodeList.contains(n)){
+			filterNodeList.add(n);
 		}
 	}
-	public List<Node> getUpNodeList() {
-		return upNodeList;
+	public List<FilterNode> getFilterNodeList() {
+		return filterNodeList;
 	}
-	public void setUpNodeList(List<Node> upNodeList) {
-		this.upNodeList = upNodeList;
+	public void setFilterNodeList(List<FilterNode> filterNodeList) {
+		this.filterNodeList = filterNodeList;
 	}
 	
 	public List<JoinPropOpType> getJoinPropOpList() {
@@ -30,26 +30,16 @@ public class JoinNode extends Node {
 	}
 	public void setJoinPropOpList(List<JoinPropOpType> joinPropOpList) {
 		this.joinPropOpList = joinPropOpList;
-	}
+	}	
 	
-	public void addSelectElement(SelectElement se){
-		selectElementList.add(se);
-	}
-	
-	public List<SelectElement> getSelectElementList() {
-		return selectElementList;
-	}
-	public void setSelectElementList(List<SelectElement> selectElementList) {
-		this.selectElementList = selectElementList;
-	}
 	@Override
 	public String toString(){
 		StringBuilder sb=new StringBuilder();
-		sb.append(String.format("JN(%d-%d-%d): ", id, tag, upNodeList.size()));
+		sb.append(String.format("JN(%d-%d-%d): ", id, tag, filterNodeList.size()));
 		
-		for(int i=0; i<upNodeList.size(); i++){
-			sb.append(upNodeList.get(i).toString());
-			if(i<upNodeList.size()-1){
+		for(int i=0; i<filterNodeList.size(); i++){
+			sb.append(filterNodeList.get(i).toString());
+			if(i<filterNodeList.size()-1){
 				JoinPropOpType p=joinPropOpList.get(i);
 				sb.append(String.format("~ %d-%d ~", p.propType, p.opType));
 			}
