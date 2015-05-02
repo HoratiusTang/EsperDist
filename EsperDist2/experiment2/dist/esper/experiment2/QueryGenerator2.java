@@ -15,7 +15,7 @@ public class QueryGenerator2 {
 	int[] windowTimes;
 	int numSelectElementsPerFilter;
 	NodesParameter[] nodeParams;
-	NodeListContainer[] nodeList2s;
+	NodeListContainer[] nodeListCnts;
 	List<Node> allNodeList;
 	List<String> queryList;
 	NodesGenerator nodesGen;
@@ -50,20 +50,13 @@ public class QueryGenerator2 {
 		nodesGen=new NodesGenerator(numEventTypes, numPropTypes, 
 				filterOpTypes.length, joinOpTypes.length,
 				windowTimes.length, numSelectElementsPerFilter, nodeParams);
-		nodeList2s=nodesGen.genearteNodeList2s();
+		nodeListCnts=nodesGen.genearteNodeList2s();
 	}
 	
 	public void generateValues(){
-//		for(NodeList2 nl2: nodeList2s){
-//			if(nl2!=null){
-//				for(NodeList nl: nl2.nodeListList){
-//					generateValues(nl);
-//				}
-//			}
-//		}
-		for(int i=0; i<nodeList2s.length; i++){
-			if(nodeList2s[i]!=null){
-				NodeListContainer nl2=nodeList2s[i];
+		for(int i=0; i<nodeListCnts.length; i++){
+			if(nodeListCnts[i]!=null){
+				NodeListContainer nl2=nodeListCnts[i];
 				for(int j=0; j<nl2.getNodeListsCount(); j++){
 					System.out.format("begin generateValues(): [%d][%d]\n", i, j);
 					generateValues(nl2.nodeListList.get(j));
@@ -87,7 +80,7 @@ public class QueryGenerator2 {
 				fn.setValue(nums[i]);
 			}
 			for( ; i<nl.getNodesCount(); i++){
-				FilterNode fn=(FilterNode)nl.orderedNodeList.get(i);
+				FilterNode fn=(FilterNode)nl.getOrderedNodeByIndex(i);
 				FilterNode fn0=(FilterNode)searchNodeWithId(fnl.getOrderedNodeList(), fn.getTag());
 				fn.setValue(fn0.getValue());
 			}
@@ -105,10 +98,10 @@ public class QueryGenerator2 {
 		int nodeTotalCount=0;
 		LinkedList<List<? extends Node>> nodeLists=new LinkedList<List<? extends Node>>();
 		LinkedList<Index> nodePositions=new LinkedList<Index>();
-		for(NodeListContainer nl2: nodeList2s){
+		for(NodeListContainer nl2: nodeListCnts){
 			if(nl2!=null){
-				for(AbstractNodeList<?> nl: nl2.nodeListList){
-					nodeLists.add(nl.nodeList);
+				for(AbstractNodeList<?> nl: nl2.getNodeListList()){
+					nodeLists.add(nl.getNodeList());
 					nodePositions.add(new Index(0));
 					nodeTotalCount+=nl.getNodesCount();
 				}

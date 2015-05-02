@@ -18,7 +18,7 @@ public class NodesGenerator {
 	EventPropOpTypeCountRandomChooser chooser=new EventPropOpTypeCountRandomChooser();
 	NodeRandomSorter nodeSorter=new NodeRandomSorter();
 	Random rand=new Random();
-	NodeListContainer[] nodeList2s=new NodeListContainer[MAX_WAYS+1];
+	NodeListContainer[] nodeListCnts=new NodeListContainer[MAX_WAYS+1];
 	
 	public NodesGenerator(int numEventTypes, int numPropTypes,
 			int numFilterOpTypes, int numJoinOpTypes, 
@@ -47,7 +47,7 @@ public class NodesGenerator {
 				System.out.format("generate %d-way nodes finished\n",i);
 			}
 		}
-		return nodeList2s;
+		return nodeListCnts;
 	}
 	
 	public void generateJoinNodeList2(int numWay){
@@ -123,7 +123,7 @@ public class NodesGenerator {
 			nl2.addNodeList(nl);
 			curCount+=jns.length;
 		}
-		nodeList2s[numWay]=nl2;
+		nodeListCnts[numWay]=nl2;
 	}
 	
 	public void generateFilterNodeList2(){
@@ -153,7 +153,7 @@ public class NodesGenerator {
 			nl2.addNodeList(nl);
 			curCount+=fns.length;
 		}
-		nodeList2s[1]=nl2;
+		nodeListCnts[1]=nl2;
 	}
 	
 	public List<SelectElement> genSelectElements(int numWay){
