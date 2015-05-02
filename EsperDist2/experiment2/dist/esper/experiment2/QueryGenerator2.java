@@ -120,16 +120,18 @@ public class QueryGenerator2 {
 			String aliasName=buildQueryEventAliasName(fn);
 			List<String> seStrList=buildFilterSelectElementStrings(fn, aliasName);
 			String fromStr=buildFromElementString(fn, aliasName);
+			String query=assembleQuery(seStrList, Arrays.asList(new String[]{fromStr}), null);
 			count++;
-			return null;
+			return query;
 		}
 		public String buildJoinQuery(JoinNode jn){
 			List<String> aliasNameList=buildQueryEventAliasNames(jn.getFilterNodeList());
 			List<String> seStrList=buildJoinSelectElementStrings(jn, aliasNameList);
 			List<String> jcStrList=buildJoinConditionStrings(jn, aliasNameList);
 			List<String> fromStrList=buildFromElementStrings(jn.getFilterNodeList(), aliasNameList);
+			String query=assembleQuery(seStrList, fromStrList, jcStrList);
 			count++;
-			return null;
+			return query;
 		}
 		
 		public List<String> buildJoinConditionStrings(JoinNode jn, List<String> aliasNameList){
@@ -182,8 +184,13 @@ public class QueryGenerator2 {
 			return propName;
 		}
 		
-		public List<String> buildFromElementStrings(List<FilterNode> fnLiist, List<String> aliasNameList){
-			return null;
+		public List<String> buildFromElementStrings(List<FilterNode> fnList, List<String> aliasNameList){
+			List<String> fromStrList=new ArrayList<String>(fnList.size());
+			for(int i=0; i<fnList.size(); i++){
+				String fromStr=buildFromElementString(fnList.get(i), aliasNameList.get(i));
+				fromStrList.add(fromStr);
+			}
+			return fromStrList;
 		}
 		
 		//FIXME: multi filter condition
@@ -214,10 +221,36 @@ public class QueryGenerator2 {
 			String aliasName=String.format("%s%04d%02d", 
 					eventName.toLowerCase(), count, 1);
 			return aliasName;
-		}		
-//		public String assembleQuery(List<String> seStrList, List<String> fromStrList){
-//			
-//		}		
+		}
+		
+		public String assembleQuery(List<String> seStrList, List<String> fromStrList, List<String> jcStrList){
+			StringBuilder sb=new StringBuilder();
+			String dem=" ";
+			sb.append("SELECT");
+			for(String seStr: seStrList){
+				sb.append(dem);
+				sb.append(seStr);
+				dem=", ";
+			}
+			dem=" ";
+			sb.append("FROM");
+			for(String fromStr: fromStrList){
+				sb.append(dem);
+				sb.append(fromStr);
+				dem=", ";
+			}
+			if(jcStrList!=null && jcStrList.size()>0){
+				dem=" ";
+				sb.append("WHERE");
+				for(String jcStr: jcStrList){
+					sb.append(dem);
+					sb.append(jcStr);
+					dem=" and ";
+				}
+			}
+			String query=sb.toString();
+			return query;
+		}
 	}
 	
 	private Number getNextValue(Number lastVal, FieldGenerator fg, int filterOpType){
