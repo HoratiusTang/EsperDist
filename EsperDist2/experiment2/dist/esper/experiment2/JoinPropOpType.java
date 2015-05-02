@@ -1,8 +1,8 @@
 package dist.esper.experiment2;
 
 public class JoinPropOpType {
-	public int propType;
-	public int opType;
+	int propType;
+	int opType;
 	public JoinPropOpType(int propType, int opType) {
 		super();
 		

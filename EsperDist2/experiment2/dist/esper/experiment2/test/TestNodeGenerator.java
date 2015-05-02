@@ -1,6 +1,6 @@
 package dist.esper.experiment2.test;
 
-import dist.esper.experiment2.NodeList2;
+import dist.esper.experiment2.NodeListContainer;
 import dist.esper.experiment2.NodesGenerator;
 import dist.esper.experiment2.NodesParameter;
 
@@ -28,9 +28,9 @@ public class TestNodeGenerator {
 		NodesGenerator ng=new NodesGenerator(numEventTypes, numPropTypes, 
 				numFilterOpTypes, numJoinOpTypes, numWindowTypes, 
 				numSelectElementsPerFilter, nps);
-		NodeList2[] nl2s=ng.genearteNodeList2s();
+		NodeListContainer[] nl2s=ng.genearteNodeList2s();
 		
-		for(NodeList2 nl2: nl2s){
+		for(NodeListContainer nl2: nl2s){
 			if(nl2!=null){
 				System.out.println(nl2);
 			}

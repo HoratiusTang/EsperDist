@@ -2,6 +2,7 @@ package dist.esper.experiment2;
 
 import java.util.*;
 
+import dist.esper.core.util.NumberFormatter;
 import dist.esper.epl.expr.OperatorTypeEnum;
 import dist.esper.epl.expr.Value;
 
@@ -35,6 +36,9 @@ public class FilterNode extends Node {
 
 	@Override
 	public String toString(){
-		return String.format("FN(%d-%d-[%d,%d,%d,%d])", id, tag, filterType.eventType, filterType.propType, filterType.opType, filterType.windowType);
+		return String.format("FN(%d-%d-[%d,%d,%d,%d,%s])", id, tag, 
+				filterType.eventType, filterType.propType, 
+				filterType.opType, filterType.windowType,
+				value==null?"null":NumberFormatter.format(value));
 	}
 }

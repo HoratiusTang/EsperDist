@@ -13,11 +13,31 @@ public class QueryGenerator2 {
 	OperatorTypeEnum[] filterOpTypes;
 	OperatorTypeEnum[] joinOpTypes;
 	int[] windowTimes;
-	NodeList2[] nodeList2s;
+	int numSelectElementsPerFilter;
+	NodesParameter[] nodeParams;
+	NodeListContainer[] nodeList2s;
 	List<Node> allNodeList;
 	List<String> queryList;
+	NodesGenerator nodesGen;
 	QueryBuilder queryBuilder=new QueryBuilder();
+	NumberComparator numberComparator=new NumberComparator();
 	
+	public QueryGenerator2(EventInstanceGenerator[] eigs,
+			OperatorTypeEnum[] filterOpTypes, OperatorTypeEnum[] joinOpTypes,
+			int[] windowTimes, int numSelectElementsPerFilter, 
+			NodesParameter[] nodeParams) {
+		super();
+		this.eigs = eigs;
+		this.filterOpTypes = filterOpTypes;
+		this.joinOpTypes = joinOpTypes;
+		this.windowTimes = windowTimes;
+		this.numSelectElementsPerFilter = numSelectElementsPerFilter;
+		this.nodeParams = nodeParams;
+		
+		this.numEventTypes = eigs.length;
+		this.numPropTypes = eigs[0].getEvent().getPropList().size();
+	}
+
 	public List<String> generateQueries(){
 		generateNodeList2s();
 		generateValues();
@@ -27,39 +47,54 @@ public class QueryGenerator2 {
 	}
 	
 	public void generateNodeList2s(){
-		
+		nodesGen=new NodesGenerator(numEventTypes, numPropTypes, 
+				filterOpTypes.length, joinOpTypes.length,
+				windowTimes.length, numSelectElementsPerFilter, nodeParams);
+		nodeList2s=nodesGen.genearteNodeList2s();
 	}
 	
 	public void generateValues(){
-		for(NodeList2 nl2: nodeList2s){
-			if(nl2!=null){
-				for(NodeList nl: nl2.nodeListList){
-					generateValues(nl);
+//		for(NodeList2 nl2: nodeList2s){
+//			if(nl2!=null){
+//				for(NodeList nl: nl2.nodeListList){
+//					generateValues(nl);
+//				}
+//			}
+//		}
+		for(int i=0; i<nodeList2s.length; i++){
+			if(nodeList2s[i]!=null){
+				NodeListContainer nl2=nodeList2s[i];
+				for(int j=0; j<nl2.getNodeListsCount(); j++){
+					System.out.format("begin generateValues(): [%d][%d]\n", i, j);
+					generateValues(nl2.nodeListList.get(j));
+					System.out.format("end   generateValues(): [%d][%d]\n", i, j);
 				}
 			}
 		}
 	}
 	
-	public void generateValues(NodeList nl){
-		if(nl.getTypeCount()==1){//filter
-			FilterEventPropOpType filterType=nl.getType(0);
+	public void generateValues(AbstractNodeList<?> nl){
+		if(nl instanceof FilterNodeList){//filter
+			FilterNodeList fnl=(FilterNodeList)nl;
+			FilterEventPropOpType filterType=fnl.getFilterType();
 			EventInstanceGenerator eig=eigs[filterType.eventType];
 			FieldGenerator fg=eig.getFieldGeneratorByIndex(filterType.propType);
-			Number lastVal=null;
-			for(Node n: nl.orderedNodeList){
-				FilterNode fn=(FilterNode)n;
-				if(fn.getTag()==fn.getId()){
-					lastVal=getNextValue(lastVal, fg, filterType.opType);
-					fn.setValue(lastVal);
-				}
-				else{
-					FilterNode fn0=(FilterNode)searchNodeWithId(nl.nodeList, fn.getTag());
-					fn.setValue(fn0.getValue());
-				}
+			
+			Number[] nums=this.generateSortedNumbers(fg, filterType.opType, nl.getNonEqualNodeCount());
+			int i;
+			for(i=0; i<nl.getNonEqualNodeCount(); i++){
+				FilterNode fn=(FilterNode)nl.getOrderedNodeByIndex(i);
+				fn.setValue(nums[i]);
+			}
+			for( ; i<nl.getNodesCount(); i++){
+				FilterNode fn=(FilterNode)nl.orderedNodeList.get(i);
+				FilterNode fn0=(FilterNode)searchNodeWithId(fnl.getOrderedNodeList(), fn.getTag());
+				fn.setValue(fn0.getValue());
 			}
 		}
-		else{//join
-			for(NodeList fnl: nl.filterNodeLists){
+		else{
+			JoinNodeList jnl=(JoinNodeList)nl;
+			for(FilterNodeList fnl: jnl.getFilterNodeLists()){
 				generateValues(fnl);
 			}
 		}
@@ -68,13 +103,13 @@ public class QueryGenerator2 {
 	public void mergeAllNodes(){
 		Random rand=new Random();
 		int nodeTotalCount=0;
-		LinkedList<List<Node>> nodeLists=new LinkedList<List<Node>>();
+		LinkedList<List<? extends Node>> nodeLists=new LinkedList<List<? extends Node>>();
 		LinkedList<Index> nodePositions=new LinkedList<Index>();
-		for(NodeList2 nl2: nodeList2s){
+		for(NodeListContainer nl2: nodeList2s){
 			if(nl2!=null){
-				for(NodeList nl: nl2.nodeListList){
+				for(AbstractNodeList<?> nl: nl2.nodeListList){
 					nodeLists.add(nl.nodeList);
-					nodePositions.add(new Index());
+					nodePositions.add(new Index(0));
 					nodeTotalCount+=nl.getNodesCount();
 				}
 			}
@@ -82,7 +117,7 @@ public class QueryGenerator2 {
 		
 		allNodeList=new ArrayList<Node>(nodeTotalCount);
 		int nodeListIndex;
-		List<Node> nodeList;
+		List<? extends Node> nodeList;
 		Index nodePosition;
 		while(allNodeList.size() < nodeTotalCount){
 			nodeListIndex=rand.nextInt(nodeLists.size());
@@ -117,9 +152,9 @@ public class QueryGenerator2 {
 	class QueryBuilder{
 		int count=0;
 		public String buildFilterQuery(FilterNode fn){
-			String aliasName=buildQueryEventAliasName(fn);
+			String aliasName=buildQueryEventAliasName(fn, 1);
 			List<String> seStrList=buildFilterSelectElementStrings(fn, aliasName);
-			String fromStr=buildFromElementString(fn, aliasName);
+			String fromStr=buildFromElementString(fn, aliasName, false);
 			String query=assembleQuery(seStrList, Arrays.asList(new String[]{fromStr}), null);
 			count++;
 			return query;
@@ -141,8 +176,8 @@ public class QueryGenerator2 {
 				FilterNode lfn=jn.getFilterNodeList().get(i);
 				FilterNode rfn=jn.getFilterNodeList().get(i+1);
 				String lpropName=buildAliasDotPropString(lfn, aliasNameList.get(i), jpo.propType);
-				String rpropName=buildAliasDotPropString(lfn, aliasNameList.get(i+i), jpo.propType);
-				OperatorTypeEnum opType=filterOpTypes[jpo.opType];
+				String rpropName=buildAliasDotPropString(rfn, aliasNameList.get(i+1), jpo.propType);
+				OperatorTypeEnum opType=joinOpTypes[jpo.opType];
 				String jc=String.format("%s%s%s", lpropName, opType.getString(), rpropName);
 				jcList.add(jc);
 			}
@@ -187,20 +222,30 @@ public class QueryGenerator2 {
 		public List<String> buildFromElementStrings(List<FilterNode> fnList, List<String> aliasNameList){
 			List<String> fromStrList=new ArrayList<String>(fnList.size());
 			for(int i=0; i<fnList.size(); i++){
-				String fromStr=buildFromElementString(fnList.get(i), aliasNameList.get(i));
+				String fromStr=buildFromElementString(fnList.get(i), aliasNameList.get(i), true);
 				fromStrList.add(fromStr);
 			}
 			return fromStrList;
 		}
 		
 		//FIXME: multi filter condition
-		public String buildFromElementString(FilterNode fn, String aliasName){
+		public String buildFromElementString(FilterNode fn, String aliasName, boolean withWindow){
 			EventInstanceGenerator eig=eigs[fn.getFilterType().eventType];
 			String propName=getPropName(fn.getFilterType().eventType, fn.getFilterType().propType);
 			OperatorTypeEnum opType=filterOpTypes[fn.getFilterType().opType];
-			String fromElementStr=String.format("%s(%s%s%s) as %s",
-					eig.getEvent(), propName, opType.getString(),
-					NumberFormatter.format(fn.getValue()), aliasName);
+			int windowTime=windowTimes[fn.getFilterType().windowType];
+			String fromElementStr;
+			if(withWindow){
+				fromElementStr=String.format("%s(%s%s%s).win:time(%d sec) as %s",
+						eig.getEventName(), propName, opType.getString(),
+						NumberFormatter.format(fn.getValue()), 
+						windowTime, aliasName);
+			}
+			else{
+				fromElementStr=String.format("%s(%s%s%s) as %s",
+						eig.getEventName(), propName, opType.getString(),
+						NumberFormatter.format(fn.getValue()), aliasName);
+			}
 			return fromElementStr;
 		}
 		
@@ -208,18 +253,16 @@ public class QueryGenerator2 {
 			List<String> eaList=new ArrayList<String>(fnList.size());
 			for(int i=0; i<fnList.size(); i++){
 				FilterNode fn=fnList.get(i);
-				String eventName=eigs[fn.getFilterType().eventType].getEventName();
-				String aliasName=String.format("%s%04d%02d", 
-						eventName.toLowerCase(), count, i);
+				String aliasName=buildQueryEventAliasName(fn, i);
 				eaList.add(aliasName);
 			}
 			return eaList;
 		}
 		
-		public String buildQueryEventAliasName(FilterNode fn){
+		public String buildQueryEventAliasName(FilterNode fn, int fnIndex){
 			String eventName=eigs[fn.getFilterType().eventType].getEventName();
 			String aliasName=String.format("%s%04d%02d", 
-					eventName.toLowerCase(), count, 1);
+					eventName.toLowerCase(), count, fnIndex);
 			return aliasName;
 		}
 		
@@ -232,6 +275,7 @@ public class QueryGenerator2 {
 				sb.append(seStr);
 				dem=", ";
 			}
+			sb.append("\n");
 			dem=" ";
 			sb.append("FROM");
 			for(String fromStr: fromStrList){
@@ -240,6 +284,7 @@ public class QueryGenerator2 {
 				dem=", ";
 			}
 			if(jcStrList!=null && jcStrList.size()>0){
+				sb.append("\n");
 				dem=" ";
 				sb.append("WHERE");
 				for(String jcStr: jcStrList){
@@ -248,9 +293,26 @@ public class QueryGenerator2 {
 					dem=" and ";
 				}
 			}
+			sb.append("\n");
 			String query=sb.toString();
 			return query;
 		}
+	}
+	
+	private Number[] generateSortedNumbers(FieldGenerator fg, int filterOpType, int count){
+		Number[] nums=new Number[count];
+		for(int i=0; i<count; i++){
+			nums[i]=(Number)fg.random();
+		}
+		if(filterOpTypes[filterOpType]==OperatorTypeEnum.GREATER ||
+				filterOpTypes[filterOpType]==OperatorTypeEnum.GREATER_OR_EQUAL){
+			numberComparator.setAscOrder(true);
+		}
+		else{
+			numberComparator.setAscOrder(false);
+		}
+		Arrays.sort(nums, numberComparator);
+		return nums;
 	}
 	
 	private Number getNextValue(Number lastVal, FieldGenerator fg, int filterOpType){
@@ -270,8 +332,8 @@ public class QueryGenerator2 {
 		return nextVal;
 	}
 	
-	private Node searchNodeWithId(List<Node> nodeList, int tag){
-		for(Node n: nodeList){
+	private <T extends Node> T searchNodeWithId(List<T> nodeList, int tag){
+		for(T n: nodeList){
 			if(n.getId()==tag){
 				return n;
 			}
@@ -281,5 +343,33 @@ public class QueryGenerator2 {
 	
 	class Index{
 		int index=0;
+		public Index(int index){
+			this.index = index;
+		}
+		@Override
+		public String toString(){
+			return ""+index;
+		}
+	}
+	
+	class NumberComparator implements Comparator<Number>{
+		boolean asc=true;
+		@Override
+		public int compare(Number n1, Number n2) {
+			double diff=n1.doubleValue()-n2.doubleValue();
+			if(diff==0.0){
+				return 0;
+			}
+			else if(diff>0){
+				return asc?1:-1;
+			}
+			else{
+				return asc?-1:1;
+			}
+		}
+		
+		public void setAscOrder(boolean asc){
+			this.asc = asc;
+		}
 	}
 }

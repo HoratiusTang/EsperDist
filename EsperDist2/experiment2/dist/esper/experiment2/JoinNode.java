@@ -3,8 +3,8 @@ package dist.esper.experiment2;
 import java.util.*;
 
 public class JoinNode extends Node {
-	public List<JoinPropOpType> joinPropOpList=new ArrayList<JoinPropOpType>(4);
-	public List<FilterNode> filterNodeList=new ArrayList<FilterNode>(5);
+	List<JoinPropOpType> joinPropOpList=new ArrayList<JoinPropOpType>(4);
+	List<FilterNode> filterNodeList=new ArrayList<FilterNode>(5);
 	
 	public JoinNode() {
 	}
@@ -41,7 +41,7 @@ public class JoinNode extends Node {
 			sb.append(filterNodeList.get(i).toString());
 			if(i<filterNodeList.size()-1){
 				JoinPropOpType p=joinPropOpList.get(i);
-				sb.append(String.format("~ %d-%d ~", p.propType, p.opType));
+				sb.append(String.format(" ~ %d-%d ~ ", p.propType, p.opType));
 			}
 		}
 		return sb.toString();
