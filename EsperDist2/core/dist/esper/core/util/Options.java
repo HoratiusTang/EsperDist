@@ -25,4 +25,6 @@ public class Options {
 	
 	public static String OUTPUT_INTERVERAL_US="outintus";
 	public static String SPOUT_BATCH_COUNT="spout.bc";
+	
+	public static String EXPECTED_SPOUNT_COUNT="spout.count";
 }

@@ -76,6 +76,7 @@ public class Coordinator {
 	Map<String,Link> monitorLinkMap=new ConcurrentSkipListMap<String,Link>();
 	
 	List<RawStream> rawStreamList=new ArrayList<RawStream>();
+	int expectedSpoutCount=0;
 	AtomicLong selectElementUID=new AtomicLong(0L);
 	AtomicLong streamUID=new AtomicLong(0L);
 	AtomicLong eplUID=new AtomicLong(0L);
@@ -221,6 +222,7 @@ public class Coordinator {
 		coordStatReportor=new CoordinatorStatReportor(this);
 		streamReviewer=new StreamReviewer(existedFscList, existedPscList,
 				existedJscList, existedRscList);
+		expectedSpoutCount=(int)ServiceManager.getConfig().getLong(Options.EXPECTED_SPOUNT_COUNT, 0);
 	}
 	
 	public void start(){
@@ -245,6 +247,10 @@ public class Coordinator {
 		double overloadRatio=costEval.getOverloadedWorkerRatio();
 		if(overloadRatio>OVERLOAD_RATIO_THRESHOLD){
 			log.error("System can NOT execute new EPL, for %.2f%% workers are overloaded", overloadRatio*100);
+			return -1;
+		}
+		if(rawStreamList.size() < expectedSpoutCount){
+			log.info("System is waiting for %d Spouts to connect, but there is only %d now", expectedSpoutCount, rawStreamList.size());
 			return -1;
 		}
 		long eplId=eplUID.getAndIncrement();
