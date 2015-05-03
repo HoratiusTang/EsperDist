@@ -349,7 +349,7 @@ public class QueryGenerator2 {
 	}
 	
 	class OpTypeValidator implements IOpTypeValidator{
-		public boolean validate(int propType, OperatorTypeEnum opType) {
+		public boolean validateSingleOp(int propType, OperatorTypeEnum opType) {
 			FieldGenerator fg=eigs[0].getFieldGeneratorByIndex(propType);
 			Class<?> clazz=fg.getFieldClassType();
 			if(clazz.isArray() || clazz.equals(String.class)){
@@ -361,14 +361,24 @@ public class QueryGenerator2 {
 			return true;
 		}
 		@Override
-		public boolean validateFilterOperation(int propType, int opType) {
-			OperatorTypeEnum op=filterOpTypes[opType];
-			return validate(propType, op);
+		public boolean validateFilterOperation(FilterEventPropOpType filterType) {
+			OperatorTypeEnum op=filterOpTypes[filterType.opType];
+			return validateSingleOp(filterType.propType, op);
 		}
 		@Override
-		public boolean validateJoinOperation(int propType, int opType) {
-			OperatorTypeEnum op=joinOpTypes[opType];
-			return validate(propType, op);
+		public boolean validateJoinOperation(JoinPropOpType[] joinTypes) {
+			int nonEqualOpCount=0;
+			for(JoinPropOpType joinType: joinTypes){
+				OperatorTypeEnum op=joinOpTypes[joinType.opType];
+				nonEqualOpCount += (op==OperatorTypeEnum.EQUAL)?0:1;
+				if(!validateSingleOp(joinType.propType, op)){
+					return false;
+				}
+			}
+			if((double)nonEqualOpCount/joinTypes.length > 0.5 + 1e-10){
+				return false;
+			}
+			return true;
 		}
 	}
 	

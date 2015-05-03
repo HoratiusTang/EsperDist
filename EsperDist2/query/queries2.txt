@@ -1,500 +1,500 @@
-SELECT d000002.dn1, f000000.in1, c000001.sr0, c000001.in1, d000002.dn1, c000001.ia0, f000000.sr0, c000001.du1, f000000.iu1
-FROM F(du0<218.74).win:time(60 sec) as f000000, C(du0<234.45).win:time(180 sec) as c000001, D(in1<185).win:time(120 sec) as d000002
-WHERE f000000.iu0<c000001.iu0 and c000001.du1<d000002.du1
+SELECT b000002.dn0, d000000.iu0, d000000.dn0, a000001.in0, d000000.iu0, b000002.iu1, b000002.dn0, a000001.du0, a000001.ia0
+FROM D(dn1>324.8).win:time(180 sec) as d000000, A(dn1>362.37).win:time(120 sec) as a000001, B(in1<198).win:time(120 sec) as b000002
+WHERE d000000.iu0=a000001.iu0 and a000001.du0>b000002.du0
 
-SELECT c000101.dn1, c000101.du1, b000102.iu0, c000101.iu1, a000100.dn1, b000102.in1, b000102.in1, c000101.in1, d000103.in0, c000101.dn1, b000102.in0, a000100.du0
-FROM A(in1>185).win:time(60 sec) as a000100, C(iu1>367).win:time(180 sec) as c000101, B(dn1<308.81).win:time(120 sec) as b000102, D(iu0>303).win:time(180 sec) as d000103
-WHERE a000100.iu1>c000101.iu1 and c000101.iu1>b000102.iu1 and b000102.iu0=d000103.iu0
+SELECT e000101.in1, c000100.iu0, d000102.dn1, e000101.ia0, b000103.iu0, a000104.du0, b000103.dn0, c000100.iu1, e000101.ia0, d000102.du0, d000102.iu0, c000100.in0, c000100.in1, c000100.iu1, e000101.dn1
+FROM C(in1<203).win:time(60 sec) as c000100, E(in0<96).win:time(180 sec) as e000101, D(in0<100).win:time(120 sec) as d000102, B(iu1<215).win:time(180 sec) as b000103, A(dn0<225).win:time(180 sec) as a000104
+WHERE c000100.dn1<e000101.dn1 and e000101.du0<d000102.du0 and d000102.in0=b000103.in0 and b000103.iu1=a000104.iu1
 
-SELECT a000200.du0, b000203.iu0, f000201.dn1, e000204.du0, e000204.dn0, a000200.sr0, b000203.sr0, a000200.in1, b000203.dn1, a000200.iu0, e000204.iu0, a000200.iu1, b000203.iu0, a000200.du0, c000202.du0
-FROM A(dn1<296.76).win:time(180 sec) as a000200, F(du1>668.75).win:time(180 sec) as f000201, C(iu0<357).win:time(180 sec) as c000202, B(in1<192).win:time(60 sec) as b000203, E(iu0<386).win:time(180 sec) as e000204
-WHERE a000200.in1<f000201.in1 and f000201.du1>c000202.du1 and c000202.du1>b000203.du1 and b000203.iu1=e000204.iu1
+SELECT b000203.in0, b000203.dn0, d000201.dn1, a000202.iu0, b000203.iu0, a000202.in1, a000202.du1, b000203.dn0, f000200.ia0, b000203.iu1, b000203.in1, a000202.in1
+FROM F(iu1<46).win:time(60 sec) as f000200, D(in0>92).win:time(180 sec) as d000201, A(in0>85).win:time(60 sec) as a000202, B(in1<165).win:time(180 sec) as b000203
+WHERE f000200.iu1=d000201.iu1 and d000201.du1<a000202.du1 and a000202.iu1=b000203.iu1
 
-SELECT d000303.in1, d000303.iu0, f000304.in0, c000302.in0, d000303.in0, f000304.sr0, b000300.du0, a000301.du1, f000304.sr0, d000303.iu1, f000304.in0, c000302.in0, a000301.dn1, d000303.du1, d000303.iu1
-FROM B(iu1>411).win:time(60 sec) as b000300, A(in1>208).win:time(180 sec) as a000301, C(dn1>289.23).win:time(60 sec) as c000302, D(in1<209).win:time(60 sec) as d000303, F(iu1<96).win:time(180 sec) as f000304
-WHERE b000300.in1<a000301.in1 and a000301.dn1>c000302.dn1 and c000302.in1=d000303.in1 and d000303.dn1<f000304.dn1
+SELECT a000301.in1, a000301.dn0, a000301.iu0
+FROM A(dn0>252.24) as a000301
 
-SELECT c000401.ia0, a000400.in1, b000402.du1, b000402.dn1, c000401.iu1, a000400.in1, d000403.du1, d000403.in0, a000400.du1, b000402.dn1, a000400.du1, c000401.dn1
-FROM A(in1>185).win:time(60 sec) as a000400, C(iu1>367).win:time(180 sec) as c000401, B(dn1<338.12).win:time(120 sec) as b000402, D(iu0>303).win:time(180 sec) as d000403
-WHERE a000400.iu1>c000401.iu1 and c000401.iu1>b000402.iu1 and b000402.iu0=d000403.iu0
+SELECT c000401.iu0, c000401.in0, d000400.iu1, d000400.iu1, d000400.in0, c000401.dn1
+FROM D(iu1>286).win:time(120 sec) as d000400, C(du1>794.29).win:time(60 sec) as c000401
+WHERE d000400.iu1=c000401.iu1
 
-SELECT c000500.dn0, d000502.du1, d000502.sr0, d000502.du1, c000500.sr0, c000500.dn0, d000502.sr0, a000501.ia0, a000501.dn1
-FROM C(dn0>220.83).win:time(180 sec) as c000500, A(dn0>218.96).win:time(180 sec) as a000501, D(du0<241.11).win:time(60 sec) as d000502
-WHERE c000500.du0>a000501.du0 and a000501.du0<d000502.du0
+SELECT b000501.ia0, b000501.du1, b000501.in1
+FROM B(du0>296.76) as b000501
 
-SELECT a000601.sr0, c000600.dn0, c000600.du0, a000601.in1, c000600.ia0, d000602.du0, c000600.ia0, d000602.ia0, a000601.dn1
-FROM C(dn0>191.7).win:time(180 sec) as c000600, A(dn0>199.5).win:time(180 sec) as a000601, D(du0<241.11).win:time(60 sec) as d000602
-WHERE c000600.du0>a000601.du0 and a000601.du0<d000602.du0
+SELECT d000602.dn1, c000601.in0, c000601.du1, d000602.in0, c000601.iu1, f000603.in0, f000603.ia0, d000602.dn1, c000601.sr0, c000601.in1, e000600.du0, e000600.du1
+FROM E(du0>278.31).win:time(180 sec) as e000600, C(in1>186).win:time(60 sec) as c000601, D(dn0<182.57).win:time(180 sec) as d000602, F(du0<278.07).win:time(60 sec) as f000603
+WHERE e000600.iu1=c000601.iu1 and c000601.iu0=d000602.iu0 and d000602.in0=f000603.in0
 
-SELECT c000701.du1, c000701.dn0, c000701.iu1
-FROM C(du0>290.52) as c000701
+SELECT b000701.dn0, b000701.in0, b000701.iu1
+FROM B(du0>275.61) as b000701
 
-SELECT f000800.iu1, e000801.du0, e000801.ia0, f000800.iu1, f000800.dn0, f000800.du1
-FROM F(iu0>427).win:time(120 sec) as f000800, E(in1<187).win:time(120 sec) as e000801
-WHERE f000800.du1<e000801.du1
+SELECT c000801.du1, d000800.dn1, c000801.iu1, d000800.dn1, c000801.du1, c000801.iu0
+FROM D(iu1>63).win:time(120 sec) as d000800, C(du1>558.7).win:time(60 sec) as c000801
+WHERE d000800.iu1=c000801.iu1
 
-SELECT a000901.in1, a000901.iu1, a000901.dn0
-FROM A(du1<317.85) as a000901
+SELECT b000903.du0, b000903.in1, b000903.ia0, d000902.in1, b000903.sr0, a000904.iu0, d000902.du1, d000902.iu1, a000904.in1, d000902.dn1, e000901.in1, e000901.du1, c000900.in0, b000903.iu1, c000900.du1
+FROM C(in1<211).win:time(60 sec) as c000900, E(in0<96).win:time(180 sec) as e000901, D(in0<100).win:time(120 sec) as d000902, B(iu1<215).win:time(180 sec) as b000903, A(dn0<225).win:time(180 sec) as a000904
+WHERE c000900.dn1<e000901.dn1 and e000901.du0<d000902.du0 and d000902.in0=b000903.in0 and b000903.iu1=a000904.iu1
 
-SELECT c001002.iu1, c001002.du0, e001004.in0, f001001.ia0, b001003.iu1, f001001.in0, c001002.in1, c001002.in0, a001000.du0, a001000.dn0, c001002.du1, e001004.in0, f001001.sr0, e001004.in1, c001002.in1
-FROM A(dn1<296.76).win:time(180 sec) as a001000, F(du1>668.75).win:time(180 sec) as f001001, C(iu0<219).win:time(180 sec) as c001002, B(in1<192).win:time(60 sec) as b001003, E(iu0<386).win:time(180 sec) as e001004
-WHERE a001000.in1<f001001.in1 and f001001.du1>c001002.du1 and c001002.du1>b001003.du1 and b001003.iu1=e001004.iu1
+SELECT d001000.dn1, d001000.iu1, d001000.in1, c001001.sr0, c001001.iu0, c001001.in0
+FROM D(iu1>55).win:time(120 sec) as d001000, C(du1>512.52).win:time(60 sec) as c001001
+WHERE d001000.iu1=c001001.iu1
 
-SELECT d001103.iu1, d001103.sr0, c001101.iu0, d001103.iu1, d001103.du1, b001102.iu1, d001103.iu1, b001102.iu0, c001101.iu1, a001100.du1, a001100.in1, a001100.dn1
-FROM A(in1>185).win:time(60 sec) as a001100, C(iu1>367).win:time(180 sec) as c001101, B(dn1<338.12).win:time(120 sec) as b001102, D(iu0>303).win:time(180 sec) as d001103
-WHERE a001100.iu1>c001101.iu1 and c001101.iu1>b001102.iu1 and b001102.iu0=d001103.iu0
+SELECT c001101.sr0, d001100.in0, d001100.sr0, c001101.iu0, d001100.du1, c001101.ia0
+FROM D(dn1>319.36).win:time(180 sec) as d001100, C(du0>288.66).win:time(60 sec) as c001101
+WHERE d001100.iu0=c001101.iu0
 
-SELECT f001201.du0, a001203.iu0, f001201.dn0, b001200.dn0, b001200.ia0, a001203.iu1, e001202.sr0, e001202.in1, a001203.ia0, f001201.ia0, e001202.iu0, b001200.sr0
-FROM B(in0<89).win:time(180 sec) as b001200, F(in1>192).win:time(120 sec) as f001201, E(dn0<205.26).win:time(120 sec) as e001202, A(iu1>537).win:time(180 sec) as a001203
-WHERE b001200.dn0>f001201.dn0 and f001201.du0<e001202.du0 and e001202.iu0<a001203.iu0
+SELECT a001200.du0, d001204.iu0, d001204.iu1, f001203.in1, a001200.du0, e001201.in0, f001203.dn1, f001203.in1, d001204.du0, e001201.iu1, c001202.du0, a001200.du0, d001204.du1, c001202.ia0, c001202.iu0
+FROM A(in0<75).win:time(60 sec) as a001200, E(du1<465.24).win:time(120 sec) as e001201, C(in0<68).win:time(120 sec) as c001202, F(in0>106).win:time(120 sec) as f001203, D(in0<135).win:time(120 sec) as d001204
+WHERE a001200.iu1>e001201.iu1 and e001201.in1=c001202.in1 and c001202.iu1<f001203.iu1 and f001203.iu0=d001204.iu0
 
-SELECT c001301.in1, c001301.ia0, c001301.dn0
-FROM C(du0>288.6) as c001301
+SELECT c001301.sr0, d001300.in1, d001300.du0, d001300.iu1, c001301.ia0, c001301.iu0
+FROM D(iu1>55).win:time(120 sec) as d001300, C(du1>558.7).win:time(60 sec) as c001301
+WHERE d001300.iu1=c001301.iu1
 
-SELECT c001402.sr0, e001404.dn0, f001401.ia0, c001402.dn0, b001403.iu0, e001404.iu1, b001403.iu1, e001404.iu0, c001402.in1, e001404.dn1, b001403.iu0, e001404.du0, e001404.iu0, b001403.iu1, a001400.iu0
-FROM A(dn1<296.76).win:time(180 sec) as a001400, F(du1>668.75).win:time(180 sec) as f001401, C(iu0<459).win:time(180 sec) as c001402, B(in1<201).win:time(60 sec) as b001403, E(iu0<386).win:time(180 sec) as e001404
-WHERE a001400.in1<f001401.in1 and f001401.du1>c001402.du1 and c001402.du1>b001403.du1 and b001403.iu1=e001404.iu1
+SELECT f001403.iu1, e001400.dn0, e001400.in1, d001402.in1, d001402.sr0, c001401.du0, e001400.du1, d001402.dn0, c001401.du0, d001402.in0, d001402.iu1, c001401.ia0
+FROM E(du0>226.16).win:time(180 sec) as e001400, C(in1>186).win:time(60 sec) as c001401, D(dn0<221.61).win:time(180 sec) as d001402, F(du0<278.07).win:time(60 sec) as f001403
+WHERE e001400.iu1=c001401.iu1 and c001401.iu0=d001402.iu0 and d001402.in0=f001403.in0
 
-SELECT c001501.ia0, f001500.dn0, c001501.sr0, f001500.ia0, c001501.dn1, c001501.in1
-FROM F(in0>110).win:time(120 sec) as f001500, C(in1<190).win:time(60 sec) as c001501
-WHERE f001500.dn1<c001501.dn1
+SELECT f001502.du1, a001501.du1, a001501.ia0, b001500.iu0, b001500.du0, a001501.sr0, b001500.iu1, f001502.du0, f001502.sr0
+FROM B(in0<92).win:time(60 sec) as b001500, A(du0>261.71).win:time(120 sec) as a001501, F(du1<735.35).win:time(60 sec) as f001502
+WHERE b001500.du0>a001501.du0 and a001501.iu1=f001502.iu1
 
-SELECT f001600.dn0, f001600.in1, f001600.iu1, f001600.ia0, e001601.dn0, f001600.dn1
-FROM F(iu0>308).win:time(120 sec) as f001600, E(in1<187).win:time(120 sec) as e001601
-WHERE f001600.du1<e001601.du1
+SELECT e001600.in1, f001601.iu1, e001600.iu1, f001601.iu0, e001600.in0, b001602.iu0, e001600.dn1, b001602.dn1, f001601.in1
+FROM E(iu0<165).win:time(180 sec) as e001600, F(in0>117).win:time(120 sec) as f001601, B(iu1<16).win:time(60 sec) as b001602
+WHERE e001600.in1=f001601.in1 and f001601.iu0=b001602.iu0
 
-SELECT c001702.sr0, a001700.in1, c001702.dn1, a001700.in1, f001701.in1, e001704.iu1, b001703.sr0, a001700.du0, a001700.in1, e001704.in0, e001704.du1, e001704.dn0, f001701.dn0, a001700.dn1, e001704.iu1
-FROM A(dn1<296.76).win:time(180 sec) as a001700, F(du1>668.75).win:time(180 sec) as f001701, C(iu0<459).win:time(180 sec) as c001702, B(in1<192).win:time(60 sec) as b001703, E(iu0<386).win:time(180 sec) as e001704
-WHERE a001700.in1<f001701.in1 and f001701.du1>c001702.du1 and c001702.du1>b001703.du1 and b001703.iu1=e001704.iu1
+SELECT b001700.du1, f001702.sr0, b001700.in0, a001701.sr0, a001701.du1, a001701.in0, f001702.in1, f001702.sr0, b001700.sr0
+FROM B(in0<92).win:time(60 sec) as b001700, A(du0>261.71).win:time(120 sec) as a001701, F(du1<735.35).win:time(60 sec) as f001702
+WHERE b001700.du0>a001701.du0 and a001701.iu1=f001702.iu1
 
-SELECT a001801.in1, c001800.du0, d001802.du1, d001802.dn0, c001800.dn0, c001800.sr0, d001802.du1, d001802.dn1, d001802.in0
-FROM C(dn0>191.7).win:time(180 sec) as c001800, A(dn0>199.5).win:time(180 sec) as a001801, D(du0<241.11).win:time(60 sec) as d001802
-WHERE c001800.du0>a001801.du0 and a001801.du0<d001802.du0
+SELECT b001801.in1, b001801.du0, b001801.sr0, e001800.in1, b001801.in1, e001800.dn0
+FROM E(du0<215.41).win:time(120 sec) as e001800, B(du0<214.29).win:time(180 sec) as b001801
+WHERE e001800.iu1=b001801.iu1
 
-SELECT d001902.du0, c001900.ia0, a001901.du1, c001900.dn0, c001900.in1, c001900.dn0, d001902.iu0, a001901.du1, d001902.du0
-FROM C(dn0>191.7).win:time(180 sec) as c001900, A(dn0>199.5).win:time(180 sec) as a001901, D(du0<257.38).win:time(60 sec) as d001902
-WHERE c001900.du0>a001901.du0 and a001901.du0<d001902.du0
+SELECT e001900.du1, c001901.in0, c001901.iu0, e001900.in0, e001900.iu0, e001900.du1, c001901.in1, e001900.du1, f001903.du1, c001901.du1, e001900.du1, d001902.du1
+FROM E(du0>226.16).win:time(180 sec) as e001900, C(in1>186).win:time(60 sec) as c001901, D(dn0<250.22).win:time(180 sec) as d001902, F(du0<278.07).win:time(60 sec) as f001903
+WHERE e001900.iu1=c001901.iu1 and c001901.iu0=d001902.iu0 and d001902.in0=f001903.in0
 
-SELECT d002001.du1, c002002.dn0, a002000.dn1, a002000.ia0, a002000.du1, d002001.dn1, d002001.iu1, a002000.du1, d002001.ia0
-FROM A(in0<97).win:time(60 sec) as a002000, D(iu1>556).win:time(120 sec) as d002001, C(dn1>318.77).win:time(120 sec) as c002002
-WHERE a002000.in0>d002001.in0 and d002001.iu1=c002002.iu1
+SELECT a002001.du0, d002000.in0, a002001.sr0, d002000.dn1, b002002.in0, d002000.du1, b002002.dn1, a002001.du1, b002002.dn0
+FROM D(dn1>185.8).win:time(180 sec) as d002000, A(dn1>362.37).win:time(120 sec) as a002001, B(in1<198).win:time(120 sec) as b002002
+WHERE d002000.iu0=a002001.iu0 and a002001.du0>b002002.du0
 
-SELECT b002101.iu0, c002100.du0, b002101.sr0, b002101.dn0, b002101.in1, c002100.sr0
-FROM C(in0>104).win:time(60 sec) as c002100, B(in1<201).win:time(120 sec) as b002101
-WHERE c002100.dn1>b002101.dn1
+SELECT e002100.du1, f002101.dn0, b002102.iu0, e002100.iu0, e002100.sr0, e002100.ia0, b002102.dn1, f002101.sr0, b002102.sr0
+FROM E(iu0<165).win:time(180 sec) as e002100, F(in0>117).win:time(120 sec) as f002101, B(iu1<65).win:time(60 sec) as b002102
+WHERE e002100.in1=f002101.in1 and f002101.iu0=b002102.iu0
 
-SELECT c002202.du1, c002202.dn1, b002200.in1, a002201.in1, b002200.in1, a002201.in1, a002201.du0, f002204.iu1, f002204.sr0, d002203.du1, f002204.in1, d002203.sr0, a002201.in1, f002204.dn0, a002201.iu1
-FROM B(iu1>411).win:time(60 sec) as b002200, A(in1>206).win:time(180 sec) as a002201, C(dn1>289.23).win:time(60 sec) as c002202, D(in1<209).win:time(60 sec) as d002203, F(iu1<96).win:time(180 sec) as f002204
-WHERE b002200.in1<a002201.in1 and a002201.dn1>c002202.dn1 and c002202.in1=d002203.in1 and d002203.dn1<f002204.dn1
+SELECT f002203.dn1, f002203.dn0, f002203.dn1, c002201.du1, c002201.dn0, d002202.iu0, f002203.du1, d002202.du1, e002200.ia0, e002200.ia0, c002201.iu0, d002202.du0
+FROM E(du0>226.16).win:time(180 sec) as e002200, C(in1>186).win:time(60 sec) as c002201, D(dn0<182.57).win:time(180 sec) as d002202, F(du0<278.07).win:time(60 sec) as f002203
+WHERE e002200.iu1=c002201.iu1 and c002201.iu0=d002202.iu0 and d002202.in0=f002203.in0
 
-SELECT f002301.in0, f002301.dn1, f002301.du0, c002302.in1, f002301.iu0, f002301.du0, a002300.ia0, e002304.du0, a002300.iu0, b002303.in0, c002302.dn0, a002300.sr0, e002304.iu1, f002301.iu1, e002304.dn0
-FROM A(dn1<296.76).win:time(180 sec) as a002300, F(du1>668.75).win:time(180 sec) as f002301, C(iu0<459).win:time(180 sec) as c002302, B(in1<201).win:time(60 sec) as b002303, E(iu0<386).win:time(180 sec) as e002304
-WHERE a002300.in1<f002301.in1 and f002301.du1>c002302.du1 and c002302.du1>b002303.du1 and b002303.iu1=e002304.iu1
+SELECT a002301.dn1, a002301.in0, a002301.in0
+FROM A(dn0>252.24) as a002301
 
-SELECT b002400.ia0, f002404.in0, d002403.iu0, c002402.iu1, b002400.dn1, d002403.du1, f002404.iu1, c002402.du1, f002404.in0, b002400.iu1, c002402.dn1, b002400.sr0, f002404.in1, c002402.dn0, b002400.ia0
-FROM B(iu1>411).win:time(60 sec) as b002400, A(in1>202).win:time(180 sec) as a002401, C(dn1>289.23).win:time(60 sec) as c002402, D(in1<209).win:time(60 sec) as d002403, F(iu1<96).win:time(180 sec) as f002404
-WHERE b002400.in1<a002401.in1 and a002401.dn1>c002402.dn1 and c002402.in1=d002403.in1 and d002403.dn1<f002404.dn1
+SELECT f002403.iu0, d002404.in1, c002402.in1, c002402.du1, a002400.dn1, f002403.in1, c002402.ia0, a002400.sr0, a002400.iu1, f002403.in0, a002400.du0, f002403.du0, f002403.du1, e002401.iu1, a002400.dn0
+FROM A(in0<107).win:time(60 sec) as a002400, E(du1<465.24).win:time(120 sec) as e002401, C(in0<113).win:time(120 sec) as c002402, F(in0>106).win:time(120 sec) as f002403, D(in0<135).win:time(120 sec) as d002404
+WHERE a002400.iu1>e002401.iu1 and e002401.in1=c002402.in1 and c002402.iu1<f002403.iu1 and f002403.iu0=d002404.iu0
 
-SELECT a002501.du0, a002501.in0, a002501.sr0
-FROM A(du1<333.29) as a002501
+SELECT e002500.iu0, b002501.du0, b002501.in1, e002500.in0, e002500.in0, e002500.ia0
+FROM E(du0<275.31).win:time(120 sec) as e002500, B(du0<252.14).win:time(180 sec) as b002501
+WHERE e002500.iu1=b002501.iu1
 
-SELECT d002601.iu1, d002601.in1, d002601.iu0
-FROM D(dn1<262.09) as d002601
+SELECT e002600.dn1, e002600.dn1, e002600.du1, e002600.dn0, b002601.sr0, e002600.in0
+FROM E(du0<215.41).win:time(120 sec) as e002600, B(du0<214.29).win:time(180 sec) as b002601
+WHERE e002600.iu1=b002601.iu1
 
-SELECT f002700.du1, f002700.du1, e002701.iu0, f002700.in1, e002701.du0, f002700.in0
-FROM F(iu0>109).win:time(120 sec) as f002700, E(in1<198).win:time(120 sec) as e002701
-WHERE f002700.du1<e002701.du1
+SELECT b002700.iu1, a002701.dn1, a002701.dn0, b002700.sr0, f002702.du1, b002700.in1, a002701.dn0, f002702.in1, b002700.dn0
+FROM B(in0<92).win:time(60 sec) as b002700, A(du0>237.33).win:time(120 sec) as a002701, F(du1<748.69).win:time(60 sec) as f002702
+WHERE b002700.du0>a002701.du0 and a002701.iu1=f002702.iu1
 
-SELECT d002801.iu1, d002801.iu1, d002801.in0
-FROM D(dn1<272.83) as d002801
+SELECT c002801.du1, c002801.ia0, c002801.in0, d002800.du1, d002800.du0, d002800.du1
+FROM D(iu1>113).win:time(120 sec) as d002800, C(du1>794.29).win:time(60 sec) as c002801
+WHERE d002800.iu1=c002801.iu1
 
-SELECT a002900.dn0, c002902.dn0, a002900.in1, d002901.du1, c002902.in0, c002902.in1, c002902.dn0, c002902.ia0, d002901.ia0
-FROM A(in0<97).win:time(60 sec) as a002900, D(iu1>197).win:time(120 sec) as d002901, C(dn1>302.78).win:time(120 sec) as c002902
-WHERE a002900.in0>d002901.in0 and d002901.iu1=c002902.iu1
+SELECT a002904.in1, b002903.du0, e002901.sr0, b002903.sr0, a002904.iu1, d002902.ia0, d002902.sr0, b002903.iu1, e002901.dn0, c002900.dn0, d002902.du0, a002904.sr0, e002901.dn0, e002901.in0, a002904.sr0
+FROM C(in1<211).win:time(60 sec) as c002900, E(in0<96).win:time(180 sec) as e002901, D(in0<100).win:time(120 sec) as d002902, B(iu1<276).win:time(180 sec) as b002903, A(dn0<225).win:time(180 sec) as a002904
+WHERE c002900.dn1<e002901.dn1 and e002901.du0<d002902.du0 and d002902.in0=b002903.in0 and b002903.iu1=a002904.iu1
 
-SELECT c003000.ia0, c003000.iu1, c003000.dn0, d003002.iu0, c003000.sr0, c003000.du0, c003000.in0, c003000.du1, a003001.ia0
-FROM C(dn0>220.83).win:time(180 sec) as c003000, A(dn0>207.84).win:time(180 sec) as a003001, D(du0<241.11).win:time(60 sec) as d003002
-WHERE c003000.du0>a003001.du0 and a003001.du0<d003002.du0
+SELECT d003001.dn1, d003001.dn0, d003001.du1
+FROM D(in0>139) as d003001
 
-SELECT e003101.sr0, e003101.du1, e003101.dn0, f003100.in1, f003100.sr0, f003100.dn0
-FROM F(iu0>489).win:time(120 sec) as f003100, E(in1<187).win:time(120 sec) as e003101
-WHERE f003100.du1<e003101.du1
+SELECT b003101.ia0, b003101.du0, b003101.in1
+FROM B(du0>271.96) as b003101
 
-SELECT c003201.ia0, f003200.in1, c003201.iu0, f003200.iu1, c003201.du0, c003201.iu1
-FROM F(in0>93).win:time(120 sec) as f003200, C(in1<213).win:time(60 sec) as c003201
-WHERE f003200.dn1<c003201.dn1
+SELECT c003201.ia0, d003200.iu1, d003200.in1, d003200.ia0, d003200.du0, c003201.ia0
+FROM D(dn1>337.15).win:time(180 sec) as d003200, C(du0>288.66).win:time(60 sec) as c003201
+WHERE d003200.iu0=c003201.iu0
 
-SELECT a003300.sr0, c003302.in0, c003302.dn1, c003302.du0, d003301.in0, c003302.in1, a003300.iu0, a003300.du0, d003301.du1
-FROM A(in0<118).win:time(60 sec) as a003300, D(iu1>197).win:time(120 sec) as d003301, C(dn1>266.39).win:time(120 sec) as c003302
-WHERE a003300.in0>d003301.in0 and d003301.iu1=c003302.iu1
+SELECT a003301.in1, a003301.iu0, a003301.iu0
+FROM A(dn0>252.24) as a003301
 
-SELECT a003401.in0, a003401.sr0, a003401.sr0
-FROM A(du1<431.6) as a003401
+SELECT b003401.sr0, b003401.ia0, b003401.ia0
+FROM B(du0>271.96) as b003401
 
-SELECT f003501.iu1, f003501.dn1, e003502.du1, a003503.ia0, e003502.in1, e003502.du1, f003501.iu0, e003502.dn1, b003500.ia0, e003502.in1, a003503.dn1, b003500.dn0
-FROM B(in0<89).win:time(180 sec) as b003500, F(in1>192).win:time(120 sec) as f003501, E(dn0<165.75).win:time(120 sec) as e003502, A(iu1>537).win:time(180 sec) as a003503
-WHERE b003500.dn0>f003501.dn0 and f003501.du0<e003502.du0 and e003502.iu0<a003503.iu0
+SELECT d003500.du1, c003501.du0, d003500.iu0, c003501.iu0, c003501.du0, d003500.du1
+FROM D(iu1>63).win:time(120 sec) as d003500, C(du1>794.29).win:time(60 sec) as c003501
+WHERE d003500.iu1=c003501.iu1
 
-SELECT c003601.du1, c003601.du0, f003600.iu0, c003601.in0, f003600.iu0, f003600.sr0
-FROM F(in0>93).win:time(120 sec) as f003600, C(in1<223).win:time(60 sec) as c003601
-WHERE f003600.dn1<c003601.dn1
+SELECT d003601.in0, d003601.ia0, d003601.iu1
+FROM D(in0>139) as d003601
 
-SELECT e003701.iu1, e003701.du0, e003701.dn0
-FROM E(in0<73) as e003701
+SELECT d003700.in0, d003700.dn1, d003700.du1, d003700.du1, d003700.in0, d003700.in0
+FROM D(iu1>55).win:time(120 sec) as d003700, C(du1>426.2).win:time(60 sec) as c003701
+WHERE d003700.iu1=c003701.iu1
 
-SELECT d003801.dn1, d003801.in0, d003801.du1
-FROM D(dn1<281.46) as d003801
+SELECT d003802.in0, f003803.in1, f003803.in0, f003803.in1, f003803.in1, c003801.du0, c003801.du0, c003801.ia0, d003802.ia0, c003801.in1, e003800.in0, d003802.du1
+FROM E(du0>226.16).win:time(180 sec) as e003800, C(in1>186).win:time(60 sec) as c003801, D(dn0<182.57).win:time(180 sec) as d003802, F(du0<278.07).win:time(60 sec) as f003803
+WHERE e003800.iu1=c003801.iu1 and c003801.iu0=d003802.iu0 and d003802.in0=f003803.in0
 
-SELECT d003901.in1, a003900.ia0, a003900.in1, a003900.in0, d003901.ia0, a003900.ia0, d003901.dn0, c003902.in1, d003901.du0
-FROM A(in0<118).win:time(60 sec) as a003900, D(iu1>197).win:time(120 sec) as d003901, C(dn1>266.39).win:time(120 sec) as c003902
-WHERE a003900.in0>d003901.in0 and d003901.iu1=c003902.iu1
+SELECT a003901.in0, a003901.sr0, a003901.iu0
+FROM A(dn0>182.98) as a003901
 
-SELECT a004001.dn0, a004001.iu0, a004001.dn1
-FROM A(du1<454) as a004001
+SELECT d004000.dn0, b004002.dn0, b004002.dn0, d004000.du0, d004000.dn0, a004001.sr0, a004001.du1, d004000.in1, a004001.iu1
+FROM D(dn1>185.8).win:time(180 sec) as d004000, A(dn1>362.37).win:time(120 sec) as a004001, B(in1<198).win:time(120 sec) as b004002
+WHERE d004000.iu0=a004001.iu0 and a004001.du0>b004002.du0
 
-SELECT b004101.iu1, c004100.ia0, b004101.in1, b004101.iu0, c004100.dn0, c004100.du0
-FROM C(in0>86).win:time(60 sec) as c004100, B(in1<210).win:time(120 sec) as b004101
-WHERE c004100.dn1>b004101.dn1
+SELECT c004101.dn0, c004101.du0, c004101.iu0, c004101.in0, d004100.du0, c004101.in1
+FROM D(dn1>319.36).win:time(180 sec) as d004100, C(du0>232.43).win:time(60 sec) as c004101
+WHERE d004100.iu0=c004101.iu0
 
-SELECT a004201.dn1, a004201.dn0, a004201.dn0
-FROM A(du1<454) as a004201
+SELECT d004202.in1, b004203.du1, a004204.du1, e004201.ia0, d004202.iu0, e004201.iu0, e004201.dn0, b004203.dn0, b004203.ia0, a004204.iu1, c004200.du1, c004200.iu0, d004202.dn0, a004204.dn0, d004202.du1
+FROM C(in1<211).win:time(60 sec) as c004200, E(in0<96).win:time(180 sec) as e004201, D(in0<100).win:time(120 sec) as d004202, B(iu1<215).win:time(180 sec) as b004203, A(dn0<225).win:time(180 sec) as a004204
+WHERE c004200.dn1<e004201.dn1 and e004201.du0<d004202.du0 and d004202.in0=b004203.in0 and b004203.iu1=a004204.iu1
 
-SELECT f004300.in0, d004302.dn0, f004300.du0, d004302.ia0, c004301.iu1, c004301.iu0, c004301.dn0, f004300.ia0, d004302.du0
-FROM F(du0<261.99).win:time(60 sec) as f004300, C(du0<298.01).win:time(180 sec) as c004301, D(in1<185).win:time(120 sec) as d004302
-WHERE f004300.iu0<c004301.iu0 and c004301.du1<d004302.du1
+SELECT b004301.dn0, b004301.du1, b004301.du0
+FROM B(du0>238.63) as b004301
 
-SELECT d004401.ia0, d004401.du0, d004401.ia0
-FROM D(dn1<268.17) as d004401
+SELECT b004402.in1, b004402.ia0, e004400.du1, f004401.sr0, e004400.dn0, f004401.ia0, f004401.du1, f004401.in0, b004402.iu1
+FROM E(iu0<165).win:time(180 sec) as e004400, F(in0>117).win:time(120 sec) as f004401, B(iu1<48).win:time(60 sec) as b004402
+WHERE e004400.in1=f004401.in1 and f004401.iu0=b004402.iu0
 
-SELECT d004501.ia0, c004502.iu0, c004502.ia0, c004502.dn1, a004500.in1, a004500.sr0, c004502.dn0, c004502.in1, a004500.in0
-FROM A(in0<97).win:time(60 sec) as a004500, D(iu1>197).win:time(120 sec) as d004501, C(dn1>266.39).win:time(120 sec) as c004502
-WHERE a004500.in0>d004501.in0 and d004501.iu1=c004502.iu1
+SELECT a004501.in0, a004501.dn0, a004501.ia0
+FROM A(dn0>207.57) as a004501
 
-SELECT c004601.du0, c004601.in0, f004600.in1, c004601.du0, f004600.in1, f004600.du1
-FROM F(in0>81).win:time(120 sec) as f004600, C(in1<223).win:time(60 sec) as c004601
-WHERE f004600.dn1<c004601.dn1
+SELECT e004601.dn1, e004601.iu1, c004602.ia0, e004601.iu0, d004604.dn1, f004603.du0, f004603.dn1, c004602.in0, d004604.dn1, d004604.du1, d004604.iu0, d004604.in1, e004601.iu1, f004603.sr0, f004603.ia0
+FROM A(in0<107).win:time(60 sec) as a004600, E(du1<465.24).win:time(120 sec) as e004601, C(in0<83).win:time(120 sec) as c004602, F(in0>106).win:time(120 sec) as f004603, D(in0<135).win:time(120 sec) as d004604
+WHERE a004600.iu1>e004601.iu1 and e004601.in1=c004602.in1 and c004602.iu1<f004603.iu1 and f004603.iu0=d004604.iu0
 
-SELECT d004701.ia0, d004701.iu1, d004701.ia0
-FROM D(dn1<280.15) as d004701
+SELECT b004703.ia0, d004701.in0, a004702.in1, d004701.du0, f004700.iu1, a004702.sr0, a004702.sr0, b004703.du0, a004702.sr0, f004700.in1, b004703.dn0, a004702.in1
+FROM F(iu1<237).win:time(60 sec) as f004700, D(in0>92).win:time(180 sec) as d004701, A(in0>85).win:time(60 sec) as a004702, B(in1<165).win:time(180 sec) as b004703
+WHERE f004700.iu1=d004701.iu1 and d004701.du1<a004702.du1 and a004702.iu1=b004703.iu1
 
-SELECT e004802.in0, f004801.du1, e004802.dn1, b004800.in0, e004802.dn1, f004801.in1, e004802.iu0, f004801.in1, e004802.iu0, e004802.dn0, a004803.in1, e004802.dn1
-FROM B(in0<89).win:time(180 sec) as b004800, F(in1>192).win:time(120 sec) as f004801, E(dn0<207.51).win:time(120 sec) as e004802, A(iu1>537).win:time(180 sec) as a004803
-WHERE b004800.dn0>f004801.dn0 and f004801.du0<e004802.du0 and e004802.iu0<a004803.iu0
+SELECT d004800.du1, c004801.iu0, c004801.sr0, d004800.du0, d004800.ia0, d004800.in1
+FROM D(iu1>63).win:time(120 sec) as d004800, C(du1>558.7).win:time(60 sec) as c004801
+WHERE d004800.iu1=c004801.iu1
 
-SELECT c004900.du1, b004901.iu0, b004901.iu0, b004901.du1, c004900.ia0, b004901.dn0
-FROM C(in0>104).win:time(60 sec) as c004900, B(in1<201).win:time(120 sec) as b004901
-WHERE c004900.dn1>b004901.dn1
+SELECT d004900.ia0, c004901.in0, d004900.iu0, d004900.dn0, c004901.iu1, d004900.dn1
+FROM D(dn1>337.15).win:time(180 sec) as d004900, C(du0>288.66).win:time(60 sec) as c004901
+WHERE d004900.iu0=c004901.iu0
 
-SELECT d005002.dn1, c005000.iu1, c005000.in1, c005000.du1, d005002.ia0, c005000.dn1, d005002.in0, d005002.sr0, a005001.dn0
-FROM C(dn0>220.83).win:time(180 sec) as c005000, A(dn0>207.84).win:time(180 sec) as a005001, D(du0<241.11).win:time(60 sec) as d005002
-WHERE c005000.du0>a005001.du0 and a005001.du0<d005002.du0
+SELECT a005001.dn0, b005000.sr0, f005002.du1, a005001.sr0, a005001.iu1, b005000.iu0, a005001.iu1, f005002.dn1, b005000.du1
+FROM B(in0<92).win:time(60 sec) as b005000, A(du0>253.3).win:time(120 sec) as a005001, F(du1<748.69).win:time(60 sec) as f005002
+WHERE b005000.du0>a005001.du0 and a005001.iu1=f005002.iu1
 
-SELECT e005101.ia0, e005101.sr0, e005101.in1
-FROM E(in0<87) as e005101
+SELECT a005101.in0, b005102.iu0, d005100.du0, b005102.sr0, b005102.du0, b005102.iu0, a005101.dn0, a005101.sr0, d005100.iu1
+FROM D(dn1>324.8).win:time(180 sec) as d005100, A(dn1>362.37).win:time(120 sec) as a005101, B(in1<197).win:time(120 sec) as b005102
+WHERE d005100.iu0=a005101.iu0 and a005101.du0>b005102.du0
 
-SELECT e005201.du0, e005201.ia0, e005201.ia0
-FROM E(in0<93) as e005201
+SELECT b005201.iu0, b005201.du0, b005201.iu1
+FROM B(du0>288.72) as b005201
 
-SELECT c005300.in0, b005301.dn1, c005300.iu0, b005301.ia0, b005301.du0, b005301.sr0
-FROM C(in0>103).win:time(60 sec) as c005300, B(in1<201).win:time(120 sec) as b005301
-WHERE c005300.dn1>b005301.dn1
+SELECT c005300.in0, b005303.in0, d005302.du0, d005302.iu0, e005301.in1, b005303.in0, e005301.du0, e005301.dn1, d005302.in1, c005300.du0, b005303.sr0, b005303.ia0, a005304.iu1, d005302.dn1, b005303.dn0
+FROM C(in1<208).win:time(60 sec) as c005300, E(in0<96).win:time(180 sec) as e005301, D(in0<100).win:time(120 sec) as d005302, B(iu1<215).win:time(180 sec) as b005303, A(dn0<225).win:time(180 sec) as a005304
+WHERE c005300.dn1<e005301.dn1 and e005301.du0<d005302.du0 and d005302.in0=b005303.in0 and b005303.iu1=a005304.iu1
 
-SELECT e005401.dn0, f005400.iu1, f005400.dn0, f005400.du0, e005401.in1, f005400.in0
-FROM F(iu0>308).win:time(120 sec) as f005400, E(in1<198).win:time(120 sec) as e005401
-WHERE f005400.du1<e005401.du1
+SELECT d005401.iu0, d005401.ia0, d005401.sr0
+FROM D(dn1>361.68) as d005401
 
-SELECT d005502.du0, d005502.ia0, d005502.du1, f005500.du0, d005502.in1, c005501.du1, c005501.in0, f005500.ia0, c005501.ia0
-FROM F(du0<261.99).win:time(60 sec) as f005500, C(du0<298.01).win:time(180 sec) as c005501, D(in1<194).win:time(120 sec) as d005502
-WHERE f005500.iu0<c005501.iu0 and c005501.du1<d005502.du1
+SELECT b005501.dn0, b005501.du1, b005501.du0
+FROM B(du0>275.61) as b005501
 
-SELECT c005600.iu0, b005601.dn0, c005600.sr0, b005601.dn1, b005601.in1, c005600.in1
-FROM C(in0>90).win:time(60 sec) as c005600, B(in1<203).win:time(120 sec) as b005601
-WHERE c005600.dn1>b005601.dn1
+SELECT b005600.du1, a005601.du0, a005601.dn0, f005602.dn1, f005602.dn1, b005600.du0, a005601.dn1, b005600.du1, a005601.in1
+FROM B(in0<92).win:time(60 sec) as b005600, A(du0>215.97).win:time(120 sec) as a005601, F(du1<748.69).win:time(60 sec) as f005602
+WHERE b005600.du0>a005601.du0 and a005601.iu1=f005602.iu1
 
-SELECT b005701.ia0, c005700.dn0, b005701.iu1, c005700.du1, b005701.iu0, b005701.dn1
-FROM C(in0>104).win:time(60 sec) as c005700, B(in1<198).win:time(120 sec) as b005701
-WHERE c005700.dn1>b005701.dn1
+SELECT e005700.iu1, e005700.iu0, b005701.in1, e005700.dn1, b005701.dn0, e005700.dn1
+FROM E(du0<225.51).win:time(120 sec) as e005700, B(du0<234.9).win:time(180 sec) as b005701
+WHERE e005700.iu1=b005701.iu1
 
-SELECT c005802.dn1, a005800.in1, a005800.in1, d005801.in1, c005802.du0, c005802.iu1, d005801.du1, c005802.dn1, d005801.du1
-FROM A(in0<97).win:time(60 sec) as a005800, D(iu1>292).win:time(120 sec) as d005801, C(dn1>318.77).win:time(120 sec) as c005802
-WHERE a005800.in0>d005801.in0 and d005801.iu1=c005802.iu1
+SELECT e005800.dn1, e005800.iu0, b005801.ia0, b005801.in0, e005800.dn1, e005800.iu1
+FROM E(du0<229.4).win:time(120 sec) as e005800, B(du0<249.66).win:time(180 sec) as b005801
+WHERE e005800.iu1=b005801.iu1
 
-SELECT d005901.in0, d005901.dn1, d005901.du1
-FROM D(dn1<314.49) as d005901
+SELECT d005901.iu1, d005901.iu1, d005901.in0
+FROM D(in0>121) as d005901
 
-SELECT b006001.ia0, b006001.iu1, c006000.ia0, c006000.dn1, c006000.ia0, c006000.dn0
-FROM C(in0>90).win:time(60 sec) as c006000, B(in1<201).win:time(120 sec) as b006001
-WHERE c006000.dn1>b006001.dn1
+SELECT d006000.in1, a006001.iu0, b006002.iu1, b006002.in0, d006000.iu1, d006000.dn0, d006000.iu0, d006000.ia0, a006001.du0
+FROM D(dn1>185.8).win:time(180 sec) as d006000, A(dn1>356.7).win:time(120 sec) as a006001, B(in1<198).win:time(120 sec) as b006002
+WHERE d006000.iu0=a006001.iu0 and a006001.du0>b006002.du0
 
-SELECT e006101.iu0, f006100.in0, f006100.in1, e006101.dn0, e006101.dn1, e006101.dn0
-FROM F(iu0>401).win:time(120 sec) as f006100, E(in1<187).win:time(120 sec) as e006101
-WHERE f006100.du1<e006101.du1
+SELECT d006100.ia0, c006101.in1, d006100.in1, d006100.in0, c006101.iu1, d006100.iu0
+FROM D(dn1>319.36).win:time(180 sec) as d006100, C(du0>214.71).win:time(60 sec) as c006101
+WHERE d006100.iu0=c006101.iu0
 
-SELECT b006200.in0, f006201.iu0, e006202.du0, b006200.in1, f006201.dn1, a006203.sr0, b006200.dn0, f006201.iu0, a006203.ia0, a006203.du1, a006203.ia0, f006201.du0
-FROM B(in0<89).win:time(180 sec) as b006200, F(in1>192).win:time(120 sec) as f006201, E(dn0<207.51).win:time(120 sec) as e006202, A(iu1>285).win:time(180 sec) as a006203
-WHERE b006200.dn0>f006201.dn0 and f006201.du0<e006202.du0 and e006202.iu0<a006203.iu0
+SELECT d006201.du0, d006201.dn0, d006201.ia0
+FROM D(in0>101) as d006201
 
-SELECT d006301.iu1, d006301.in0, d006301.dn1
-FROM D(dn1<294.12) as d006301
+SELECT a006301.du1, a006301.iu0, a006301.dn1
+FROM A(dn0>218.31) as a006301
 
-SELECT c006401.iu0, c006401.du1, f006400.in0, c006401.dn1, c006401.dn1, c006401.in1
-FROM F(in0>103).win:time(120 sec) as f006400, C(in1<213).win:time(60 sec) as c006401
-WHERE f006400.dn1<c006401.dn1
+SELECT f006400.dn0, f006400.du0, a006402.du1, b006403.in0, d006401.iu1, d006401.iu0, d006401.ia0, a006402.iu1, f006400.in1, b006403.dn1, f006400.du0, f006400.ia0
+FROM F(iu1<204).win:time(60 sec) as f006400, D(in0>92).win:time(180 sec) as d006401, A(in0>85).win:time(60 sec) as a006402, B(in1<165).win:time(180 sec) as b006403
+WHERE f006400.iu1=d006401.iu1 and d006401.du1<a006402.du1 and a006402.iu1=b006403.iu1
 
-SELECT b006501.du0, c006500.iu0, c006500.du1, c006500.sr0, c006500.du1, b006501.du1
-FROM C(in0>103).win:time(60 sec) as c006500, B(in1<201).win:time(120 sec) as b006501
-WHERE c006500.dn1>b006501.dn1
+SELECT b006501.in0, b006501.iu0, b006501.ia0
+FROM B(du0>261.33) as b006501
 
-SELECT f006601.iu1, b006600.in0, b006600.in1, a006603.sr0, b006600.sr0, e006602.ia0, a006603.dn1, e006602.iu0, b006600.in0, a006603.ia0, b006600.ia0, b006600.iu1
-FROM B(in0<89).win:time(180 sec) as b006600, F(in1>192).win:time(120 sec) as f006601, E(dn0<207.51).win:time(120 sec) as e006602, A(iu1>285).win:time(180 sec) as a006603
-WHERE b006600.dn0>f006601.dn0 and f006601.du0<e006602.du0 and e006602.iu0<a006603.iu0
+SELECT e006600.in0, f006601.in1, f006601.iu1, b006602.in0, b006602.in0, e006600.in1, b006602.du0, b006602.iu1, b006602.sr0
+FROM E(iu0<165).win:time(180 sec) as e006600, F(in0>119).win:time(120 sec) as f006601, B(iu1<16).win:time(60 sec) as b006602
+WHERE e006600.in1=f006601.in1 and f006601.iu0=b006602.iu0
 
-SELECT a006701.du0, a006701.in0, c006700.in0, a006701.du1, a006701.in0, c006700.in0, a006701.du1, a006701.ia0, d006702.sr0
-FROM C(dn0>209.56).win:time(180 sec) as c006700, A(dn0>207.84).win:time(180 sec) as a006701, D(du0<241.11).win:time(60 sec) as d006702
-WHERE c006700.du0>a006701.du0 and a006701.du0<d006702.du0
+SELECT a006701.iu1, a006701.in0, a006701.sr0
+FROM A(dn0>151.81) as a006701
 
-SELECT e006801.du1, e006801.sr0, f006800.sr0, f006800.ia0, f006800.du0, f006800.iu1
-FROM F(iu0>194).win:time(120 sec) as f006800, E(in1<198).win:time(120 sec) as e006801
-WHERE f006800.du1<e006801.du1
+SELECT a006801.iu1, a006801.iu1, a006801.dn0
+FROM A(dn0>191.77) as a006801
 
-SELECT c006901.in0, f006900.ia0, f006900.in1, f006900.iu1, c006901.ia0, c006901.dn1
-FROM F(in0>85).win:time(120 sec) as f006900, C(in1<223).win:time(60 sec) as c006901
-WHERE f006900.dn1<c006901.dn1
+SELECT a006900.ia0, e006901.in1, f006903.in1, a006900.iu1, e006901.iu0, d006904.dn1, c006902.dn1, a006900.dn0, f006903.dn0, f006903.ia0, c006902.in0, f006903.ia0, a006900.in1, d006904.dn0, c006902.ia0
+FROM A(in0<107).win:time(60 sec) as a006900, E(du1<465.24).win:time(120 sec) as e006901, C(in0<68).win:time(120 sec) as c006902, F(in0>106).win:time(120 sec) as f006903, D(in0<135).win:time(120 sec) as d006904
+WHERE a006900.iu1>e006901.iu1 and e006901.in1=c006902.in1 and c006902.iu1<f006903.iu1 and f006903.iu0=d006904.iu0
 
-SELECT d007001.dn1, d007001.du0, c007002.in1, c007002.dn1, a007000.sr0, d007001.du1, a007000.iu1, d007001.dn0, d007001.du0
-FROM A(in0<97).win:time(60 sec) as a007000, D(iu1>292).win:time(120 sec) as d007001, C(dn1>302.78).win:time(120 sec) as c007002
-WHERE a007000.in0>d007001.in0 and d007001.iu1=c007002.iu1
+SELECT a007001.ia0, a007001.dn1, a007001.du1
+FROM A(dn0>174.51) as a007001
 
-SELECT c007100.dn1, c007100.dn0, b007101.dn1, c007100.in1, b007101.iu1, b007101.du1
-FROM C(in0>90).win:time(60 sec) as c007100, B(in1<210).win:time(120 sec) as b007101
-WHERE c007100.dn1>b007101.dn1
+SELECT d007101.dn1, d007101.du1, d007101.du0
+FROM D(in0>46) as d007101
 
-SELECT a007201.dn1, a007201.iu1, a007201.du0
-FROM A(du1<375.86) as a007201
+SELECT a007201.in0, a007201.ia0, a007201.iu0
+FROM A(dn0>191.77) as a007201
 
-SELECT f007300.du1, c007301.dn1, f007300.du1, f007300.iu0, f007300.iu1, c007301.iu0
-FROM F(in0>93).win:time(120 sec) as f007300, C(in1<223).win:time(60 sec) as c007301
-WHERE f007300.dn1<c007301.dn1
+SELECT b007301.in0, b007301.iu1, b007301.in0, e007300.du1, b007301.sr0, e007300.iu0
+FROM E(du0<215.41).win:time(120 sec) as e007300, B(du0<214.29).win:time(180 sec) as b007301
+WHERE e007300.iu1=b007301.iu1
 
-SELECT f007400.in1, c007401.du0, f007400.du0, c007401.du1, f007400.iu0, c007401.in0
-FROM F(in0>93).win:time(120 sec) as f007400, C(in1<223).win:time(60 sec) as c007401
-WHERE f007400.dn1<c007401.dn1
+SELECT b007401.dn0, b007401.du1, b007401.ia0, e007400.dn0, e007400.dn0, b007401.iu1
+FROM E(du0<215.41).win:time(120 sec) as e007400, B(du0<234.9).win:time(180 sec) as b007401
+WHERE e007400.iu1=b007401.iu1
 
-SELECT d007502.dn1, d007502.du1, f007500.in0, c007501.ia0, d007502.dn0, c007501.dn1, f007500.in1, d007502.iu0, c007501.du0
-FROM F(du0<218.74).win:time(60 sec) as f007500, C(du0<238.51).win:time(180 sec) as c007501, D(in1<185).win:time(120 sec) as d007502
-WHERE f007500.iu0<c007501.iu0 and c007501.du1<d007502.du1
+SELECT d007500.dn0, a007501.du0, d007500.ia0, d007500.dn0, b007502.iu0, d007500.iu1, d007500.dn0, b007502.du0, d007500.in1
+FROM D(dn1>324.8).win:time(180 sec) as d007500, A(dn1>362.37).win:time(120 sec) as a007501, B(in1<195).win:time(120 sec) as b007502
+WHERE d007500.iu0=a007501.iu0 and a007501.du0>b007502.du0
 
-SELECT e007601.in0, e007601.du0, e007601.in1
-FROM E(in0<103) as e007601
+SELECT a007601.dn1, b007600.iu1, f007602.iu0, a007601.iu1, a007601.du0, f007602.iu0, b007600.in1, a007601.iu0, f007602.ia0
+FROM B(in0<92).win:time(60 sec) as b007600, A(du0>253.3).win:time(120 sec) as a007601, F(du1<748.69).win:time(60 sec) as f007602
+WHERE b007600.du0>a007601.du0 and a007601.iu1=f007602.iu1
 
-SELECT c007700.ia0, d007702.in0, a007701.ia0, c007700.in1, c007700.in0, c007700.in1, c007700.du1, c007700.in0, a007701.iu1
-FROM C(dn0>191.7).win:time(180 sec) as c007700, A(dn0>207.84).win:time(180 sec) as a007701, D(du0<241.11).win:time(60 sec) as d007702
-WHERE c007700.du0>a007701.du0 and a007701.du0<d007702.du0
+SELECT d007700.in0, d007700.iu1, c007701.sr0, c007701.du1, d007700.in1, c007701.du1
+FROM D(dn1>319.36).win:time(180 sec) as d007700, C(du0>287.53).win:time(60 sec) as c007701
+WHERE d007700.iu0=c007701.iu0
 
-SELECT a007801.du1, a007801.sr0, a007801.iu1
-FROM A(du1<485.48) as a007801
+SELECT b007801.dn0, b007801.iu0, b007801.ia0
+FROM B(du0>269.71) as b007801
 
-SELECT c007902.du0, a007900.du1, d007901.du1, d007901.du0, c007902.ia0, d007901.in1, d007901.in0, d007901.du1, d007901.du0
-FROM A(in0<97).win:time(60 sec) as a007900, D(iu1>197).win:time(120 sec) as d007901, C(dn1>302.78).win:time(120 sec) as c007902
-WHERE a007900.in0>d007901.in0 and d007901.iu1=c007902.iu1
+SELECT a007901.sr0, b007900.in0, b007900.iu0, f007902.ia0, b007900.in1, a007901.du0, b007900.in1, f007902.in0, b007900.in0
+FROM B(in0<92).win:time(60 sec) as b007900, A(du0>253.3).win:time(120 sec) as a007901, F(du1<735.35).win:time(60 sec) as f007902
+WHERE b007900.du0>a007901.du0 and a007901.iu1=f007902.iu1
 
-SELECT e008001.du1, e008001.sr0, e008001.du0
-FROM E(in0<99) as e008001
+SELECT f008002.du1, b008000.iu1, f008002.du0, f008002.du0, b008000.in1, a008001.sr0, f008002.ia0, a008001.du0, b008000.dn1
+FROM B(in0<92).win:time(60 sec) as b008000, A(du0>261.71).win:time(120 sec) as a008001, F(du1<674.74).win:time(60 sec) as f008002
+WHERE b008000.du0>a008001.du0 and a008001.iu1=f008002.iu1
 
-SELECT e008101.du1, e008101.dn1, e008101.ia0
-FROM E(in0<88) as e008101
+SELECT e008101.in0, c008102.sr0, c008102.iu1, c008102.iu0, f008103.in1, a008100.in1, c008102.iu0, a008100.du1, c008102.du1, e008101.dn1, e008101.du0, d008104.in1, e008101.dn0, e008101.du1, e008101.in0
+FROM A(in0<107).win:time(60 sec) as a008100, E(du1<465.24).win:time(120 sec) as e008101, C(in0<83).win:time(120 sec) as c008102, F(in0>106).win:time(120 sec) as f008103, D(in0<135).win:time(120 sec) as d008104
+WHERE a008100.iu1>e008101.iu1 and e008101.in1=c008102.in1 and c008102.iu1<f008103.iu1 and f008103.iu0=d008104.iu0
 
-SELECT f008204.in0, b008200.dn0, f008204.sr0, d008203.in0, f008204.iu1, d008203.in1, b008200.du1, f008204.sr0, b008200.in0, d008203.dn0, b008200.dn0, b008200.dn0, a008201.du0, c008202.in0, f008204.du0
-FROM B(iu1>411).win:time(60 sec) as b008200, A(in1>206).win:time(180 sec) as a008201, C(dn1>289.23).win:time(60 sec) as c008202, D(in1<209).win:time(60 sec) as d008203, F(iu1<96).win:time(180 sec) as f008204
-WHERE b008200.in1<a008201.in1 and a008201.dn1>c008202.dn1 and c008202.in1=d008203.in1 and d008203.dn1<f008204.dn1
+SELECT e008200.in1, b008201.du0, e008200.ia0, e008200.sr0, e008200.in1, b008201.in0
+FROM E(du0<222.72).win:time(120 sec) as e008200, B(du0<234.9).win:time(180 sec) as b008201
+WHERE e008200.iu1=b008201.iu1
 
-SELECT e008301.dn0, f008300.iu1, f008300.du1, f008300.sr0, f008300.dn1, e008301.in0
-FROM F(iu0>308).win:time(120 sec) as f008300, E(in1<187).win:time(120 sec) as e008301
-WHERE f008300.du1<e008301.du1
+SELECT b008303.iu1, a008302.du1, a008302.in1, d008301.du0, d008301.dn1, d008301.du0, d008301.dn1, a008302.ia0, f008300.dn1, d008301.in0, b008303.iu0, f008300.ia0
+FROM F(iu1<89).win:time(60 sec) as f008300, D(in0>92).win:time(180 sec) as d008301, A(in0>85).win:time(60 sec) as a008302, B(in1<165).win:time(180 sec) as b008303
+WHERE f008300.iu1=d008301.iu1 and d008301.du1<a008302.du1 and a008302.iu1=b008303.iu1
 
-SELECT a008401.in0, a008401.in0, a008401.iu0
-FROM A(du1<431.6) as a008401
+SELECT f008401.du1, f008401.iu1, e008400.in0, b008402.in0, b008402.iu0, e008400.du0, b008402.du0, b008402.sr0, e008400.sr0
+FROM E(iu0<165).win:time(180 sec) as e008400, F(in0>117).win:time(120 sec) as f008401, B(iu1<48).win:time(60 sec) as b008402
+WHERE e008400.in1=f008401.in1 and f008401.iu0=b008402.iu0
 
-SELECT b008502.du1, b008502.dn1, d008503.du0, d008503.in1, c008501.iu0, a008500.in0, c008501.in1, d008503.iu0, c008501.dn0, c008501.iu1, a008500.du0, c008501.sr0
-FROM A(in1>185).win:time(60 sec) as a008500, C(iu1>367).win:time(180 sec) as c008501, B(dn1<338.12).win:time(120 sec) as b008502, D(iu0>117).win:time(180 sec) as d008503
-WHERE a008500.iu1>c008501.iu1 and c008501.iu1>b008502.iu1 and b008502.iu0=d008503.iu0
+SELECT b008501.du1, b008501.iu1, b008501.dn1
+FROM B(du0>237.19) as b008501
 
-SELECT c008601.iu1, c008601.iu0, c008601.du1
-FROM C(du0>271.76) as c008601
+SELECT c008601.sr0, c008601.iu1, c008601.ia0, c008601.in0, d008600.sr0, c008601.sr0
+FROM D(iu1>214).win:time(120 sec) as d008600, C(du1>794.29).win:time(60 sec) as c008601
+WHERE d008600.iu1=c008601.iu1
 
-SELECT e008701.dn1, e008701.du0, e008701.iu1
-FROM E(in0<99) as e008701
+SELECT c008701.dn1, c008701.in0, d008700.dn0, d008700.sr0, c008701.du0, c008701.du0
+FROM D(iu1>43).win:time(120 sec) as d008700, C(du1>426.2).win:time(60 sec) as c008701
+WHERE d008700.iu1=c008701.iu1
 
-SELECT d008801.iu1, d008801.dn1, d008801.sr0
-FROM D(dn1<302.4) as d008801
+SELECT d008801.in0, d008801.ia0, d008801.dn0
+FROM D(in0>101) as d008801
 
-SELECT a008901.iu1, f008904.in0, d008903.iu1, c008902.sr0, b008900.sr0, b008900.iu1, d008903.dn1, d008903.dn0, b008900.dn1, a008901.du0, f008904.du0, d008903.du0, d008903.ia0, f008904.dn1, c008902.iu0
-FROM B(iu1>411).win:time(60 sec) as b008900, A(in1>208).win:time(180 sec) as a008901, C(dn1>289.23).win:time(60 sec) as c008902, D(in1<178).win:time(60 sec) as d008903, F(iu1<96).win:time(180 sec) as f008904
-WHERE b008900.in1<a008901.in1 and a008901.dn1>c008902.dn1 and c008902.in1=d008903.in1 and d008903.dn1<f008904.dn1
+SELECT b008902.du1, b008902.iu0, b008902.iu1, e008900.iu1, b008902.dn0, b008902.sr0, e008900.in1, e008900.iu0, e008900.du1
+FROM E(iu0<165).win:time(180 sec) as e008900, F(in0>104).win:time(120 sec) as f008901, B(iu1<240).win:time(60 sec) as b008902
+WHERE e008900.in1=f008901.in1 and f008901.iu0=b008902.iu0
 
-SELECT c009001.dn1, c009001.dn1, c009001.dn0
-FROM C(du0>288.71) as c009001
+SELECT d009000.sr0, c009001.ia0, d009000.ia0, c009001.du1, c009001.iu1, c009001.du0
+FROM D(iu1>214).win:time(120 sec) as d009000, C(du1>794.29).win:time(60 sec) as c009001
+WHERE d009000.iu1=c009001.iu1
 
-SELECT a009101.iu0, a009101.du1, a009101.dn1
-FROM A(du1<454) as a009101
+SELECT e009100.iu0, f009101.du1, f009101.iu0, e009100.sr0, b009102.dn0, b009102.du0, b009102.ia0, e009100.du1, f009101.iu0
+FROM E(iu0<165).win:time(180 sec) as e009100, F(in0>104).win:time(120 sec) as f009101, B(iu1<65).win:time(60 sec) as b009102
+WHERE e009100.in1=f009101.in1 and f009101.iu0=b009102.iu0
 
-SELECT b009201.du1, b009201.du0, c009200.in0, b009201.in1, c009200.du0, c009200.du0
-FROM C(in0>86).win:time(60 sec) as c009200, B(in1<212).win:time(120 sec) as b009201
-WHERE c009200.dn1>b009201.dn1
+SELECT a009201.iu1, a009201.sr0, a009201.in0
+FROM A(dn0>226.96) as a009201
 
-SELECT d009301.du0, d009301.dn0, d009301.dn1
-FROM D(dn1<327.4) as d009301
+SELECT d009301.dn1, d009301.sr0, d009301.dn0
+FROM D(dn1>325.9) as d009301
 
-SELECT d009401.dn1, d009401.iu1, d009401.ia0
-FROM D(dn1<303.05) as d009401
+SELECT e009400.in0, f009401.in1, b009402.dn0, b009402.du1, f009401.iu1, f009401.in1, f009401.du1, f009401.iu0, e009400.iu0
+FROM E(iu0<165).win:time(180 sec) as e009400, F(in0>104).win:time(120 sec) as f009401, B(iu1<65).win:time(60 sec) as b009402
+WHERE e009400.in1=f009401.in1 and f009401.iu0=b009402.iu0
 
-SELECT c009501.dn0, c009501.in1, c009501.dn1
-FROM C(du0>288.71) as c009501
+SELECT d009501.dn0, d009501.dn0, d009501.du1
+FROM D(dn1>289.6) as d009501
 
-SELECT f009600.du0, f009600.in1, c009601.in1, f009600.iu0, f009600.in0, c009601.du1
-FROM F(in0>110).win:time(120 sec) as f009600, C(in1<213).win:time(60 sec) as c009601
-WHERE f009600.dn1<c009601.dn1
+SELECT d009600.ia0, c009601.sr0, c009601.sr0, c009601.dn0, d009600.dn1, d009600.dn1
+FROM D(dn1>319.36).win:time(180 sec) as d009600, C(du0>232.43).win:time(60 sec) as c009601
+WHERE d009600.iu0=c009601.iu0
 
-SELECT b009701.iu1, c009700.ia0, c009700.iu0, c009700.iu1, c009700.du1, b009701.in0
-FROM C(in0>86).win:time(60 sec) as c009700, B(in1<232).win:time(120 sec) as b009701
-WHERE c009700.dn1>b009701.dn1
+SELECT d009701.ia0, d009701.du0, d009701.ia0
+FROM D(dn1>309.94) as d009701
 
-SELECT d009801.in0, d009801.sr0, d009801.du0
-FROM D(dn1<280.15) as d009801
+SELECT b009802.iu0, b009802.dn1, b009802.in1, d009800.iu1, d009800.iu0, b009802.du0, b009802.in1, b009802.dn0, a009801.dn1
+FROM D(dn1>185.8).win:time(180 sec) as d009800, A(dn1>362.37).win:time(120 sec) as a009801, B(in1<198).win:time(120 sec) as b009802
+WHERE d009800.iu0=a009801.iu0 and a009801.du0>b009802.du0
 
-SELECT c009900.iu1, b009901.du1, c009900.in1, c009900.in0, c009900.in0, c009900.dn1
-FROM C(in0>90).win:time(60 sec) as c009900, B(in1<201).win:time(120 sec) as b009901
-WHERE c009900.dn1>b009901.dn1
+SELECT b009901.iu0, b009901.du1, b009901.ia0
+FROM B(du0>269.71) as b009901
 
-SELECT e010001.dn1, e010001.in1, e010001.ia0
-FROM E(in0<105) as e010001
+SELECT d010001.iu1, d010001.du1, d010001.ia0
+FROM D(in0>105) as d010001
 
-SELECT a010101.du0, a010101.in1, a010101.in0
-FROM A(du1<684.53) as a010101
+SELECT a010102.in0, a010102.du1, b010103.iu0, a010102.iu1, d010101.dn1, b010103.sr0, f010100.ia0, a010102.in0, b010103.dn0, b010103.dn1, b010103.dn0, f010100.ia0
+FROM F(iu1<237).win:time(60 sec) as f010100, D(in0>92).win:time(180 sec) as d010101, A(in0>85).win:time(60 sec) as a010102, B(in1<165).win:time(180 sec) as b010103
+WHERE f010100.iu1=d010101.iu1 and d010101.du1<a010102.du1 and a010102.iu1=b010103.iu1
 
-SELECT b010202.ia0, a010200.iu1, b010202.iu1, d010203.in1, b010202.ia0, a010200.du0, a010200.in0, c010201.ia0, c010201.iu0, b010202.dn1, b010202.du1, c010201.sr0
-FROM A(in1>206).win:time(60 sec) as a010200, C(iu1>367).win:time(180 sec) as c010201, B(dn1<308.81).win:time(120 sec) as b010202, D(iu0>303).win:time(180 sec) as d010203
-WHERE a010200.iu1>c010201.iu1 and c010201.iu1>b010202.iu1 and b010202.iu0=d010203.iu0
+SELECT e010200.dn1, e010200.sr0, b010201.dn1, e010200.iu1, b010201.in0, b010201.sr0
+FROM E(du0<275.31).win:time(120 sec) as e010200, B(du0<252.14).win:time(180 sec) as b010201
+WHERE e010200.iu1=b010201.iu1
 
-SELECT a010301.du1, a010301.in0, a010301.dn1
-FROM A(du1<640.29) as a010301
+SELECT d010301.dn1, d010301.in0, d010301.iu0
+FROM D(dn1>309.94) as d010301
 
-SELECT f010400.iu1, f010400.sr0, c010401.in0, f010400.ia0, f010400.in0, c010401.in1
-FROM F(in0>87).win:time(120 sec) as f010400, C(in1<223).win:time(60 sec) as c010401
-WHERE f010400.dn1<c010401.dn1
+SELECT d010401.du0, d010401.sr0, d010401.dn1
+FROM D(dn1>322.38) as d010401
 
-SELECT e010501.ia0, e010501.dn1, e010501.in0
-FROM E(in0<99) as e010501
+SELECT b010502.dn1, d010500.dn1, a010501.in0, d010500.du1, a010501.sr0, a010501.ia0, a010501.sr0, a010501.in0, d010500.iu1
+FROM D(dn1>185.8).win:time(180 sec) as d010500, A(dn1>356.7).win:time(120 sec) as a010501, B(in1<232).win:time(120 sec) as b010502
+WHERE d010500.iu0=a010501.iu0 and a010501.du0>b010502.du0
 
-SELECT e010601.in0, f010600.iu0, f010600.dn1, e010601.in1, e010601.in1, f010600.in1
-FROM F(iu0>489).win:time(120 sec) as f010600, E(in1<174).win:time(120 sec) as e010601
-WHERE f010600.du1<e010601.du1
+SELECT b010601.du1, e010600.sr0, e010600.in1, b010601.du0, b010601.iu0, b010601.in0
+FROM E(du0<275.31).win:time(120 sec) as e010600, B(du0<249.66).win:time(180 sec) as b010601
+WHERE e010600.iu1=b010601.iu1
 
-SELECT d010701.in1, d010701.dn0, d010701.iu1
-FROM D(dn1<272.83) as d010701
+SELECT b010701.dn0, b010701.du1, b010701.iu1
+FROM B(du0>255.03) as b010701
 
-SELECT e010801.in0, f010800.in0, e010801.ia0, f010800.ia0, e010801.dn0, f010800.dn0
-FROM F(iu0>194).win:time(120 sec) as f010800, E(in1<198).win:time(120 sec) as e010801
-WHERE f010800.du1<e010801.du1
+SELECT a010801.ia0, a010801.iu1, a010801.du0
+FROM A(dn0>159.38) as a010801
 
-SELECT e010901.in1, e010901.du1, e010901.dn0
-FROM E(in0<107) as e010901
+SELECT c010901.du0, c010901.iu1, c010901.dn0, c010901.iu0, c010901.ia0, c010901.in1
+FROM D(iu1>43).win:time(120 sec) as d010900, C(du1>426.2).win:time(60 sec) as c010901
+WHERE d010900.iu1=c010901.iu1
 
-SELECT c011001.ia0, c011001.in1, c011001.sr0
-FROM C(du0>254) as c011001
+SELECT c011001.du1, c011001.ia0, d011000.dn0, d011000.dn1, c011001.dn1, d011000.dn1
+FROM D(dn1>277.56).win:time(180 sec) as d011000, C(du0>214.64).win:time(60 sec) as c011001
+WHERE d011000.iu0=c011001.iu0
 
-SELECT c011101.ia0, c011101.iu1, c011101.dn0
-FROM C(du0>227.11) as c011101
+SELECT e011100.ia0, e011100.du1, b011101.in0, b011101.in1, b011101.du0, b011101.iu0
+FROM E(du0<225.51).win:time(120 sec) as e011100, B(du0<249.66).win:time(180 sec) as b011101
+WHERE e011100.iu1=b011101.iu1
 
-SELECT d011202.in0, d011202.ia0, f011200.dn1, c011201.du0, d011202.in1, f011200.du0, d011202.in1, f011200.in1, f011200.sr0
-FROM F(du0<218.74).win:time(60 sec) as f011200, C(du0<206.13).win:time(180 sec) as c011201, D(in1<185).win:time(120 sec) as d011202
-WHERE f011200.iu0<c011201.iu0 and c011201.du1<d011202.du1
+SELECT d011201.du0, d011201.sr0, d011201.iu0
+FROM D(dn1>289.6) as d011201
 
-SELECT e011301.iu0, e011301.ia0, e011301.sr0
-FROM E(in0<107) as e011301
+SELECT d011301.dn1, d011301.iu0, d011301.du1
+FROM D(in0>100) as d011301
 
-SELECT e011401.du1, e011401.dn1, e011401.sr0
-FROM E(in0<87) as e011401
+SELECT a011401.dn1, a011401.iu1, a011401.du0
+FROM A(dn0>207.33) as a011401
 
-SELECT c011501.in0, c011501.du1, c011501.du0
-FROM C(du0>236) as c011501
+SELECT d011501.dn1, d011501.sr0, d011501.ia0
+FROM D(in0>85) as d011501
 
-SELECT d011601.ia0, d011601.sr0, d011601.iu0
-FROM D(dn1<302.4) as d011601
+SELECT b011601.sr0, b011601.du1, b011601.sr0
+FROM B(du0>238.63) as b011601
 
-SELECT d011701.sr0, d011701.dn0, d011701.dn1
-FROM D(dn1<325.85) as d011701
+SELECT b011701.iu1, b011701.in1, b011701.iu0
+FROM B(du0>237.52) as b011701
 
-SELECT d011801.sr0, d011801.ia0, d011801.dn0
-FROM D(dn1<325.85) as d011801
+SELECT d011800.iu0, c011801.dn1, c011801.in1, d011800.sr0, d011800.in1, d011800.in0
+FROM D(dn1>306.93).win:time(180 sec) as d011800, C(du0>214.64).win:time(60 sec) as c011801
+WHERE d011800.iu0=c011801.iu0
 
-SELECT a011901.sr0, a011901.sr0, a011901.sr0
-FROM A(du1<489.73) as a011901
+SELECT c011901.in0, c011901.dn1, d011900.in0, c011901.in1, c011901.sr0, c011901.dn0
+FROM D(dn1>306.93).win:time(180 sec) as d011900, C(du0>214.64).win:time(60 sec) as c011901
+WHERE d011900.iu0=c011901.iu0
 
-SELECT c012001.ia0, f012000.dn1, f012000.iu1, c012001.in0, d012002.du1, c012001.sr0, f012000.ia0, d012002.du0, c012001.in0
-FROM F(du0<261.99).win:time(60 sec) as f012000, C(du0<298.01).win:time(180 sec) as c012001, D(in1<194).win:time(120 sec) as d012002
-WHERE f012000.iu0<c012001.iu0 and c012001.du1<d012002.du1
+SELECT a012001.dn1, a012001.sr0, a012001.dn1
+FROM A(dn0>182.67) as a012001
 
-SELECT e012101.dn0, e012101.du0, f012100.iu1, f012100.ia0, e012101.sr0, f012100.in0
-FROM F(iu0>102).win:time(120 sec) as f012100, E(in1<198).win:time(120 sec) as e012101
-WHERE f012100.du1<e012101.du1
+SELECT b012101.sr0, b012101.ia0, b012101.iu1
+FROM B(du0>290.73) as b012101
 
-SELECT c012201.dn1, c012201.dn0, c012201.in0
-FROM C(du0>219.65) as c012201
+SELECT e012200.iu0, e012200.ia0, b012201.dn1, b012201.iu1, b012201.in1, b012201.in0
+FROM E(du0<275.31).win:time(120 sec) as e012200, B(du0<258.42).win:time(180 sec) as b012201
+WHERE e012200.iu1=b012201.iu1
 
-SELECT e012301.in0, e012301.in1, e012301.du0
-FROM E(in0<115) as e012301
+SELECT d012300.iu0, d012300.ia0, c012301.sr0, c012301.dn1, c012301.iu0, d012300.sr0
+FROM D(dn1>314.6).win:time(180 sec) as d012300, C(du0>214.71).win:time(60 sec) as c012301
+WHERE d012300.iu0=c012301.iu0
 
-SELECT a012401.iu1, a012401.du1, a012401.sr0
-FROM A(du1<360.23) as a012401
+SELECT d012401.ia0, d012401.ia0, d012401.dn0
+FROM D(in0>58) as d012401
 
-SELECT a012501.iu1, a012501.in0, a012501.dn1
-FROM A(du1<545.3) as a012501
+SELECT d012501.in1, d012501.du1, d012501.dn1
+FROM D(dn1>306.93) as d012501
 
-SELECT d012602.sr0, c012601.iu1, f012600.sr0, f012600.dn1, f012600.in1, c012601.in0, d012602.du1, f012600.du0, d012602.in1
-FROM F(du0<218.74).win:time(60 sec) as f012600, C(du0<298.01).win:time(180 sec) as c012601, D(in1<185).win:time(120 sec) as d012602
-WHERE f012600.iu0<c012601.iu0 and c012601.du1<d012602.du1
+SELECT a012601.dn1, a012601.sr0, a012601.dn0
+FROM A(dn0>159.38) as a012601
 
-SELECT a012701.du0, a012701.iu0, a012701.iu1
-FROM A(du1<375.86) as a012701
+SELECT d012701.dn1, d012701.in0, d012701.dn0
+FROM D(in0>81) as d012701
 
-SELECT f012800.sr0, f012800.du0, c012801.iu1, d012802.dn0, d012802.ia0, f012800.ia0, f012800.dn0, d012802.dn1, c012801.dn1
-FROM F(du0<261.99).win:time(60 sec) as f012800, C(du0<298.01).win:time(180 sec) as c012801, D(in1<185).win:time(120 sec) as d012802
-WHERE f012800.iu0<c012801.iu0 and c012801.du1<d012802.du1
+SELECT d012801.dn0, d012801.iu0, d012801.dn1
+FROM D(in0>46) as d012801
 
-SELECT c012901.ia0, c012901.dn0, c012901.du1
-FROM C(du0>288.71) as c012901
+SELECT d012900.iu1, d012900.iu1, c012901.in1, c012901.in0, c012901.du0, d012900.sr0
+FROM D(dn1>306.93).win:time(180 sec) as d012900, C(du0>214.71).win:time(60 sec) as c012901
+WHERE d012900.iu0=c012901.iu0
 
-SELECT f013000.iu0, f013000.du0, e013001.iu0, f013000.iu1, f013000.du1, e013001.ia0
-FROM F(iu0>308).win:time(120 sec) as f013000, E(in1<198).win:time(120 sec) as e013001
-WHERE f013000.du1<e013001.du1
+SELECT d013001.ia0, d013001.du0, d013001.sr0
+FROM D(in0>96) as d013001
 
-SELECT f013100.iu0, f013100.du0, f013100.dn0, f013100.sr0, c013101.du1, c013101.in0
-FROM F(in0>93).win:time(120 sec) as f013100, C(in1<223).win:time(60 sec) as c013101
-WHERE f013100.dn1<c013101.dn1
+SELECT d013101.in0, d013101.ia0, d013101.du0
+FROM D(in0>85) as d013101
 
-SELECT c013201.in1, c013201.iu1, c013201.ia0, f013200.du0, c013201.iu0, f013200.dn1
-FROM F(in0>103).win:time(120 sec) as f013200, C(in1<213).win:time(60 sec) as c013201
-WHERE f013200.dn1<c013201.dn1
+SELECT d013201.dn0, d013201.du1, d013201.in1
+FROM D(in0>85) as d013201
 
-SELECT e013301.ia0, e013301.in0, e013301.in1
-FROM E(in0<97) as e013301
+SELECT d013301.in1, d013301.in0, d013301.dn0
+FROM D(dn1>329.22) as d013301
 
-SELECT c013401.du1, c013401.du1, c013401.du1
-FROM C(du0>254) as c013401
+SELECT d013401.iu0, d013401.sr0, d013401.dn1
+FROM D(dn1>285.48) as d013401
 
-SELECT c013501.dn1, c013501.in0, c013501.iu1
-FROM C(du0>225.94) as c013501
+SELECT d013501.sr0, d013501.in0, d013501.in0
+FROM D(dn1>285.48) as d013501
 
-SELECT c013601.dn0, c013601.iu0, c013601.dn0
-FROM C(du0>227.11) as c013601
+SELECT d013601.ia0, d013601.ia0, d013601.dn1
+FROM D(dn1>276.6) as d013601
 
-SELECT e013701.in1, e013701.ia0, e013701.dn1
-FROM E(in0<111) as e013701
+SELECT d013701.du0, d013701.du0, d013701.iu0
+FROM D(dn1>325.9) as d013701
 
-SELECT c013801.du0, c013801.dn0, c013801.in1
-FROM C(du0>220.75) as c013801
+SELECT d013801.du0, d013801.in0, d013801.sr0
+FROM D(dn1>235.66) as d013801
 
-SELECT c013901.du1, c013901.du1, c013901.du1
-FROM C(du0>264.92) as c013901
+SELECT d013901.du0, d013901.du1, d013901.ia0
+FROM D(dn1>265.4) as d013901
 

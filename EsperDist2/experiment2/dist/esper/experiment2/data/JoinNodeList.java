@@ -38,9 +38,10 @@ public class JoinNodeList extends AbstractNodeList<JoinNode>{
 		}
 		return false;
 	}
-	public void addJoinPropOp(JoinPropOpType joinPropOp){
-		joinPropOpList.add(joinPropOp);
-	}
+//	public void addJoinPropOp(JoinPropOpType joinPropOp){
+//		joinPropOpList.add(joinPropOp);
+//	}
+	
 	public List<JoinPropOpType> getJoinPropOpList(){
 		return this.joinPropOpList;
 	}

@@ -140,6 +140,7 @@ public class RawSocketLink extends Link{
 				else if(length>0){
 					//log.debug("ReceiverRunnable read %d bytes", length);
 					RawSocketLinkUtil.readBytes(bis, recvBuffer, 0, length);
+					System.gc();
 					obj=bytesSer.fromBytes(recvBuffer, 0, length);
 					notifyReceived(obj);
 				}

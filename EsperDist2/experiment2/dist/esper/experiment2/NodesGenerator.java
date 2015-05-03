@@ -79,9 +79,7 @@ public class NodesGenerator {
 					nl.addType(filterType);
 				}
 			}
-			for(int i=0; i<numWay-1; i++){
-				nl.addJoinPropOp(jtRand.next());
-			}
+			nl.setJoinPropOpList(Arrays.asList(jtRand.next(numWay)));
 			
 			//int count=getNormalRandomNumber(nodeParams[numWay].nodeCountPerType);
 			int count=nodeParams[numWay].nodeCountPerType;
@@ -205,21 +203,21 @@ public class NodesGenerator {
 		
 		public FilterEventPropOpType next(){
 			int eventType, propType, opType, windowType;
-			FilterEventPropOpType type;
+			FilterEventPropOpType fitlerType;
 			while(true){
 				eventType=rand.nextInt(numEventTypes);
 				propType=rand.nextInt(numPropTypes);
 				opType=rand.nextInt(numFilterOpTypes);
 				windowType=rand.nextInt(numWindowTypes);
-				type=new FilterEventPropOpType(eventType, propType, opType, windowType);
-				if(!set.contains(type.hashCode())){
+				fitlerType=new FilterEventPropOpType(eventType, propType, opType, windowType);
+				if(!set.contains(fitlerType.hashCode())){
 					if(opTypeValidator!=null){
-						if(opTypeValidator.validateFilterOperation(propType, opType)){
-							return type;
+						if(opTypeValidator.validateFilterOperation(fitlerType)){
+							return fitlerType;
 						}
 					}
 					else{
-						return type;
+						return fitlerType;
 					}
 				}
 			}
@@ -230,14 +228,18 @@ public class NodesGenerator {
 	}
 	
 	class JoinTypeRandomChooser{
-		public JoinPropOpType next(){
-			int joinPropType;
-			int opType;
+		public JoinPropOpType[] next(int numWay){
+			JoinPropOpType[] joinTypes=new JoinPropOpType[numWay-1];
 			while(true){
-				joinPropType=rand.nextInt(numPropTypes);
-				opType=rand.nextInt(numJoinOpTypes);//>,<,=
+				for(int i=0; i<numWay-1; i++){
+					if(joinTypes[i]==null){
+						joinTypes[i]=new JoinPropOpType();
+					}
+					joinTypes[i].propType=rand.nextInt(numPropTypes);
+					joinTypes[i].opType=rand.nextInt(numJoinOpTypes);//>,<,=
+				}
 				if(opTypeValidator!=null){
-					if(opTypeValidator.validateJoinOperation(joinPropType, opType)){
+					if(opTypeValidator.validateJoinOperation(joinTypes)){
 						break;
 					}
 				}
@@ -245,12 +247,12 @@ public class NodesGenerator {
 					break;
 				}
 			}
-			return new JoinPropOpType(joinPropType, opType);
+			return joinTypes;
 		}		
 	}
 	
 	public static interface IOpTypeValidator{
-		public boolean validateFilterOperation(int propType, int opType);
-		public boolean validateJoinOperation(int propType, int opType);
+		public boolean validateFilterOperation(FilterEventPropOpType filterType);
+		public boolean validateJoinOperation(JoinPropOpType[] joinTypes);
 	}
 }
