@@ -60,11 +60,11 @@ public class CoordinatorMain{
 					int retried=0;
 					while(retried < retries){
 						eqlId=coord.executeEPL(query);
+						Thread.sleep(intervalMS);
 						if(eqlId>=0){
 							break;
 						}
 						retried++;
-						Thread.sleep(intervalMS);
 					}
 					if(eqlId<0){
 						log.error("can NOT submit new EPL for %d times, will exit.", retries);
