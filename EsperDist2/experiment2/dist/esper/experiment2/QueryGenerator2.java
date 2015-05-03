@@ -64,7 +64,7 @@ public class QueryGenerator2 {
 				filterOpTypes.length, joinOpTypes.length,
 				windowTimes.length, numSelectElementsPerFilter, nodeParams);
 		nodesGen.setOpTypeValidator(opTypeValidator);
-		nodeListCnts=nodesGen.genearteNodeList2s();
+		nodeListCnts=nodesGen.genearteNodeListContainers();
 	}
 	
 	public void generateValues(){

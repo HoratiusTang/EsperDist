@@ -51,7 +51,7 @@ public class NodesGenerator {
 		}
 	}
 
-	public NodeListContainer[] genearteNodeList2s(){
+	public NodeListContainer[] genearteNodeListContainers(){
 		for(int i=1;i<=MAX_WAYS;i++){
 			if(nodeParams[i]!=null){
 				System.out.format("generate %d-way nodes starting...\n",i);

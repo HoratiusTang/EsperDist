@@ -28,7 +28,7 @@ public class TestNodeGenerator {
 		NodesGenerator ng=new NodesGenerator(numEventTypes, numPropTypes, 
 				numFilterOpTypes, numJoinOpTypes, numWindowTypes, 
 				numSelectElementsPerFilter, nps);
-		NodeListContainer[] nl2s=ng.genearteNodeList2s();
+		NodeListContainer[] nl2s=ng.genearteNodeListContainers();
 		
 		for(NodeListContainer nl2: nl2s){
 			if(nl2!=null){
