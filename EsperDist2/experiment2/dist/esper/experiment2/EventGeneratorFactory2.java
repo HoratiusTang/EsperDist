@@ -7,12 +7,12 @@ public class EventGeneratorFactory2 {
 	public static EventInstanceGenerator[] genEventInstanceGenerators(String[] eventNames){
 		EventInstanceGenerator[] eigs=new EventInstanceGenerator[eventNames.length];
 		for(int i=0; i<eventNames.length; i++){
-			eigs[i]=genEventInstanceGeneratorDefault(eventNames[i]);
+			eigs[i]=genEventInstanceGenerator(eventNames[i]);
 		}
 		return eigs;
 	}
 	
-	public static EventInstanceGenerator genEventInstanceGeneratorDefault(String eventName){
+	public static EventInstanceGenerator genEventInstanceGenerator(String eventName){
 		EventInstanceGenerator eventGen=new EventInstanceGenerator("DEFAULT_PROTOTYPE", eventName);
 		//eventGen.addProperty("im0", new FieldGeneratorFactory.IntegerMonotoGenerator(0, 1));
 		eventGen.addProperty("in0", new FieldGeneratorFactory.IntegerNormalGenerator(100, 10, 0, 200));

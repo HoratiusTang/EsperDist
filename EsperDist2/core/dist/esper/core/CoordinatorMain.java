@@ -37,6 +37,7 @@ public class CoordinatorMain{
 	static class SumbitQueryRunnable implements Runnable{
 		Coordinator coord;
 		long intervalMS=3500;
+		int retries=10;
 		
 		public SumbitQueryRunnable(Coordinator coord) {
 			super();
@@ -55,8 +56,20 @@ public class CoordinatorMain{
 				log.info("read %d queries from %s", queryList.size(), queriesFilePath);
 				log.info("begin submit queries");
 				for(String query: queryList){
-					coord.executeEPL(query);
-					Thread.sleep(intervalMS);
+					long eqlId=-1;
+					int retried=0;
+					while(retried < retries){
+						eqlId=coord.executeEPL(query);
+						if(eqlId>=0){
+							break;
+						}
+						retried++;
+						Thread.sleep(intervalMS);
+					}
+					if(eqlId<0){
+						log.error("can NOT submit new EPL for %d times, will exit.", retries);
+						break;
+					}
 				}
 				log.info("end submit queries");
 			}

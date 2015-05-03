@@ -52,6 +52,7 @@ public class Coordinator {
 	}
 	public static final double GATEWAY_WORKER_RATIO_MIN=1.0d/3.0d;
 	static int CENTRALIZED_TREE_PRUNE_COUNT=5;
+	static double OVERLOAD_RATIO_THRESHOLD=0.5d;
 	
 	public String id;
 	LinkManager linkManager;
@@ -241,6 +242,11 @@ public class Coordinator {
 	}
 	
 	public long executeEPL(String epl) throws Exception{
+		double overloadRatio=costEval.getOverloadedWorkerRatio();
+		if(overloadRatio>OVERLOAD_RATIO_THRESHOLD){
+			log.error("System can NOT execute new EPL, for %.2f%% workers are overloaded", overloadRatio*100);
+			return -1;
+		}
 		long eplId=eplUID.getAndIncrement();
 		List<Tree> treeList=centralizedTreeBuilder.generateTree(eplId, epl);
 		if(treeList.size()>CENTRALIZED_TREE_PRUNE_COUNT){

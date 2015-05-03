@@ -8,6 +8,7 @@ import dist.esper.core.util.Options;
 import dist.esper.core.util.ServiceManager;
 import dist.esper.event.Event;
 import dist.esper.experiment.EventGeneratorFactory;
+import dist.esper.experiment2.EventGeneratorFactory2;
 import dist.esper.external.event.EventInstanceGenerator;
 import dist.esper.external.event.FieldGenerator;
 import dist.esper.external.event.FieldGeneratorFactory;
@@ -45,14 +46,15 @@ public class SpoutMain {
 	}
 	
 	private static EventInstanceGenerator genEventInstanceGenerator() throws Exception{
-		String eventCategory=ServiceManager.getConfig().get(Options.EVENT_CATEGORY);
+		//String eventCategory=ServiceManager.getConfig().get(Options.EVENT_CATEGORY);
 		String eventName=ServiceManager.getConfig().get(Options.EVENT_NAME);
-		if(eventCategory==null){
-			throw new Exception(String.format("not found option '%s'", Options.EVENT_CATEGORY));
-		}
+//		if(eventCategory==null){
+//			throw new Exception(String.format("not found option '%s'", Options.EVENT_CATEGORY));
+//		}
 		if(eventName==null){
 			throw new Exception(String.format("not found option '%s'", Options.EVENT_NAME));
 		}		
-		return EventGeneratorFactory.genEventInstanceGenerator(eventCategory, eventName);
+		//return EventGeneratorFactory.genEventInstanceGenerator(eventCategory, eventName);
+		return EventGeneratorFactory2.genEventInstanceGenerator(eventName);
 	}
 }
