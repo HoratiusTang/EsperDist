@@ -127,19 +127,26 @@ public class Value extends AbstractIdentExpression{
 	}
 	
 	public static int compareValue(Value a,Value b){
-		assert(a.type==b.type && a.type!=DataTypeEnum.NONE):String.format("Values are not comparable: %s, %s.",a.toString(),b.toString());		
-		if(a.type==DataTypeEnum.INT){
+		//assert(a.type==b.type && a.type!=DataTypeEnum.NONE):String.format("Values are not comparable: %s, %s.",a.toString(),b.toString());		
+		if(a.type==DataTypeEnum.INT && b.type==DataTypeEnum.INT){
 			return (int)(a.intVal-b.intVal);
 		}
-		else if(a.type==DataTypeEnum.FLOAT){
-			return Double.compare(a.floatVal, b.floatVal);
+		else if(a.type==DataTypeEnum.FLOAT && b.type==DataTypeEnum.INT){
+			return Double.compare(a.floatVal, b.intVal);
 		}
-		else if(a.type==DataTypeEnum.BOOLEAN){
+		else if(a.type==DataTypeEnum.INT && a.type==DataTypeEnum.FLOAT){
+			return Double.compare(a.intVal, b.floatVal);
+		}
+		else if(a.type==DataTypeEnum.BOOLEAN && b.type==DataTypeEnum.BOOLEAN){
 			return a.boolVal==!b.boolVal?1:-1;
 		}
-		else{//if(a.type==Types.STRING_TYPE){
+		else if(a.type==DataTypeEnum.STRING_ARRAY && b.type==DataTypeEnum.STRING_ARRAY){
 			return a.strVal.compareToIgnoreCase(b.strVal);
-		}			
+		}
+		else{
+			assert(false):String.format("Values are not comparable: %s, %s.",a.toString(),b.toString());
+			return 0;
+		}
 	}
 	
 	public static String valueArrayToString(Value[] vals){

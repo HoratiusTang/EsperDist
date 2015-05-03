@@ -23,13 +23,13 @@ public class CentralizedTreeBuilder {
 		StatementVisitor sv=new StatementVisitor(eplId, ServiceManager.getInstance(coordinator.id).getEventRegistry());
 		sv.visitStatementSpecification(ss);
 		
-		log.debug(ss.toString());
+		//log.debug(ss.toString());
 		
 		TreeBuilder builder=new TreeBuilder(eplId, epl, ss);
 		List<Tree> treeList=builder.buildTreeList();
 		
 		for(Tree tree: treeList){
-			log.debug(tree.toString());
+			//log.debug(tree.toString());
 		}
 		return treeList;
 	}
