@@ -138,8 +138,8 @@ public class AsyncRawSocketLink extends RawSocketLink {
 				return (int)(oldEnd-oldBegin);
 			}
 			catch (IOException e) {
-				Exception ex=new Exception(String.format("error occur when write to OutputStream: begin=%d, end=%d, oldEnd=%d, newEnd=%d",
-								begin, end, oldEnd, newEnd), e);
+				Exception ex=new Exception(String.format("error occur when write to OutputStream from %s to %s: begin=%d, end=%d, oldEnd=%d, newEnd=%d",
+								myId.getId(), targetId.getId(), begin, end, oldEnd, newEnd), e);
 				throw ex;
 			}
 		}
