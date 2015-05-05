@@ -31,19 +31,19 @@ public class QueryGeneratorMain3 {
 	static int[] queryTotalCounts={500, 1000, 1500, 2000};
 	
 	public static void main(String[] args){
-		//generateFilterQueryFiles();
+		generateFilterQueryFiles();
 		generateFilterJoinQueryFiles();
 		//generateSingleFile();
 	}
 	
-	public static void generateQueryFile(NodesParameter[] nodeParams, String filePathBase, 
+	public static boolean generateQueryFile(NodesParameter[] nodeParams, String filePathBase, 
 			int queryTotalCount, double equalRatio, double implyRatio, boolean overwrite){
 		String filePath=String.format("%s_%04d_%.2f_%.2f.txt", filePathBase, 
 				queryTotalCount, equalRatio, implyRatio);
 		File file=new File(filePath);
 		if(!overwrite && file.exists()){
 			//System.out.format("info: file '%s' already exists, will return\n", filePath);
-			return;
+			return true;
 		}
 		QueryGenerator2 queryGen2=new QueryGenerator2(
 				eigs, filterOpTypes, joinOpTypes,
@@ -61,12 +61,12 @@ public class QueryGeneratorMain3 {
 			headerAndQueryList.addAll(queryList);		
 			MultiLineFileWriter.writeToFile(filePath, headerAndQueryList);
 			System.out.format("info: finish generating %d queries into %s\n", queryList.size(), filePath);
+			return true;
 		}
 		catch (Exception e){
 			System.out.format("error: generate failed for %s: %s\n", filePath, e.getMessage());
-			//e.printStackTrace(System.out);
+			return false;
 		}
-		System.out.flush();
 	}
 	
 	public static void generateFilterQueryFiles(){
@@ -80,6 +80,7 @@ public class QueryGeneratorMain3 {
 			new NodesParameter(5),
 		};
 		
+		int successCount=0;
 		int nodeCountPerType=25;
 		nodeParams[0].nodeCountPerType=nodeCountPerType;
 		for(int queryTotalCount: queryTotalCounts){
@@ -88,11 +89,16 @@ public class QueryGeneratorMain3 {
 				for(double implyRatio: ratios){
 					nodeParams[0].equalRatio=equalRatio;
 					nodeParams[0].implyRatio=implyRatio;
-					generateQueryFile(nodeParams, filePathBase, queryTotalCount, equalRatio, implyRatio, false);
+					boolean result=generateQueryFile(nodeParams, filePathBase, queryTotalCount, equalRatio, implyRatio, false);
+					if(result){
+						successCount++;
+					}
 					ThreadUtil.sleep(200);
 				}
 			}
 		}
+		System.out.format("\ninfo: FINISH generating %d/%d filter-only query files.\n\n", successCount, 
+				queryTotalCounts.length * ratios.length * ratios.length);
 	}
 	
 	public static void generateFilterJoinQueryFiles(){
@@ -106,6 +112,7 @@ public class QueryGeneratorMain3 {
 			new NodesParameter(5),
 		};
 		
+		int successCount=0;
 		int nodeCountPerType=25;		
 		for(int queryTotalCount: queryTotalCounts){
 			nodeParams[0].nodeCount=queryTotalCount*40/100;
@@ -120,11 +127,16 @@ public class QueryGeneratorMain3 {
 						nodeParams[i].equalRatio=equalRatio;
 						nodeParams[i].implyRatio=implyRatio;
 					}
-					generateQueryFile(nodeParams, filePathBase, queryTotalCount, equalRatio, implyRatio, false);
+					boolean result=generateQueryFile(nodeParams, filePathBase, queryTotalCount, equalRatio, implyRatio, false);
+					if(result){
+						successCount++;
+					}
 					ThreadUtil.sleep(200);
 				}
 			}
 		}
+		System.out.format("\ninfo: FINISH generating %d/%d filter-join query files.\n\n", successCount, 
+				queryTotalCounts.length * ratios.length * ratios.length);
 	}
 	
 	public static void generateSingleFile(){
