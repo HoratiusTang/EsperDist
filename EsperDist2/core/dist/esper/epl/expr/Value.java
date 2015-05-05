@@ -137,7 +137,7 @@ public class Value extends AbstractIdentExpression{
 		else if(a.type==DataTypeEnum.FLOAT && b.type==DataTypeEnum.INT){
 			return Double.compare(a.floatVal, b.intVal);
 		}
-		else if(a.type==DataTypeEnum.INT && a.type==DataTypeEnum.FLOAT){
+		else if(a.type==DataTypeEnum.INT && b.type==DataTypeEnum.FLOAT){
 			return Double.compare(a.intVal, b.floatVal);
 		}
 		else if(a.type==DataTypeEnum.BOOLEAN && b.type==DataTypeEnum.BOOLEAN){
