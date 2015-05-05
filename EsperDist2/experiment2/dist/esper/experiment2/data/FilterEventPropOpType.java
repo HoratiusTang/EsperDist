@@ -5,6 +5,7 @@ public class FilterEventPropOpType{
 	public int propType;
 	public int opType;
 	public int windowType;
+	
 	public FilterEventPropOpType(int eventType, int propType, int opType, int windowType) {
 		super();
 		this.eventType = eventType;

@@ -51,11 +51,11 @@ public class QueryGeneratorMain2 {
 		String headers=generateHeaders(eventNames, eigs, filterOpTypes, joinOpTypes,
 				windowTimes, numSelectElementsPerFilter,
 				nodeParams);
-		List<String> queryList=queryGen2.generateQueries();
-		List<String> headerAndQueryList=new ArrayList<String>(queryList.size()+2);
-		headerAndQueryList.add(headers);
-		headerAndQueryList.addAll(queryList);
 		try {
+			List<String> queryList=queryGen2.generateQueries();
+			List<String> headerAndQueryList=new ArrayList<String>(queryList.size()+2);
+			headerAndQueryList.add(headers);
+			headerAndQueryList.addAll(queryList);		
 			MultiLineFileWriter.writeToFile(filePath, headerAndQueryList);
 			System.out.format("info: generated %d queries, and outputed them into %s", queryList.size(), filePath);
 		}

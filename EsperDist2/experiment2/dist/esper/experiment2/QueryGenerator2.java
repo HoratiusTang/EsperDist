@@ -49,9 +49,18 @@ public class QueryGenerator2 {
 		
 		this.numEventTypes = eigs.length;
 		this.numPropTypes = eigs[0].getEvent().getPropList().size();
+		
+		reset();
+	}
+	
+	public void reset(){
+		nodeListCnts=null;
+		allNodeList=null;
+		queryList=null;
+		queryBuilder.reset();
 	}
 
-	public List<String> generateQueries(){
+	public List<String> generateQueries() throws Exception{
 		generateNodeListContainers();
 		generateValues();
 		mergeAllNodes();
@@ -59,7 +68,7 @@ public class QueryGenerator2 {
 		return queryList;
 	}
 	
-	public void generateNodeListContainers(){
+	public void generateNodeListContainers() throws Exception{
 		nodesGen=new NodesGenerator(numEventTypes, numPropTypes, 
 				filterOpTypes.length, joinOpTypes.length,
 				windowTimes.length, numSelectElementsPerFilter, nodeParams);
@@ -72,9 +81,9 @@ public class QueryGenerator2 {
 			if(nodeListCnts[i]!=null){
 				NodeListContainer nlc=nodeListCnts[i];
 				for(int j=0; j<nlc.getNodeListsCount(); j++){
-					System.out.format("begin generateValues(): [%d][%d]\n", i, j);
+					//System.out.format("begin generateValues(): [%d][%d]\n", i, j);
 					generateValues(nlc.getNodeListList().get(j));
-					System.out.format("end   generateValues(): [%d][%d]\n", i, j);
+					//System.out.format("end   generateValues(): [%d][%d]\n", i, j);
 				}
 			}
 		}
@@ -158,6 +167,9 @@ public class QueryGenerator2 {
 	
 	class QueryBuilder{
 		int count=0;
+		public void reset(){
+			count=0;
+		}
 		public String buildFilterQuery(FilterNode fn){
 			String aliasName=buildQueryEventAliasName(fn, 1);
 			List<String> seStrList=buildFilterSelectElementStrings(fn, aliasName);

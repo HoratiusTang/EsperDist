@@ -30,7 +30,7 @@ public class NodesGenerator {
 	NodeRandomSorter nodeSorter=new NodeRandomSorter();
 	Random rand=new Random();
 	IOpTypeValidator opTypeValidator=null;
-	NodeListContainer[] nodeListCnts=new NodeListContainer[MAX_WAYS+1];
+	NodeListContainer[] nodeListCnts;
 	
 	public NodesGenerator(int numEventTypes, int numPropTypes,
 			int numFilterOpTypes, int numJoinOpTypes, 
@@ -49,22 +49,42 @@ public class NodesGenerator {
 				nodeParams[np.numWay]=np;
 			}
 		}
+		reset();
+	}
+	
+	public void reset(){
+		ftRand.reset();
+		nodeListCnts=new NodeListContainer[MAX_WAYS+1];
 	}
 
-	public NodeListContainer[] genearteNodeListContainers(){
+	public NodeListContainer[] genearteNodeListContainers() throws Exception{
 		for(int i=1;i<=MAX_WAYS;i++){
 			if(nodeParams[i]!=null){
-				System.out.format("generate %d-way nodes starting...\n",i);
-				generateJoinNodeListContainer(i);
-				System.out.format("generate %d-way nodes finished\n",i);
+				//System.out.format("info: generate %d-way nodes starting...\n",i);
+				int curRetries=0;
+				while(true){
+					try {
+						generateJoinNodeListContainer(i);
+						break;
+					}
+					catch (Exception e) {
+						curRetries++;
+						if(curRetries>10){
+							throw new Exception(String.format("generateJoinNodeListContainer(%d) failed, already retried %d times", i, curRetries));
+						}
+//						System.out.format("error: generateJoinNodeListContainer(%d): %s, will retry the %dnd times\n", 
+//								i, e.getMessage(), curRetries);
+					}
+				}
+				//System.out.format("info: generate %d-way nodes finished\n",i);
 			}
 		}
 		return nodeListCnts;
 	}
 	
-	public void generateJoinNodeListContainer(int numWay){
+	public void generateJoinNodeListContainer(int numWay) throws Exception{
 		if(numWay==1){
-			generateFilterNodeList2();
+			generateFilterNodeListContainer();
 			return;
 		}
 		NodeListContainer nl2=new NodeListContainer(numWay);
@@ -125,7 +145,7 @@ public class NodesGenerator {
 				jns[i].setFilterNodeList(jns[k].getFilterNodeList());
 			}
 			nl.copySortedNodes(jns);
-			nodeSorter.randomSort(jns, nodeParams[numWay].implyRatio, nodeParams[numWay].implyRatio/5.0);
+			nodeSorter.randomSort(jns, nodeParams[numWay].implyRatio, 0.05);
 			nl.setNodes(jns);
 			nl.setFilterNodesList(fnLists);
 			nl2.addNodeList(nl);
@@ -134,7 +154,7 @@ public class NodesGenerator {
 		nodeListCnts[numWay]=nl2;
 	}
 	
-	public void generateFilterNodeList2(){
+	public void generateFilterNodeListContainer() throws Exception{
 		int curCount=0;
 		NodeListContainer nl2=new NodeListContainer(1);
 		while(curCount < nodeParams[1].nodeCount){
@@ -156,7 +176,7 @@ public class NodesGenerator {
 				fns[i].setTag(fns[j].getTag());
 			}
 			nl.copySortedNodes(fns);
-			nodeSorter.randomSort(fns, nodeParams[1].implyRatio, nodeParams[1].implyRatio/5.0);
+			nodeSorter.randomSort(fns, nodeParams[1].implyRatio, 0.05);
 			nl.setNodes(fns);
 			nl2.addNodeList(nl);
 			curCount+=fns.length;
@@ -199,25 +219,26 @@ public class NodesGenerator {
 
 	class FilterTypeRandomChooser{
 		public double std=1.0; //standard devition
-		public Set<Integer> set=new TreeSet<Integer>();
+		public Set<Integer> set=new HashSet<Integer>();
 		
 		public FilterEventPropOpType next(){
 			int eventType, propType, opType, windowType;
-			FilterEventPropOpType fitlerType;
+			FilterEventPropOpType filterType;
 			while(true){
 				eventType=rand.nextInt(numEventTypes);
 				propType=rand.nextInt(numPropTypes);
 				opType=rand.nextInt(numFilterOpTypes);
 				windowType=rand.nextInt(numWindowTypes);
-				fitlerType=new FilterEventPropOpType(eventType, propType, opType, windowType);
-				if(!set.contains(fitlerType.hashCode())){
+				filterType=new FilterEventPropOpType(eventType, propType, opType, windowType);
+				if(!set.contains(filterType.hashCode())){
 					if(opTypeValidator!=null){
-						if(opTypeValidator.validateFilterOperation(fitlerType)){
-							return fitlerType;
+						if(opTypeValidator.validateFilterOperation(filterType)){
+							set.add(filterType.hashCode());
+							return filterType;
 						}
 					}
 					else{
-						return fitlerType;
+						return filterType;
 					}
 				}
 			}
