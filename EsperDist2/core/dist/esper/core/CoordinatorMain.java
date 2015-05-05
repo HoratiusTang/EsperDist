@@ -42,6 +42,7 @@ public class CoordinatorMain{
 		public SumbitQueryRunnable(Coordinator coord) {
 			super();
 			this.coord = coord;
+			this.intervalMS = ServiceManager.getConfig().getLong(Options.EPL_EXECUTE_INTERVAL_MS, intervalMS);
 		}
 
 		@Override

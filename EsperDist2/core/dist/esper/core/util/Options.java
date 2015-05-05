@@ -27,4 +27,6 @@ public class Options {
 	public static String SPOUT_BATCH_COUNT="spout.bc";
 	
 	public static String EXPECTED_SPOUNT_COUNT="spout.count";
+	
+	public static String EPL_EXECUTE_INTERVAL_MS="epl.interval";//ms
 }
