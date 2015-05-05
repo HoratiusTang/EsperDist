@@ -45,7 +45,7 @@ public class JoinNodeList extends AbstractNodeList<JoinNode>{
 	public List<JoinPropOpType> getJoinPropOpList(){
 		return this.joinPropOpList;
 	}
-	public void addType(FilterEventPropOpType type){
+	public void addFilterType(FilterEventPropOpType type){
 		filterTypeList.add(type);
 	}
 	

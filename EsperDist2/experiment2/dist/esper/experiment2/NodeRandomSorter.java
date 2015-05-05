@@ -25,7 +25,7 @@ public class NodeRandomSorter {
 		sc=new int[n.length];
 		
 		int swapCount=n.length/4;
-		if(this.implyRatio<0.3 && n.length>5){
+		if(this.implyRatio<0.1 && n.length>5){
 			nodeComparator.setAscOrder(false);
 			Arrays.sort(n, nodeComparator);
 			swapCount = n.length/10 + 1;

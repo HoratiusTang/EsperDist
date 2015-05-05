@@ -91,65 +91,78 @@ public class NodesGenerator {
 		
 		int curCount=0;
 		while(curCount<nodeParams[numWay].nodeCount){
-			ftRand.reset();
-			JoinNodeList nl=new JoinNodeList();
-			while(nl.getTypeCount()<numWay){
-				FilterEventPropOpType filterType=ftRand.next();
-				if(!nl.isEventExisted(filterType.eventType)){
-					nl.addType(filterType);
+			int curRetries=0;
+			while(true){
+				try{
+					ftRand.reset();
+					JoinNodeList nl=new JoinNodeList();
+					while(nl.getTypeCount()<numWay){
+						FilterEventPropOpType filterType=ftRand.next(false);
+						if(!nl.isEventExisted(filterType.eventType)){
+							nl.addFilterType(filterType);
+						}
+					}
+					nl.setJoinPropOpList(Arrays.asList(jtRand.next(numWay)));
+					
+					//int count=getNormalRandomNumber(nodeParams[numWay].nodeCountPerType);
+					int count=nodeParams[numWay].nodeCountPerType;
+					JoinNode[] jns=new JoinNode[count];
+					
+					int eqCount=(int)(count*nodeParams[numWay].equalRatio);
+					int neqCount=count-eqCount;//0-neqCount++
+					nl.setNonEqualNodeCount(neqCount);
+		
+					List<JoinFilterNodeList> fnLists=new ArrayList<JoinFilterNodeList>(nl.getTypeCount());
+					for(int j=0;j<numWay;j++){
+						JoinFilterNodeList fnList=new JoinFilterNodeList(nl.getType(j));
+						fnList.addNode(new FilterNode(nl.getType(j)));
+						fnLists.add(fnList);
+					}
+					
+					/* init first */
+					jns[0]=new JoinNode(nl.getJoinPropOpList());
+					jns[0].setSelectElementList(genSelectElements(numWay));
+					for(int j=0;j<numWay;j++){
+						jns[0].addFilterNode((FilterNode)fnLists.get(j).getLastNode());
+					}
+					
+					for(int i=1; i<neqCount; i++){
+						jns[i]=new JoinNode(nl.getJoinPropOpList());
+						jns[i].setSelectElementList(genSelectElements(numWay));
+						int k=rand.nextInt(numWay);
+						fnLists.get(k).addNode(new FilterNode(nl.getType(k)));
+						for(int j=0; j<numWay; j++){
+							jns[i].addFilterNode((FilterNode)fnLists.get(j).getLastNode());
+						}
+					}
+					
+					for(int j=0;j<numWay;j++){
+						fnLists.get(j).setNonEqualNodeCount(fnLists.get(j).getNodesCount());
+					}
+					
+					for(int i=neqCount; i<count; i++){
+						jns[i]=new JoinNode(nl.getJoinPropOpList());
+						jns[i].setSelectElementList(genSelectElements(numWay));
+						int k=rand.nextInt(neqCount);
+						jns[i].setTag(jns[k].getTag());
+						jns[i].setFilterNodeList(jns[k].getFilterNodeList());
+					}
+					nl.copySortedNodes(jns);
+					nodeSorter.randomSort(jns, nodeParams[numWay].implyRatio, 0.05);
+					nl.setNodes(jns);
+					nl.setFilterNodesList(fnLists);
+					nl2.addNodeList(nl);
+					curCount+=jns.length;
+					break;
+				}
+				catch(Exception ex){
+					//System.out.format("error: in generateJoinNodeListContainer(%d): %s", numWay, ex.getMessage());
+					curRetries++;
+					if(curRetries>50){
+						throw ex;
+					}
 				}
 			}
-			nl.setJoinPropOpList(Arrays.asList(jtRand.next(numWay)));
-			
-			//int count=getNormalRandomNumber(nodeParams[numWay].nodeCountPerType);
-			int count=nodeParams[numWay].nodeCountPerType;
-			JoinNode[] jns=new JoinNode[count];
-			
-			int eqCount=(int)(count*nodeParams[numWay].equalRatio);
-			int neqCount=count-eqCount;//0-neqCount++
-			nl.setNonEqualNodeCount(neqCount);
-
-			List<JoinFilterNodeList> fnLists=new ArrayList<JoinFilterNodeList>(nl.getTypeCount());
-			for(int j=0;j<numWay;j++){
-				JoinFilterNodeList fnList=new JoinFilterNodeList(nl.getType(j));
-				fnList.addNode(new FilterNode(nl.getType(j)));
-				fnLists.add(fnList);
-			}
-			
-			/* init first */
-			jns[0]=new JoinNode(nl.getJoinPropOpList());
-			jns[0].setSelectElementList(genSelectElements(numWay));
-			for(int j=0;j<numWay;j++){
-				jns[0].addFilterNode((FilterNode)fnLists.get(j).getLastNode());
-			}
-			
-			for(int i=1; i<neqCount; i++){
-				jns[i]=new JoinNode(nl.getJoinPropOpList());
-				jns[i].setSelectElementList(genSelectElements(numWay));
-				int k=rand.nextInt(numWay);
-				fnLists.get(k).addNode(new FilterNode(nl.getType(k)));
-				for(int j=0; j<numWay; j++){
-					jns[i].addFilterNode((FilterNode)fnLists.get(j).getLastNode());
-				}
-			}
-			
-			for(int j=0;j<numWay;j++){
-				fnLists.get(j).setNonEqualNodeCount(fnLists.get(j).getNodesCount());
-			}
-			
-			for(int i=neqCount; i<count; i++){
-				jns[i]=new JoinNode(nl.getJoinPropOpList());
-				jns[i].setSelectElementList(genSelectElements(numWay));
-				int k=rand.nextInt(neqCount);
-				jns[i].setTag(jns[k].getTag());
-				jns[i].setFilterNodeList(jns[k].getFilterNodeList());
-			}
-			nl.copySortedNodes(jns);
-			nodeSorter.randomSort(jns, nodeParams[numWay].implyRatio, 0.05);
-			nl.setNodes(jns);
-			nl.setFilterNodesList(fnLists);
-			nl2.addNodeList(nl);
-			curCount+=jns.length;
 		}
 		nodeListCnts[numWay]=nl2;
 	}
@@ -157,29 +170,44 @@ public class NodesGenerator {
 	public void generateFilterNodeListContainer() throws Exception{
 		int curCount=0;
 		NodeListContainer nl2=new NodeListContainer(1);
+		ftRand.reset();//it's a must! shit!
 		while(curCount < nodeParams[1].nodeCount){
-			FilterEventPropOpType filterType=ftRand.next();
-			FilterNodeList nl=new FilterNodeList(filterType);
-			//int count=getNormalRandomNumber(nodeParams[1].nodeCountPerType);
-			int count=nodeParams[1].nodeCountPerType;
-			FilterNode[] fns=new FilterNode[count];
-			for(int i=0; i<count; i++){
-				FilterNode fn=new FilterNode(filterType);
-				fn.setSelectElementList(genSelectElements(1));
-				fns[i]=fn;
+			int curRetries=0;
+			while(true){
+				try{
+					FilterEventPropOpType filterType=ftRand.next(false);
+					FilterNodeList nl=new FilterNodeList(filterType);
+					//int count=getNormalRandomNumber(nodeParams[1].nodeCountPerType);
+					int count=nodeParams[1].nodeCountPerType;
+					FilterNode[] fns=new FilterNode[count];
+					for(int i=0; i<count; i++){
+						FilterNode fn=new FilterNode(filterType);
+						fn.setSelectElementList(genSelectElements(1));
+						fns[i]=fn;
+					}
+					int eqCount=(int)(count*nodeParams[1].equalRatio);
+					int neqCount=count-eqCount;
+					nl.setNonEqualNodeCount(neqCount);
+					for(int i=neqCount; i<count; i++){
+						int j=rand.nextInt(neqCount);
+						fns[i].setTag(fns[j].getTag());
+					}
+					nl.copySortedNodes(fns);
+					nodeSorter.randomSort(fns, nodeParams[1].implyRatio, 0.05);
+					nl.setNodes(fns);
+					nl2.addNodeList(nl);
+					curCount+=fns.length;
+					//System.out.format("curCount=%d\n", curCount);
+					ftRand.storeFilterType(filterType);
+					break;
+				}
+				catch(Exception ex){
+					curRetries++;
+					if(curRetries>50){
+						throw ex;
+					}
+				}
 			}
-			int eqCount=(int)(count*nodeParams[1].equalRatio);
-			int neqCount=count-eqCount;
-			nl.setNonEqualNodeCount(neqCount);
-			for(int i=neqCount; i<count; i++){
-				int j=rand.nextInt(neqCount);
-				fns[i].setTag(fns[j].getTag());
-			}
-			nl.copySortedNodes(fns);
-			nodeSorter.randomSort(fns, nodeParams[1].implyRatio, 0.05);
-			nl.setNodes(fns);
-			nl2.addNodeList(nl);
-			curCount+=fns.length;
 		}
 		nodeListCnts[1]=nl2;
 	}
@@ -221,7 +249,7 @@ public class NodesGenerator {
 		public double std=1.0; //standard devition
 		public Set<Integer> set=new HashSet<Integer>();
 		
-		public FilterEventPropOpType next(){
+		public FilterEventPropOpType next(boolean isStore){
 			int eventType, propType, opType, windowType;
 			FilterEventPropOpType filterType;
 			while(true){
@@ -233,7 +261,9 @@ public class NodesGenerator {
 				if(!set.contains(filterType.hashCode())){
 					if(opTypeValidator!=null){
 						if(opTypeValidator.validateFilterOperation(filterType)){
-							set.add(filterType.hashCode());
+							if(isStore){
+								storeFilterType(filterType);
+							}
 							return filterType;
 						}
 					}
@@ -242,7 +272,11 @@ public class NodesGenerator {
 					}
 				}
 			}
-		}		
+		}
+		
+		public void storeFilterType(FilterEventPropOpType filterType){
+			set.add(filterType.hashCode());
+		}
 		public void reset(){
 			set.clear();
 		}
