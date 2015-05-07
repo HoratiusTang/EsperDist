@@ -2,10 +2,12 @@ package dist.esper.core.comm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import dist.esper.core.id.WorkerId;
 import dist.esper.util.Logger2;
@@ -18,7 +20,7 @@ public abstract class Link {
 	protected WorkerId targetId=null;
 	protected LinkManager linkManager=null;
 	protected List<Listener> overallListenerList=new ArrayList<Listener>(4);
-	protected Map<String,List<Listener>> listenerListMap=new TreeMap<String,List<Listener>>();
+	protected Map<String,List<Listener>> listenerListMap=new ConcurrentSkipListMap<String,List<Listener>>();
 	private static AtomicLong linkCounter=new AtomicLong(0L);
 	
 	public Link(){
@@ -57,19 +59,26 @@ public abstract class Link {
 	}
 
 	public void addListener(Listener listener){
-		if(!overallListenerList.contains(listener)){
-			overallListenerList.add(listener);
+		synchronized(overallListenerList){
+			if(!overallListenerList.contains(listener)){
+				overallListenerList.add(listener);
+			}
 		}
 		//remove duplicate listener from map, avoid notify multiple times
 		for(Map.Entry<String,List<Listener>> e: listenerListMap.entrySet()){
-			if(e.getValue().contains(listener)){
-				e.getValue().remove(listener);
+			List<Listener> lnList=e.getValue();
+			synchronized(lnList){
+				if(lnList.contains(listener)){
+					lnList.remove(listener);
+				}
 			}
 		}
 	}
 	
 	public void removeListener(Listener listener){
-		overallListenerList.remove(listener);
+		synchronized(overallListenerList){
+			overallListenerList.remove(listener);
+		}
 	}
 	
 	public List<Listener> getOverallListenerList() {
@@ -82,15 +91,19 @@ public abstract class Link {
 			lnList=new ArrayList<Listener>(4);
 			listenerListMap.put(classTypeName, lnList);
 		}
-		if(!lnList.contains(listener)){
-			lnList.add(listener);
+		synchronized(lnList){
+			if(!lnList.contains(listener)){
+				lnList.add(listener);
+			}
 		}
 	}
 	
-	public void removeListener(Listener listener, String classTypeName){
+	public void removeListener(Listener listener, String classTypeName){		
 		List<Listener> lnList=listenerListMap.get(classTypeName);
-		if(lnList!=null){
-			lnList.remove(listener);
+		synchronized(lnList){
+			if(lnList!=null){
+				lnList.remove(listener);
+			}
 		}
 	}
 	
@@ -115,12 +128,14 @@ public abstract class Link {
 		if(obj.getClass().getSimpleName().equals("NewWorkerMessage") && getOverallListenerList().size()==0){
 			log.warn("recevied NewWorkerMessage from %s, but OverallListenerList is empty", targetId.getId());
 		}
-		for(Link.Listener ln: getOverallListenerList()){
-			try{
-				ln.received(this, obj);
-			}
-			catch(Exception ex){
-				log.getLogger().error(String.format("error occur when notifyReceived(), link: %s", this.toString()), ex);
+		synchronized(overallListenerList){
+			for(Link.Listener ln: overallListenerList){
+				try{
+					ln.received(this, obj);
+				}
+				catch(Exception ex){
+					log.getLogger().error(String.format("error occur when notifyReceived(), link: %s", this.toString()), ex);
+				}
 			}
 		}
 		List<Listener> lnList=listenerListMap.get(obj.getClass().getSimpleName());
