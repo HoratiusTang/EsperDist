@@ -225,12 +225,18 @@ public class Worker {
 	public void handleCoordinatorMessage(Object obj){
 		if(obj instanceof NewStreamInstanceMessage){
 			NewStreamInstanceMessage nsiMsg=(NewStreamInstanceMessage)obj;
-			handleNewStreamContainer(nsiMsg.getStreamContainer());
+			handleNewStreamContainer(nsiMsg.getStreamContainer(), nsiMsg.getEqlId());
 			workerStatCollector.updateWorkerStat(this);
+			NewOrModifyInstanceResponseMessage nmirm=new NewOrModifyInstanceResponseMessage(
+					id, nsiMsg.getStreamContainer().getUniqueName(), nsiMsg.getEqlId(), true);
+			coordLink.send(nmirm); 
 		}
 		else if(obj instanceof ModifyStreamInstanceMessage){
 			ModifyStreamInstanceMessage msiMsg=(ModifyStreamInstanceMessage)obj;
-			modifyStreamContainer(msiMsg.getStreamContainer());
+			modifyStreamContainer(msiMsg.getStreamContainer(), msiMsg.getEqlId());
+			NewOrModifyInstanceResponseMessage nmirm=new NewOrModifyInstanceResponseMessage(
+					id, msiMsg.getStreamContainer().getUniqueName(), msiMsg.getEqlId(), true);
+			coordLink.send(nmirm);
 		}
 		else if(obj instanceof NewRawStreamSamplingMessage){
 			NewRawStreamSamplingMessage nrssMsg=(NewRawStreamSamplingMessage)obj;
@@ -247,7 +253,7 @@ public class Worker {
 		rawSampler.sampleNewRawStream(rsl);
 	}
 	
-	public void modifyStreamContainer(StreamContainer sc){
+	public void modifyStreamContainer(StreamContainer sc, long eqlId){
 		Instance instance=insMap.get(sc.getUniqueName());
 		assert(instance!=null);
 		if(sc instanceof RootStreamContainer){
@@ -273,7 +279,7 @@ public class Worker {
 		instance.resume();
 	}
 	
-	public void handleNewStreamContainer(StreamContainer sc){
+	public void handleNewStreamContainer(StreamContainer sc, long eqlId){
 		instancesLock.writeLock().lock();
 		Instance instance=null;
 		if(sc instanceof RootStreamContainer){

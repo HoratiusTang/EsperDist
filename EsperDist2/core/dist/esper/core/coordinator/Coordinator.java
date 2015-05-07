@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -94,6 +95,9 @@ public class Coordinator {
 	MessageHandlingScheduler messageHandlingScheduler;
 	MessageHandler messageHandler=new MessageHandler();
 	
+	MessageHandlingScheduler responseMessageHandlingScheduler;
+	ResponseMessageHandler responseMessageHandler=new ResponseMessageHandler();
+	
 	AsyncFileWriter workerStatWriter;
 	DelayedStreamContainerFlowRegistry delayedContainerFlowRegistry;	
 
@@ -120,7 +124,15 @@ public class Coordinator {
 		@Override
 		public void received(Link link, Object obj) {
 			//handleReceiving(link, obj);
-			messageHandlingScheduler.submit(link, obj, messageHandler);			
+			if(obj instanceof AbstractMessage){
+				AbstractMessage msg=(AbstractMessage)obj;
+				if(msg.getPrimaryType()==PrimaryTypes.RESPONSE){
+					responseMessageHandlingScheduler.submit(link, obj, responseMessageHandler);
+				}
+				else{
+					messageHandlingScheduler.submit(link, obj, messageHandler);
+				}
+			}			
 		}
 	}
 	
@@ -128,6 +140,34 @@ public class Coordinator {
 		@Override
 		public void handleMessage(Link link, Object obj) {
 			handleReceiving(link, obj);
+		}
+	}
+	
+	class ResponseMessageHandler implements MessageHandlingScheduler.IMessageHandler{
+		ConcurrentHashMap<Object, Object> waitingMap=new ConcurrentHashMap<Object, Object>();
+		Object dummy=new Object();
+		@Override
+		public void handleMessage(Link link, Object obj) {
+			Semaphore sem=(Semaphore)waitingMap.putIfAbsent(obj, dummy);
+			if(sem!=null)
+				sem.release();
+			else
+				return;//responsed before waitResponse()
+		}
+		
+		public void waitResponse(Object expectedResponse){
+			Semaphore sem=new Semaphore(0);
+			if(waitingMap.putIfAbsent(expectedResponse, sem) != null){//already responsed before waitResponse()
+				waitingMap.remove(expectedResponse);
+			}
+			else{
+				try {
+					sem.acquire(1);
+				}
+				catch (InterruptedException e) {
+					log.debug("error occur in waitResponse()", e);
+				}
+			}
 		}
 	}
 	
@@ -342,31 +382,31 @@ public class Coordinator {
 		containerTreeMap.put(scf.getEplId(), scf);
 		costEval.registContainerRecursively(scf.getRootContainer());
 		delayedContainerFlowRegistry.delayNewStreamContainerFlow(scf);
-		submitRecursively(scf.getRootContainer());
+		submitRecursively(scf.getRootContainer(), scf.getEplId());
 	}
 	
-	public void submitRecursively(StreamContainer sc){
+	public void submitRecursively(StreamContainer sc, long eqlId){
 		if(sc instanceof RootStreamContainer){
 			RootStreamContainer rsc=(RootStreamContainer)sc;
 			costEval.workerInputContainersMap.putPair(rsc.getWorkerId().getId(), (DerivedStreamContainer)rsc.getUpContainer());
-			submitRecursively(rsc.getUpContainer());
+			submitRecursively(rsc.getUpContainer(), eqlId);
 		}
 		else if(sc instanceof JoinDelayedStreamContainer){
 			JoinDelayedStreamContainer jcsc=(JoinDelayedStreamContainer)sc;
 			costEval.workerInputContainersMap.putPair(jcsc.getWorkerId().getId(), (DerivedStreamContainer)jcsc.getAgent());
-			submitRecursively(jcsc.getAgent());
+			submitRecursively(jcsc.getAgent(), eqlId);
 		}
 		else if(sc instanceof JoinStreamContainer){
 			JoinStreamContainer jsc=(JoinStreamContainer)sc;
 			for(StreamContainer csc: jsc.getUpContainerList()){
 				costEval.workerInputContainersMap.putPair(jsc.getWorkerId().getId(), (DerivedStreamContainer)csc);
-				submitRecursively(csc);
+				submitRecursively(csc, eqlId);
 			}
 		}
 		else if(sc instanceof FilterDelayedStreamContainer){
 			FilterDelayedStreamContainer fcsc=(FilterDelayedStreamContainer)sc;
 			costEval.workerInputContainersMap.putPair(fcsc.getWorkerId().getId(), (DerivedStreamContainer)fcsc.getAgent());
-			submitRecursively(fcsc.getAgent());
+			submitRecursively(fcsc.getAgent(), eqlId);
 		}
 		else if(sc instanceof FilterStreamContainer){			
 			FilterStreamContainer fsc=(FilterStreamContainer)sc;			
@@ -383,7 +423,7 @@ public class Coordinator {
 			}
 		}
 		StreamContainer sc2=StreamContainerFactory.copy(sc, 2);//FIXME
-		submitStreamContainerToWorker(sc2);
+		submitStreamContainerToWorker(sc2, eqlId);
 		//addToExistedStreamContainer(sc);
 	}
 	
@@ -406,18 +446,20 @@ public class Coordinator {
 		link.send(nrssMsg);
 	}
 	
-	public void submitStreamContainerToWorker(StreamContainer sc){		
+	public void submitStreamContainerToWorker(StreamContainer sc, long eqlId){	
 		Link link=getWorkerLink(sc.getWorkerId().getId());
 		DerivedStreamContainer psc=(DerivedStreamContainer)sc;
 		
+		NewOrModifyInstanceResponseMessage nmirm=new NewOrModifyInstanceResponseMessage(id, sc.getUniqueName(), eqlId, true);
 		if(psc.isNew()){
-			NewStreamInstanceMessage nsiMsg=new NewStreamInstanceMessage(id,sc);
-			link.send(nsiMsg);			
+			NewStreamInstanceMessage nsiMsg=new NewStreamInstanceMessage(id,sc,eqlId);
+			link.send(nsiMsg);		
 		}
 		else{
-			ModifyStreamInstanceMessage msiMsg=new ModifyStreamInstanceMessage(id,sc);
+			ModifyStreamInstanceMessage msiMsg=new ModifyStreamInstanceMessage(id,sc,eqlId);
 			link.send(msiMsg);
-		}		
+		}
+		responseMessageHandler.waitResponse(nmirm);
 	}
 	
 	public void addToExistedStreamContainer(StreamContainer sc){

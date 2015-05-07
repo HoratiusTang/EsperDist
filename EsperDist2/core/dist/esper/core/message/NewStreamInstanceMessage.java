@@ -12,6 +12,7 @@ import dist.esper.core.flow.container.StreamContainer;
 public class NewStreamInstanceMessage extends AbstractMessage{
 	private static final long serialVersionUID = -7798239742265480819L;
 	StreamContainer streamContainer;
+	long eqlId;
 	
 	public NewStreamInstanceMessage() {
 		super();
@@ -22,9 +23,10 @@ public class NewStreamInstanceMessage extends AbstractMessage{
 		this.primaryType=PrimaryTypes.CONTROLL;
 	}
 	
-	public NewStreamInstanceMessage(String sourceId, StreamContainer streamContainer) {
+	public NewStreamInstanceMessage(String sourceId, StreamContainer streamContainer, long eqlId) {
 		this(sourceId);
 		this.sourceId = sourceId;
+		this.eqlId = eqlId;
 		this.streamContainer = streamContainer;
 	}
 
@@ -34,17 +36,25 @@ public class NewStreamInstanceMessage extends AbstractMessage{
 
 	public void setStreamContainer(StreamContainer streamContainer) {
 		this.streamContainer = streamContainer;
-	}
+	}	
 	
+	public long getEqlId() {
+		return eqlId;
+	}
+
+	public void setEqlId(long eqlId) {
+		this.eqlId = eqlId;
+	}
+
+
 	public static class NewStreamInstanceMessageSerializer extends Serializer<NewStreamInstanceMessage>{
 		@Override
 		public void write(Kryo kryo, Output output,
 				NewStreamInstanceMessage nsim) {
 			kryo.writeObject(output, nsim.getPrimaryType());
 			kryo.writeObject(output, nsim.getSourceId());
-			//StreamContainer.streamContainersLock.lock();
-			kryo.writeClassAndObject(output, nsim.getStreamContainer());
-			//StreamContainer.streamContainersLock.unlock();
+			kryo.writeObject(output, nsim.getEqlId());
+			kryo.writeClassAndObject(output, nsim.getStreamContainer());			
 		}
 
 		@Override
@@ -52,6 +62,7 @@ public class NewStreamInstanceMessage extends AbstractMessage{
 				Class<NewStreamInstanceMessage> type) {
 			NewStreamInstanceMessage nsim=new NewStreamInstanceMessage();
 			nsim.primaryType = kryo.readObject(input, Integer.class);
+			nsim.eqlId = kryo.readObject(input, Long.class);
 			nsim.sourceId = kryo.readObject(input, String.class);			
 			nsim.streamContainer = (StreamContainer) kryo.readClassAndObject(input);
 			return nsim;
