@@ -229,13 +229,13 @@ public class Coordinator {
 		start(true);
 	}
 	public void start(boolean sync){
+		log.info("Coordinator is running...");
 		if(sync){
 			coordStatReportor.run();
 		}
 		else{
 			new Thread(coordStatReportor).start();
 		}
-		log.info("Coordinator is running...");
 	}
 	
 	public void registEPEvent(Event event){

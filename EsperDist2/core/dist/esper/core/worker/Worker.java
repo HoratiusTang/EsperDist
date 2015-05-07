@@ -143,13 +143,13 @@ public class Worker {
 		start(true);
 	}
 	public void start(boolean sync){
-		if(sync){		
+		log.info("Worker %s is running...", this.id);
+		if(sync){
 			workerStatReportor.run();
 		}
 		else{
 			new Thread(workerStatReportor).start();
 		}
-		log.info("Worker %s is running...", this.id);
 	}
 	
 	public void registEventRecursively(Event event){
@@ -216,7 +216,8 @@ public class Worker {
 			instancesLock.readLock().lock();
 			ins=insMap.get(streamName);
 			instancesLock.readLock().unlock();
-			try{Thread.sleep(1000);}catch(Exception ex){}
+			log.debug("trying to get instance by streamName: "+streamName);
+			ThreadUtil.sleep(1000);
 		}
 		return ins;
 	}
