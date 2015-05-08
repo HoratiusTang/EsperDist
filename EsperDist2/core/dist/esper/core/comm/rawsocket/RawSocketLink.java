@@ -27,19 +27,20 @@ public class RawSocketLink extends Link{
 	protected SyncSender sender;
 	protected ReceiverRunnable recevierRun;
 	protected ReentrantLock lock=new ReentrantLock();
-	protected byte[] recvBuffer;	
+	protected byte[] recvBuffer;
 	
 	public RawSocketLink(WorkerId myId, WorkerId targetId, Socket socket, int recvBufferSize, int sendObjectBufferSize){
 		super(myId, targetId);
 		this.socket = socket;
 		this.recvBuffer = new byte[recvBufferSize];
-		this.bytesSer = new KryoByteArraySerializer(sendObjectBufferSize);
+		this.bytesSer = new KryoByteArraySerializer(8);
+		this.sender=new SyncSender(sendObjectBufferSize);
 		//init();
 	}
 	
 	public void init(){
 		try {
-			sender=new SyncSender();
+			sender.init();
 			recevierRun=new ReceiverRunnable();
 			new Thread(recevierRun).start();
 			recevierRun.waitStarted();
@@ -66,18 +67,22 @@ public class RawSocketLink extends Link{
 	}
 	
 	public class SyncSender{
+		private byte[] objectBuf;
 		BufferedOutputStream bos=null;		
-		public SyncSender() throws IOException{
-			bos=new BufferedOutputStream(socket.getOutputStream());
+		public SyncSender(int sendObjectBufferSize){
+			this.objectBuf=new byte[sendObjectBufferSize];			
+		}
+		
+		public void init() throws IOException{
+			this.bos=new BufferedOutputStream(socket.getOutputStream());
 		}
 		
 		public int send(Object obj) throws Exception {
 			try{
 				lock.lock();
-				byte[] bytes=bytesSer.toBytes(obj);
-				//OutputStream os=socket.getOutputStream();
-				RawSocketLinkUtil.writeLength(bos, bytes.length);
-				bos.write(bytes);
+				int length=bytesSer.toBytes(obj, objectBuf);
+				RawSocketLinkUtil.writeLength(bos, length);
+				bos.write(objectBuf, 0, length);
 				bos.flush();
 //				if(obj instanceof NewStreamInstanceMessage || obj instanceof ModifyStreamInstanceMessage){
 //					BytesFileSerializer.writeBytes(bytes, 0, bytes.length, 
@@ -87,7 +92,7 @@ public class RawSocketLink extends Link{
 //								obj.getClass().getSimpleName(), //class type 
 //								bytes.length, "sended"));
 //				}
-				return bytes.length;
+				return length;
 			}
 			catch(Exception ex){				
 				throw ex;
