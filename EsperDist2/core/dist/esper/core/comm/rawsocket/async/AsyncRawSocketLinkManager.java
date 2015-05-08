@@ -62,14 +62,20 @@ public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 			long sendStartTimeNS, sendEndTimeNS, totalStartTimeNS, totalEndTimeNS;
 			int bytes, roundTotalBytes, asyncLinkCount;
 			IStatRecorder curStatRecorder=null;
+			long[] t=new long[5];
+			StringBuilder sb=new StringBuilder();
 			while(true){
 				totalStartTimeNS=System.nanoTime();
 				curStatRecorder=statRecorder;
 				curStatRecorder.beginRound(sendLinkMap.size()+recvLinkMap.size());
+				t[0]=totalStartTimeNS;
 				refreshLinkList(sendLinkMap.values(), sendLinkList);
+				t[1]=System.nanoTime();
 				roundTotalBytes=0;
+				asyncLinkCount=0;
 				for(Link link: sendLinkList){
 					if(link instanceof AsyncRawSocketLink){
+						asyncLinkCount++;
 						try{
 							sendStartTimeNS=System.nanoTime();
 							bytes=((AsyncRawSocketLink)link).flush();
@@ -82,16 +88,18 @@ public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 						}
 					}
 				}
+				t[2]=System.nanoTime();
 				//TEST
 				//ThreadUtil.sleep(200);
-				asyncLinkCount=0;
 				refreshLinkList(recvLinkMap.values(), recvLinkList);
+				t[3]=System.nanoTime();
 				for(Link link: recvLinkList){
 					if(link instanceof AsyncRawSocketLink){
 						asyncLinkCount++;
 						try{
 							sendStartTimeNS=System.nanoTime();
 							bytes=((AsyncRawSocketLink)link).flush();
+							roundTotalBytes+=bytes;
 							sendEndTimeNS=System.nanoTime();
 							statRecorder.record(link.getLinkId(), bytes, (int)((sendEndTimeNS-sendStartTimeNS)/990.0));
 						}
@@ -101,6 +109,7 @@ public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 					}
 				}
 				totalEndTimeNS=System.nanoTime();
+				t[4]=totalEndTimeNS;
 				long totalSendTimeUS=(totalEndTimeNS-totalStartTimeNS)/1000+1;
 				curStatRecorder.endRound(totalSendTimeUS);
 				long sleepTimeMS = (flushIntervalUS>>>10) - totalSendTimeUS/1000;
@@ -108,8 +117,13 @@ public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 					ThreadUtil.sleep(sleepTimeMS);
 				}
 				else{
-					log.debug("flush %d links with %d bytes in %d ms, will sleep %d ms, flushIntervalUS=%d ms", 
-							asyncLinkCount, roundTotalBytes, totalSendTimeUS/1000, sleepTimeMS, flushIntervalUS>>>10);
+					sb.setLength(0);
+					for(int i=0;i<t.length-1;i++){
+						sb.append(String.format("t[%d]-t[%d]=%.1f us; ", i+1, i, ((double)(t[i+1]-t[i]))/1000.0));
+					}
+					log.debug("flush %d links with %d bytes in %d ms, will sleep %d ms, flushIntervalUS=%d ms: %s", 
+							asyncLinkCount, roundTotalBytes, totalSendTimeUS/1000, sleepTimeMS, flushIntervalUS>>>10,
+							sb.toString());
 				}
 			}
 		}
