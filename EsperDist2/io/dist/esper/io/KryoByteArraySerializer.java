@@ -54,13 +54,14 @@ public class KryoByteArraySerializer{
 				output.setBuffer(buffer);
 				writeKryo.reset();
 				writeKryo.writeClassAndObject(output, obj);
+				/*
 				try{
 					Object obj2=fromBytes(buffer, 0, output.position());
 					assert(obj2.getClass().getSimpleName().equals(obj.getClass().getSimpleName()));
 				}
 				catch(Exception e2){
 					log.getLogger().error("********* error occur in toBytes()->fromBytes() *********", e2);
-				}
+				}*/
 				break;
 			}
 			catch(IndexOutOfBoundsException ex){
@@ -87,13 +88,14 @@ public class KryoByteArraySerializer{
 			writeKryo.reset();			
 			writeKryo.writeClassAndObject(out, obj);
 			int count=out.position()-offset;
+			/*
 			try{
 				Object obj2=fromBytes(bytes, offset, count);
 				assert(obj2.getClass().getSimpleName().equals(obj.getClass().getSimpleName()));
 			}
 			catch(Exception e2){
 				log.getLogger().error("********* error occur in toBytes()->fromBytes() *********", e2);
-			}
+			}*/
 			return count;
 		}
 		catch(Exception ex){

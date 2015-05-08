@@ -524,7 +524,8 @@ public class WorkerStatCollector2 {
 				}
 			}
 			if(count>0){
-				return (totalRoundTimeUS*1e6)/(double)(count*outputIntervalUS);
+				long systemOutputIntervalUS=ServiceManager.getOutputIntervalUS();
+				return (totalRoundTimeUS*systemOutputIntervalUS)/(double)(count*outputIntervalUS);
 			}
 			return 0.0;
 		}

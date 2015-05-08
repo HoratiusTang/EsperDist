@@ -135,6 +135,19 @@ public class CostEvaluator {
 	public double getOverloadedWorkerRatio(){
 		return (double)getOverloadedWorkerCount()/(double)allWorkerStatMap.size();
 	}
+	
+	public String getAllWorkerStatsDesciption(){
+		StringBuilder sb=new StringBuilder();
+		sb.append('{');
+		for(WorkerStat ws: allWorkerStatMap.values()){
+			sb.append(String.format("%s(%s): CPU-%.2f%%, Mem-%.2f%%, BW-%.2f/%d;", 
+					ws.getId(), ws.isGateway()?"gate":"proc", ws.getCpuUsage(), 
+					(double)(ws.getMemUsed()/(ws.getMemUsed()+ws.getMemFree())),
+					ws.getBwUsageUS(), ServiceManager.getOutputIntervalUS()));
+		}
+		sb.append('}');
+		return sb.toString();
+	}
 
 	public void updateWorkerStat(WorkerStat ws){
 		if(ws.isGateway()){

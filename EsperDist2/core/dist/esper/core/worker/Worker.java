@@ -216,7 +216,8 @@ public class Worker {
 			instancesLock.readLock().lock();
 			ins=insMap.get(streamName);
 			instancesLock.readLock().unlock();
-			log.debug("trying to get instance by streamName: "+streamName);
+			if(ins==null)
+				log.debug("trying to get instance by streamName: "+streamName);
 			ThreadUtil.sleep(1000);
 		}
 		return ins;

@@ -298,7 +298,9 @@ public class Coordinator {
 	public long executeEPL(String epl) throws Exception{
 		double overloadRatio=costEval.getOverloadedWorkerRatio();
 		if(overloadRatio>OVERLOAD_RATIO_THRESHOLD){
-			log.error("System can NOT execute new EPL, for %.2f%% workers are overloaded", overloadRatio*100);
+			log.error("System can NOT execute new EPL, for %.2f%% workers are overloaded: %s", 
+					overloadRatio*100, costEval.getAllWorkerStatsDesciption());
+			ThreadUtil.sleep(1000);
 			return -1;
 		}
 		if(rawStreamList.size() < expectedSpoutCount){
