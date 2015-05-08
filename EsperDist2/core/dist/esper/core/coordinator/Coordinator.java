@@ -462,7 +462,7 @@ public class Coordinator {
 		Link link=getWorkerLink(sc.getWorkerId().getId());
 		DerivedStreamContainer psc=(DerivedStreamContainer)sc;
 		
-		NewOrModifyInstanceResponseMessage nmirm=new NewOrModifyInstanceResponseMessage(id, sc.getUniqueName(), eqlId, true);
+		NewOrModifyInstanceResponseMessage nmirm=new NewOrModifyInstanceResponseMessage(sc.getWorkerId().getId(), sc.getUniqueName(), eqlId, true);
 		if(psc.isNew()){
 			NewStreamInstanceMessage nsiMsg=new NewStreamInstanceMessage(id,sc,eqlId);
 			link.send(nsiMsg);		
