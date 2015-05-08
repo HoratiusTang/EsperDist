@@ -553,8 +553,10 @@ public class WorkerStatCollector2 {
 				this.roundTimeUS=roundTimeUS;
 			}
 			public void assign(long linkId, int sendBytes, long sendTimeUS){
-				linkStats[actualCount].assign(linkId, sendBytes, sendTimeUS);
-				actualCount++;
+				if(actualCount<linkStats.length){
+					linkStats[actualCount].assign(linkId, sendBytes, sendTimeUS);
+					actualCount++;
+				}
 			}
 		}
 		

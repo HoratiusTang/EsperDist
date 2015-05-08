@@ -151,21 +151,29 @@ public class Coordinator {
 		Object dummy=new Object();
 		@Override
 		public void handleMessage(Link link, Object obj) {
+			log.debug("ResponseMessageHandler recevied message: "+obj.toString());
 			Semaphore sem=(Semaphore)waitingMap.putIfAbsent(obj, dummy);
-			if(sem!=null)
+			if(sem!=null){				
 				sem.release();
-			else
+				log.debug("ResponseMessageHandler released semaphore for "+obj.toString());
+			}
+			else{
+				log.debug("ResponseMessageHandler added semaphore for "+obj.toString());
 				return;//responsed before waitResponse()
+			}
 		}
 		
 		public void waitResponse(Object expectedResponse){
 			Semaphore sem=new Semaphore(0);
 			if(waitingMap.putIfAbsent(expectedResponse, sem) != null){//already responsed before waitResponse()
 				waitingMap.remove(expectedResponse);
+				log.debug("ResponseMessageHandler remove dummy for "+expectedResponse.toString());
 			}
 			else{
 				try {
+					log.debug("ResponseMessageHandler waiting for semaphore for "+expectedResponse.toString());
 					sem.acquire(1);
+					log.debug("ResponseMessageHandler waited for semaphore for "+expectedResponse.toString());
 				}
 				catch (InterruptedException e) {
 					log.debug("error occur in waitResponse()", e);
@@ -463,7 +471,9 @@ public class Coordinator {
 			ModifyStreamInstanceMessage msiMsg=new ModifyStreamInstanceMessage(id,sc,eqlId);
 			link.send(msiMsg);
 		}
+		log.debug(id+" waiting for "+nmirm.toString());
 		responseMessageHandler.waitResponse(nmirm);
+		log.debug(id+" waited for "+nmirm.toString());
 	}
 	
 	public void addToExistedStreamContainer(StreamContainer sc){
