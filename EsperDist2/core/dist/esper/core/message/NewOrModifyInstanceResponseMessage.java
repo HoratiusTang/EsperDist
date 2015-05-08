@@ -57,7 +57,7 @@ public class NewOrModifyInstanceResponseMessage extends AbstractMessage {
 	
 	@Override
 	public String toString(){
-		return String.format("NewOrModifyInstanceResponseMessage: primaryType=%d, sourceId=%d, streamName=%s, eqlId=%d, success=%s",
+		return String.format("NewOrModifyInstanceResponseMessage: primaryType=%d, sourceId=%s, streamName=%s, eqlId=%d, success=%s",
 				primaryType, sourceId, streamName, eqlId, success?"true":"false");
 	}
 	
