@@ -119,7 +119,9 @@ public class AsyncRawSocketLink extends RawSocketLink {
 			//log.debug("before flush");
 			long oldEnd=end;
 			long oldBegin=begin;
-			try {				
+			
+			try {
+				long t0=System.nanoTime();
 				if(oldEnd / array.length == oldBegin / array.length){
 					out.write(array, (int)(oldBegin % array.length), (int)(oldEnd-oldBegin));
 				}
@@ -135,7 +137,13 @@ public class AsyncRawSocketLink extends RawSocketLink {
 				out.flush();//MUST!
 				begin=oldEnd;
 				//log.debug("flushed %d bytes", (int)(oldEnd-oldBegin));
-				return (int)(oldEnd-oldBegin);
+				int bytes=(int)(oldEnd-oldBegin);
+				long t1=System.nanoTime();
+				int dt=(int)((t1-t0)/1000.0);
+				if(dt>10000){
+					log.debug("flush link %s with %d bytes in %d us", AsyncRawSocketLink.this.toString(), bytes, dt);
+				}
+				return bytes;
 			}
 			catch (IOException e) {
 				Exception ex=new Exception(String.format("error occur when write to OutputStream from %s to %s: begin=%d, end=%d, oldEnd=%d, newEnd=%d",

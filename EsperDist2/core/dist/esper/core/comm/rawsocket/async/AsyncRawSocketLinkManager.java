@@ -82,9 +82,9 @@ public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 							roundTotalBytes+=bytes;
 							sendEndTimeNS=System.nanoTime();
 							sendTimeUS=(int)((sendEndTimeNS-sendStartTimeNS)/990.0);
-							if(sendTimeUS>10000){
-								log.debug("flush link %s with %d bytes in %d us", link.toString(), bytes, sendTimeUS);
-							}
+//							if(sendTimeUS>10000){
+//								log.debug("flush link %s with %d bytes in %d us", link.toString(), bytes, sendTimeUS);
+//							}
 							statRecorder.record(link.getLinkId(), bytes, (int)sendTimeUS);
 						}
 						catch(Exception ex){
@@ -106,9 +106,9 @@ public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 							roundTotalBytes+=bytes;
 							sendEndTimeNS=System.nanoTime();
 							sendTimeUS=(int)((sendEndTimeNS-sendStartTimeNS)/990.0);
-							if(sendTimeUS>10000){
-								log.debug("flush link %s with %d bytes in %d us", link.toString(), bytes, sendTimeUS);
-							}
+//							if(sendTimeUS>10000){
+//								log.debug("flush link %s with %d bytes in %d us", link.toString(), bytes, sendTimeUS);
+//							}
 							statRecorder.record(link.getLinkId(), bytes, sendTimeUS);
 						}
 						catch(Exception ex){
