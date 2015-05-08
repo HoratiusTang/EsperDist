@@ -240,6 +240,7 @@ public class Worker {
 		}
 		else if(obj instanceof NewRawStreamSamplingMessage){
 			NewRawStreamSamplingMessage nrssMsg=(NewRawStreamSamplingMessage)obj;
+			log.debug("%s recevied NewRawStreamSamplingMessage for RawStream %s", id, nrssMsg.getRawStream().getEventName());
 			sampleNewRawStream(nrssMsg.getRawStream());
 			workerStatCollector.updateWorkerStat(this);
 		}

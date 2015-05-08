@@ -22,6 +22,7 @@ public class DataMessage extends AbstractMessage{
 	
 	public DataMessage() {
 		super();
+		this.primaryType = PrimaryTypes.DATA;
 	}
 
 	public DataMessage(String sourceId, String streamName,

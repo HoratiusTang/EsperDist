@@ -248,6 +248,7 @@ public class Coordinator {
 		costEval=new CostEvaluator(containerNameMap);
 		
 		messageHandlingScheduler=new MessageHandlingScheduler(id, 1);
+		responseMessageHandlingScheduler=new MessageHandlingScheduler(id, 1);
 		
 		workerStatWriter=new AsyncFileWriter("log/workerstats", 8000);
 		
