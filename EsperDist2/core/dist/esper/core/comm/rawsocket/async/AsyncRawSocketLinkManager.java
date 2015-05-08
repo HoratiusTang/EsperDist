@@ -17,10 +17,13 @@ import dist.esper.util.ThreadUtil;
 
 public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 	static Logger2 log=Logger2.getLogger(AsyncRawSocketLinkManager.class);
-	FlushLinkRunnable flushRun=new FlushLinkRunnable();
+	FlushLinkRunnable flushRun;
 	IStatRecorder statRecorder=new DummyStatRecorder();
 	public AsyncRawSocketLinkManager(WorkerId myId) {
 		super(myId);
+		long systemOutputIntervalUS=ServiceManager.getOutputIntervalUS();
+		long flushLinkIntervalUS=systemOutputIntervalUS/2;
+		flushRun=new FlushLinkRunnable(flushLinkIntervalUS);
 		new Thread(flushRun).start();
 	}
 	
@@ -44,11 +47,16 @@ public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 	}
 	
 	class FlushLinkRunnable implements Runnable{
+		long flushIntervalUS;
 		List<Link> sendLinkList=new ArrayList<Link>();
 		List<Link> recvLinkList=new ArrayList<Link>();
+		
+		public FlushLinkRunnable(long flushIntervalUS){
+			this.flushIntervalUS = flushIntervalUS;
+		}
+		
 		@Override
-		public void run() {
-			long outputIntervalUS=ServiceManager.getOutputIntervalUS();
+		public void run() {			
 			long sendStartTimeNS, sendEndTimeNS, totalStartTimeNS, totalEndTimeNS;
 			int bytes;
 			IStatRecorder curStatRecorder=null;
@@ -90,7 +98,7 @@ public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 				totalEndTimeNS=System.nanoTime();
 				long totalSendTimeUS=(totalEndTimeNS-totalStartTimeNS)/1000+1;
 				curStatRecorder.endRound(totalSendTimeUS);
-				long sleepTimeMS = (outputIntervalUS>>>10) - totalSendTimeUS/1000;
+				long sleepTimeMS = (flushIntervalUS>>>10) - totalSendTimeUS/1000;
 				//log.debug("flush all links use %d ms, will sleep %d ms, outputIntervalUS=%d ms", totalSendTimeUS/1000, sleepTimeMS, outputIntervalUS>>>10);
 				if(sleepTimeMS>0){
 					ThreadUtil.sleep(sleepTimeMS);

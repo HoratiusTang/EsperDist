@@ -227,7 +227,7 @@ public class Worker {
 			NewStreamInstanceMessage nsiMsg=(NewStreamInstanceMessage)obj;
 			log.debug("before handling NewStreamInstanceMessage for "+nsiMsg.getStreamContainer().getUniqueName());
 			handleNewStreamContainer(nsiMsg.getStreamContainer(), nsiMsg.getEqlId());
-			log.debug("before handling NewStreamInstanceMessage for "+nsiMsg.getStreamContainer().getUniqueName());
+			log.debug("after handling NewStreamInstanceMessage for "+nsiMsg.getStreamContainer().getUniqueName());
 			workerStatCollector.updateWorkerStat(this);
 			log.debug("before sending NewOrModifyInstanceResponseMessage for "+nsiMsg.getStreamContainer().getUniqueName());
 			NewOrModifyInstanceResponseMessage nmirm=new NewOrModifyInstanceResponseMessage(
