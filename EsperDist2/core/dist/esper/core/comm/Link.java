@@ -140,12 +140,14 @@ public abstract class Link {
 		}
 		List<Listener> lnList=listenerListMap.get(obj.getClass().getSimpleName());
 		if(lnList!=null){
-			for(Link.Listener ln: lnList){
-				try{
-					ln.received(this, obj);
-				}
-				catch(Exception ex){
-					log.getLogger().error(String.format("error occur when notifyReceived(), link: %s", this.toString()), ex);
+			synchronized(lnList){
+				for(Link.Listener ln: lnList){
+					try{
+						ln.received(this, obj);
+					}
+					catch(Exception ex){
+						log.getLogger().error(String.format("error occur when notifyReceived(), link: %s", this.toString()), ex);
+					}
 				}
 			}
 		}
