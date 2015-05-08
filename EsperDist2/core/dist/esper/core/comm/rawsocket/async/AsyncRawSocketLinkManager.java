@@ -24,7 +24,9 @@ public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 		long systemOutputIntervalUS=ServiceManager.getOutputIntervalUS();
 		long flushLinkIntervalUS=systemOutputIntervalUS/2;
 		flushRun=new FlushLinkRunnable(flushLinkIntervalUS);
-		new Thread(flushRun).start();
+		Thread flushThread=new Thread(flushRun);
+		flushThread.setPriority(Thread.MAX_PRIORITY);
+		flushThread.start();
 	}
 	
 	public IStatRecorder getStatRecorder() {
