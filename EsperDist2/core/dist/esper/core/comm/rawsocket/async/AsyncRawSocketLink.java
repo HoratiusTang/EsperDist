@@ -140,7 +140,7 @@ public class AsyncRawSocketLink extends RawSocketLink {
 				int bytes=(int)(oldEnd-oldBegin);
 				long t1=System.nanoTime();
 				int dt=(int)((t1-t0)/1000.0);
-				if(dt>10000){
+				if(dt>5000){
 					log.debug("flush link %s with %d bytes in %d us", AsyncRawSocketLink.this.toString(), bytes, dt);
 				}
 				return bytes;
