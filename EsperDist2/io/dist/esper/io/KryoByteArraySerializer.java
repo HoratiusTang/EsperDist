@@ -79,10 +79,11 @@ public class KryoByteArraySerializer{
 	}
 	
 	public int toBytes(Object obj, byte[] bytes, int offset){
-		Output out=new Output();
 		try{
+			Output out=new Output();
 			out.setBuffer(bytes);
 			out.setPosition(offset);
+			writeLock.lock();
 			writeKryo.reset();			
 			writeKryo.writeClassAndObject(out, obj);
 			int count=out.position()-offset;
@@ -98,6 +99,9 @@ public class KryoByteArraySerializer{
 		catch(Exception ex){
 			log.getLogger().error("error occur in toBytes(object, byte[], int)", ex);
 			return 0;
+		}
+		finally{
+			writeLock.unlock();
 		}
 	}
 	
