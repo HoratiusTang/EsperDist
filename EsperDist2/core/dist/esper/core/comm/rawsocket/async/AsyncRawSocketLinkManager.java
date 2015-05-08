@@ -99,9 +99,11 @@ public class AsyncRawSocketLinkManager extends RawSocketLinkManager {
 				long totalSendTimeUS=(totalEndTimeNS-totalStartTimeNS)/1000+1;
 				curStatRecorder.endRound(totalSendTimeUS);
 				long sleepTimeMS = (flushIntervalUS>>>10) - totalSendTimeUS/1000;
-				//log.debug("flush all links use %d ms, will sleep %d ms, outputIntervalUS=%d ms", totalSendTimeUS/1000, sleepTimeMS, outputIntervalUS>>>10);
 				if(sleepTimeMS>0){
 					ThreadUtil.sleep(sleepTimeMS);
+				}
+				else{
+					log.debug("flush all links use %d ms, will sleep %d ms, flushIntervalUS=%d ms", totalSendTimeUS/1000, sleepTimeMS, flushIntervalUS>>>10);
 				}
 			}
 		}

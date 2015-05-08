@@ -495,9 +495,9 @@ public class WorkerStatCollector2 {
 
 		@Override
 		public void endRound(long roundTimeUS) {
-			if(curLinkMngStat==null){
-				System.out.print("");
-			}
+//			if(curLinkMngStat==null){
+//				System.out.print("");
+//			}
 			curLinkMngStat.endAssign(roundTimeUS);
 			
 			//linkMngStatQueue.unlock();
