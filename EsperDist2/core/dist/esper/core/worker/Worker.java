@@ -225,11 +225,15 @@ public class Worker {
 	public void handleCoordinatorMessage(Object obj){
 		if(obj instanceof NewStreamInstanceMessage){
 			NewStreamInstanceMessage nsiMsg=(NewStreamInstanceMessage)obj;
+			log.debug("before handling NewStreamInstanceMessage for "+nsiMsg.getStreamContainer().getUniqueName());
 			handleNewStreamContainer(nsiMsg.getStreamContainer(), nsiMsg.getEqlId());
+			log.debug("before handling NewStreamInstanceMessage for "+nsiMsg.getStreamContainer().getUniqueName());
 			workerStatCollector.updateWorkerStat(this);
+			log.debug("before sending NewOrModifyInstanceResponseMessage for "+nsiMsg.getStreamContainer().getUniqueName());
 			NewOrModifyInstanceResponseMessage nmirm=new NewOrModifyInstanceResponseMessage(
 					id, nsiMsg.getStreamContainer().getUniqueName(), nsiMsg.getEqlId(), true);
-			coordLink.send(nmirm); 
+			coordLink.send(nmirm);
+			log.debug("after sending NewOrModifyInstanceResponseMessage for "+nsiMsg.getStreamContainer().getUniqueName());
 		}
 		else if(obj instanceof ModifyStreamInstanceMessage){
 			ModifyStreamInstanceMessage msiMsg=(ModifyStreamInstanceMessage)obj;
