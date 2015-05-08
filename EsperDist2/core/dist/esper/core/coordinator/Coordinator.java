@@ -132,7 +132,10 @@ public class Coordinator {
 				else{
 					messageHandlingScheduler.submit(link, obj, messageHandler);
 				}
-			}			
+			}
+			else{
+				messageHandlingScheduler.submit(link, obj, messageHandler);
+			}
 		}
 	}
 	
