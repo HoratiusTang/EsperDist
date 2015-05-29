@@ -154,13 +154,19 @@ public class RawSocketLinkManager extends LinkManager {
 			Object obj=bytesSer.fromBytes(recvBuffer, 0, length);
 			if(obj instanceof LinkEstablishedMessage){
 				LinkEstablishedMessage lem=(LinkEstablishedMessage)obj;
-				WorkerId targetId=lem.getWorkerId();				
-				//RawSocketLink sockLink=new RawSocketLink(myId, targetId, socket, getBufferSize());
-				RawSocketLink sockLink=(RawSocketLink)newLink(myId, targetId, socket, getBufferSize(), getBufferSize());
-				log.info("server accept connection from %s", targetId.getId());
-				notifyNewReceivedLink(sockLink);
-				sockLink.init();
-				return true;
+				WorkerId targetId=lem.getWorkerId();
+				try{
+					//RawSocketLink sockLink=new RawSocketLink(myId, targetId, socket, getBufferSize());
+					RawSocketLink sockLink=(RawSocketLink)newLink(myId, targetId, socket, getBufferSize(), getBufferSize());
+					log.info("server accept connection from %s", targetId.getId());
+					notifyNewReceivedLink(sockLink);
+					sockLink.init();
+					return true;
+				}
+				catch(Exception ex){
+					log.error("error ocurr when accept connection", ex);
+					return false;
+				}
 			}
 			else{
 				return false;

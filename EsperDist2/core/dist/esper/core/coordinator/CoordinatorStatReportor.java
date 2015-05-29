@@ -35,8 +35,7 @@ public class CoordinatorStatReportor implements Runnable{
 	@Override
 	public void run(){
 		long lastSendTimestampNS=System.nanoTime();
-		while(true){
-			/*
+		while(true){			
 			ThreadUtil.sleep(checkStatIntervalMS);
 			long currentTimestampNS=System.nanoTime();
 			if( currentTimestampNS - lastSendTimestampNS > sendIntervalNS){
@@ -50,13 +49,14 @@ public class CoordinatorStatReportor implements Runnable{
 				else{
 					coordinator.unlockContainerMap();
 				}
-			}
-			*/
+			}			
+			/*
 			ThreadUtil.sleep(sendIntervalNS/1000000);
 			coordinator.lockContainerMap();
 			refreshGlobalStat();
 			coordinator.unlockContainerMap();
-			sendGlobatStatToMonitors();			
+			sendGlobatStatToMonitors();
+			*/			
 		}
 //		long timeMS=4000;
 //		while(true){
