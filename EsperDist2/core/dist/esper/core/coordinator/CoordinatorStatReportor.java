@@ -78,10 +78,15 @@ public class CoordinatorStatReportor implements Runnable{
 		monLinkList.clear();
 		monLinkList.addAll(coordinator.monitorLinkMap.values());
 		for(Link link: monLinkList){
-			if(!link.isClosed()){
-				//coordinator.containersLock.lock();
-				int bytes=link.send(gs);
-				//coordinator.containersLock.unlock();
+			try{
+				if(!link.isClosed()){
+					//coordinator.containersLock.lock();
+					int bytes=link.send(gs);
+					//coordinator.containersLock.unlock();
+				}
+			}
+			catch(Exception ex){
+				log.debug("error ocurr when send GlobatStat", ex);
 			}
 		}
 	}
