@@ -7,9 +7,12 @@ import java.util.*;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Registration;
 
+import dist.esper.core.CoordinatorMain;
+import dist.esper.util.Logger2;
 import dist.esper.util.ReflectionFactory;
 
 public class KryoClassRegister {
+	static Logger2 log=Logger2.getLogger(KryoClassRegister.class);
 	static List<Class<?>> allClazzList=null;
 	static List<String> pkgNameList=new ArrayList<String>(20);
 	
@@ -47,7 +50,9 @@ public class KryoClassRegister {
 		for(Class<?> clazz: allClazzList){
 			//System.out.println(clazz.getSimpleName());
 			Registration reg=kryo.register(clazz);
+			log.info("registed class %s, id=%d", clazz.getSimpleName(), reg.getId());
 		}
+		log.info("registed %d classes for Kryo", allClazzList.size());
 		return allClazzList.size();
 	}
 	
