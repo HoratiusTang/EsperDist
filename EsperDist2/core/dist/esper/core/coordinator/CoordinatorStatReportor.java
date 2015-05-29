@@ -89,11 +89,12 @@ public class CoordinatorStatReportor implements Runnable{
 				if(!link.isClosed()){
 					//coordinator.containersLock.lock();
 					int bytes=link.send(gs);
+					log.info("CoordinatorStatReportor send %d bytes to Monitor", bytes);
 					//coordinator.containersLock.unlock();
 				}
 			}
 			catch(Exception ex){
-				log.debug("error ocurr when send GlobatStat", ex);
+				log.error("error ocurr when send GlobatStat", ex);
 			}
 		}
 	}
