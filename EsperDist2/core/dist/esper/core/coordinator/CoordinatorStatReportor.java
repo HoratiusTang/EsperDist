@@ -47,6 +47,8 @@ public class CoordinatorStatReportor implements Runnable{
 					lastSendTimestampNS = currentTimestampNS;
 				}
 				else{
+					log.info("fail to send GlobatStat: containerStatMap.size()=%d, containerIdMap.size()=%d", 
+							coordinator.costEval.containerStatMap.size(), coordinator.containerIdMap.size());
 					coordinator.unlockContainerMap();
 				}
 			}			
