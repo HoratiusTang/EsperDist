@@ -31,6 +31,9 @@ public class JoinStats {
 		if(jsc.getJoinExprList().size()!=1 || !(jsc.getJoinExprList().get(0) instanceof ComparisonExpression)){
 			return;
 		}
+		if(jsc instanceof JoinDelayedStreamContainer){
+			return;
+		}
 		ComparisonExpression ce=(ComparisonExpression)jsc.getJoinExprList().get(0);
 		EventProperty prop1=((EventPropertySpecification)(ce.getChild(0))).getEventProp();
 		EventProperty prop2=((EventPropertySpecification)(ce.getChild(1))).getEventProp();
@@ -49,6 +52,9 @@ public class JoinStats {
 	
 	public void updateContainerStat(JoinStreamContainer jsc, InstanceStat ss){
 		if(jsc.getJoinExprList().size()!=1 || !(jsc.getJoinExprList().get(0) instanceof ComparisonExpression)){
+			return;
+		}
+		if(jsc instanceof JoinDelayedStreamContainer){
 			return;
 		}
 		ComparisonExpression ce=(ComparisonExpression)jsc.getJoinExprList().get(0);
