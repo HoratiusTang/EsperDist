@@ -45,7 +45,7 @@ public class CostEvaluator {
 	public MultiValueMap<String,DerivedStreamContainer> workerInputContainersMap=new MultiValueMap<String,DerivedStreamContainer>();
 	public MultiValueMap<String,RawStream> workerInputRawStreamsMap=new MultiValueMap<String,RawStream>();
 	
-	public PlanSelectionStrategy planSelectionStrategy=PlanSelectionStrategy.MIXED;
+	public PlanSelectionStrategy planSelectionStrategy=PlanSelectionStrategy.RANDOM;
 	MixedComparator mixedComparator=new MixedComparator();
 	GreedyComparator greedyComparator=new GreedyComparator();
 	

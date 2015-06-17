@@ -28,10 +28,11 @@ public class QueryGeneratorMain3 {
 	static int numSelectElementsPerFilter=3;
 	//static String filePathBase="query/query2";
 	static double[] ratios={0.0, 0.25, 0.50, 0.75};
-	static int[] queryTotalCounts={500, 1000, 1500, 2000};
+	static int[] filterOnlyqueryTotalCounts={150, 300, 450, 600};
+	static int[] filterJoinqueryTotalCounts={100, 200, 300, 400};
 	
 	public static void main(String[] args){
-		generateFilterQueryFiles();
+		generateFilterOnlyQueryFiles();
 		generateFilterJoinQueryFiles();
 		//generateSingleFile();
 	}
@@ -69,7 +70,7 @@ public class QueryGeneratorMain3 {
 		}
 	}
 	
-	public static void generateFilterQueryFiles(){
+	public static void generateFilterOnlyQueryFiles(){
 		String filePathBase="query/queries2_filter-only";
 		
 		NodesParameter[] nodeParams=new NodesParameter[]{
@@ -83,7 +84,7 @@ public class QueryGeneratorMain3 {
 		int successCount=0;
 		int nodeCountPerType=25;
 		nodeParams[0].nodeCountPerType=nodeCountPerType;
-		for(int queryTotalCount: queryTotalCounts){
+		for(int queryTotalCount: filterOnlyqueryTotalCounts){
 			nodeParams[0].nodeCount=queryTotalCount;
 			for(double equalRatio: ratios){
 				for(double implyRatio: ratios){
@@ -98,7 +99,7 @@ public class QueryGeneratorMain3 {
 			}
 		}
 		System.out.format("\ninfo: FINISH generating %d/%d filter-only query files.\n\n", successCount, 
-				queryTotalCounts.length * ratios.length * ratios.length);
+				filterOnlyqueryTotalCounts.length * ratios.length * ratios.length);
 	}
 	
 	public static void generateFilterJoinQueryFiles(){
@@ -114,7 +115,7 @@ public class QueryGeneratorMain3 {
 		
 		int successCount=0;
 		int nodeCountPerType=25;		
-		for(int queryTotalCount: queryTotalCounts){
+		for(int queryTotalCount: filterJoinqueryTotalCounts){
 			nodeParams[0].nodeCount=queryTotalCount*40/100;
 			nodeParams[1].nodeCount=queryTotalCount*30/100;
 			nodeParams[2].nodeCount=queryTotalCount*15/100;
@@ -136,7 +137,7 @@ public class QueryGeneratorMain3 {
 			}
 		}
 		System.out.format("\ninfo: FINISH generating %d/%d filter-join query files.\n\n", successCount, 
-				queryTotalCounts.length * ratios.length * ratios.length);
+				filterJoinqueryTotalCounts.length * ratios.length * ratios.length);
 	}
 	
 	public static void generateSingleFile(){
