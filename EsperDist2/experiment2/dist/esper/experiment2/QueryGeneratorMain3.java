@@ -32,7 +32,7 @@ public class QueryGeneratorMain3 {
 	static int[] filterJoinqueryTotalCounts={100, 200, 300, 400};
 	
 	public static void main(String[] args){
-		//generateFilterOnlyQueryFiles();
+		generateFilterOnlyQueryFiles();
 		generateFilterJoinQueryFiles();
 		//generateSingleFile();
 	}
