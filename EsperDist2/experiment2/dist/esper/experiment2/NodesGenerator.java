@@ -87,7 +87,7 @@ public class NodesGenerator {
 			generateFilterNodeListContainer();
 			return;
 		}
-		NodeListContainer nl2=new NodeListContainer(numWay);
+		NodeListContainer nlc=new NodeListContainer(numWay);
 		
 		int curCount=0;
 		while(curCount<nodeParams[numWay].nodeCount){
@@ -148,10 +148,21 @@ public class NodesGenerator {
 						jns[i].setFilterNodeList(jns[k].getFilterNodeList());
 					}
 					nl.copySortedNodes(jns);
-					nodeSorter.randomSort(jns, nodeParams[numWay].implyRatio, 0.05);
+					try{
+						nodeSorter.randomSort(jns, nodeParams[numWay].implyRatio, 0.05);
+					}
+					catch(Exception ex){
+						if(count>10){
+							throw ex;
+						}
+						else{
+							//ignore it, for count is too small, very hard to reach desired parameters
+							//it is a trick
+						}
+					}
 					nl.setNodes(jns);
 					nl.setFilterNodesList(fnLists);
-					nl2.addNodeList(nl);
+					nlc.addNodeList(nl);
 					curCount+=jns.length;
 					break;
 				}
@@ -164,12 +175,12 @@ public class NodesGenerator {
 				}
 			}
 		}
-		nodeListCnts[numWay]=nl2;
+		nodeListCnts[numWay]=nlc;
 	}
 	
 	public void generateFilterNodeListContainer() throws Exception{
 		int curCount=0;
-		NodeListContainer nl2=new NodeListContainer(1);
+		NodeListContainer nlc=new NodeListContainer(1);
 		ftRand.reset();//it's a must! shit!
 		while(curCount < nodeParams[1].nodeCount){
 			int curRetries=0;
@@ -195,7 +206,7 @@ public class NodesGenerator {
 					nl.copySortedNodes(fns);
 					nodeSorter.randomSort(fns, nodeParams[1].implyRatio, 0.05);
 					nl.setNodes(fns);
-					nl2.addNodeList(nl);
+					nlc.addNodeList(nl);
 					curCount+=fns.length;
 					//System.out.format("curCount=%d\n", curCount);
 					ftRand.storeFilterType(filterType);
@@ -209,7 +220,7 @@ public class NodesGenerator {
 				}
 			}
 		}
-		nodeListCnts[1]=nl2;
+		nodeListCnts[1]=nlc;
 	}
 	
 	public List<SelectElement> genSelectElements(int numWay){
