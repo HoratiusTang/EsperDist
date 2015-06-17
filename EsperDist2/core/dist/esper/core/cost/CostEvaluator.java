@@ -119,7 +119,7 @@ public class CostEvaluator {
 	}
 	
 	public static boolean checkWorkerOverload(WorkerStat ws){
-		return ws.cpuUsage>=0.9 || ((double)ws.bwUsageUS/ServiceManager.getOutputIntervalUS())>=0.9 ||
+		return ws.cpuUsage>=0.95 || //((double)ws.bwUsageUS/ServiceManager.getOutputIntervalUS())>=0.9 ||
 				(double)ws.memFree/(double)ws.memUsed <= 1.0/8.0;
 	}
 	

@@ -32,7 +32,7 @@ public class QueryGeneratorMain3 {
 	static int[] filterJoinqueryTotalCounts={100, 200, 300, 400};
 	
 	public static void main(String[] args){
-		generateFilterOnlyQueryFiles();
+		//generateFilterOnlyQueryFiles();
 		generateFilterJoinQueryFiles();
 		//generateSingleFile();
 	}
@@ -124,9 +124,18 @@ public class QueryGeneratorMain3 {
 			for(double equalRatio: ratios){
 				for(double implyRatio: ratios){
 					for(int i=0;i<nodeParams.length;i++){
-						nodeParams[i].nodeCountPerType=nodeCountPerType;
 						nodeParams[i].equalRatio=equalRatio;
 						nodeParams[i].implyRatio=implyRatio;
+						nodeParams[i].nodeCountPerType=nodeCountPerType;
+						//adjust the nodeParams[i].nodeCountPerType, make it close to 25
+						if(nodeParams[i].nodeCount % nodeParams[i].nodeCountPerType != 0){
+							if(nodeParams[i].nodeCount > 2*nodeParams[i].nodeCountPerType){
+								nodeParams[i].nodeCountPerType=20;
+							}
+							else{
+								nodeParams[i].nodeCountPerType=nodeParams[i].nodeCount;
+							}
+						}						
 					}
 					boolean result=generateQueryFile(nodeParams, filePathBase, queryTotalCount, equalRatio, implyRatio, false);
 					if(result){
@@ -140,6 +149,7 @@ public class QueryGeneratorMain3 {
 				filterJoinqueryTotalCounts.length * ratios.length * ratios.length);
 	}
 	
+	/*
 	public static void generateSingleFile(){
 		String filePathBase="query/queries2_filter-only";
 		
@@ -159,4 +169,5 @@ public class QueryGeneratorMain3 {
 		generateQueryFile(nodeParams, filePathBase, nodeParams[0].nodeCount, 
 				nodeParams[0].equalRatio, nodeParams[0].implyRatio, true);
 	}
+	*/
 }

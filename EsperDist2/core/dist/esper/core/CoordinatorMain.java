@@ -37,7 +37,7 @@ public class CoordinatorMain{
 	static class SumbitQueryRunnable implements Runnable{
 		Coordinator coord;
 		long intervalMS=3500;
-		int retries=10;
+		int retries=50;
 		
 		public SumbitQueryRunnable(Coordinator coord) {
 			super();
