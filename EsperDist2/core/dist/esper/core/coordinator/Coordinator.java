@@ -19,6 +19,7 @@ import com.espertech.esper.epl.spec.StatementSpecCompiled;
 
 import dist.esper.core.comm.*;
 import dist.esper.core.cost.*;
+import dist.esper.core.cost.CostEvaluator.StreamFlowAndDRU;
 import dist.esper.core.cost.DeltaResourceUsage.CandidateContainerType;
 import dist.esper.core.flow.centralized.*;
 import dist.esper.core.flow.container.*;
@@ -43,6 +44,7 @@ import dist.esper.util.CollectionUtils;
 import dist.esper.util.DateUtil;
 import dist.esper.util.Logger2;
 import dist.esper.util.ThreadUtil;
+import dist.esper.util.Tuple2D;
 
 public class Coordinator {
 	static Logger2 log;
@@ -256,7 +258,6 @@ public class Coordinator {
 	public void init(){
 		epService = EPServiceProviderManager.getProvider(id);
 		epAdminProxy = new EPAdministratorImplProxy(epService.getEPAdministrator());
-		costEval=new CostEvaluator(containerNameMap);
 		
 		messageHandlingScheduler=new MessageHandlingScheduler(id, 1);
 		responseMessageHandlingScheduler=new MessageHandlingScheduler(id, 1);
@@ -274,6 +275,7 @@ public class Coordinator {
 		coordStatReportor=new CoordinatorStatReportor(this);
 		streamReviewer=new StreamReviewer(existedFscList, existedPscList,
 				existedJscList, existedRscList);
+		costEval=new CostEvaluator(containerNameMap, streamReviewer);
 		expectedSpoutCount=(int)ServiceManager.getConfig().getLong(Options.EXPECTED_SPOUNT_COUNT, 0);
 	}
 	
@@ -317,26 +319,29 @@ public class Coordinator {
 		for(Tree tree: treeList){
 			StreamFlow sf=streamFlowBuilder.buildStreamFlow(tree);
 			sfList.add(sf);
-		}		
+		}
+		/**
 		for(StreamFlow sf: sfList){
 			DeltaResourceUsage dru=this.computeBestDeltaResourceUsage(sf);
 			druList.add(dru);
 		}		
 		int index=costEval.chooseBestIndex(druList);
+		**/
+		StreamFlowAndDRU sfAndDru=costEval.buildAndEvaluateAndChooseBestPlan(sfList);
 		StreamContainer.streamContainersLock.readLock().lock();
-		StreamContainerFlow sct=streamContainerFlowBuilder.buildStreamContainerFlow(sfList.get(index), druList.get(index));
+		/**StreamContainerFlow sct=streamContainerFlowBuilder.buildStreamContainerFlow(sfList.get(index), druList.get(index));**/
+		StreamContainerFlow sct=streamContainerFlowBuilder.buildStreamContainerFlow(sfAndDru.getFirst(), sfAndDru.getSecond());
 		this.submit(sct);
 		StreamContainer.streamContainersLock.readLock().unlock();
 		return eplId;
 	}
 	
-	public DeltaResourceUsage computeBestDeltaResourceUsage(StreamFlow sf){
-		streamReviewer.reset(sf.getRootStream());
-		streamReviewer.check();
-		DeltaResourceUsage rootDRU=costEval.computeBestStrategy(sf.getRootStream());
-		return rootDRU;
-	}
-	
+//	public DeltaResourceUsage computeBestDeltaResourceUsage(StreamFlow sf){
+//		streamReviewer.reset(sf.getRootStream());
+//		streamReviewer.check();
+//		DeltaResourceUsage rootDRU=costEval.computeBestStrategy(sf.getRootStream());
+//		return rootDRU;
+//	}
 	
 	public List<RawStream> getRawStreamList() {
 		return rawStreamList;

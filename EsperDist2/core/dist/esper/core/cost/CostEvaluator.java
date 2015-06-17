@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import com.esotericsoftware.minlog.Log;
 
 import dist.esper.core.coordinator.CoordinatorStatReportor;
+import dist.esper.core.coordinator.StreamReviewer;
 import dist.esper.core.cost.DeltaResourceUsage.CandidateContainerType;
 import dist.esper.core.flow.container.*;
 import dist.esper.core.flow.stream.*;
@@ -21,6 +22,7 @@ import dist.esper.util.IncludingExcludingPrincipleComputer;
 import dist.esper.util.Logger2;
 import dist.esper.util.MultiValueMap;
 import dist.esper.util.ThreadUtil;
+import dist.esper.util.Tuple2D;
 
 public class CostEvaluator {
 	static Logger2 log=Logger2.getLogger(CostEvaluator.class);
@@ -39,8 +41,13 @@ public class CostEvaluator {
 	JoinStats joinStats;
 	public RawStats rawStats;
 	EventOrPropertySizeEstimator sizeEstimator;
+	StreamReviewer streamReviewer;
 	public MultiValueMap<String,DerivedStreamContainer> workerInputContainersMap=new MultiValueMap<String,DerivedStreamContainer>();
 	public MultiValueMap<String,RawStream> workerInputRawStreamsMap=new MultiValueMap<String,RawStream>();
+	
+	public PlanSelectionStrategy planSelectionStrategy=PlanSelectionStrategy.MIXED;
+	MixedComparator mixedComparator=new MixedComparator();
+	GreedyComparator greedyComparator=new GreedyComparator();
 	
 	public void registContainerRecursively(DerivedStreamContainer psc){
 		if(psc instanceof RootStreamContainer){
@@ -68,18 +75,20 @@ public class CostEvaluator {
 //		}
 	}
 	
-	public CostEvaluator(Map<String, DerivedStreamContainer> containerMap) {
+	public CostEvaluator(Map<String, DerivedStreamContainer> containerMap, StreamReviewer streamReviewer) {
 		super();
 		rawStats = new RawStats();
 		filterStats = new FilterStats(rawStats);
 		joinStats = new JoinStats(rawStats, filterStats);
 		sizeEstimator = new EventOrPropertySizeEstimator(rawStats);
 		this.containerNameMap = containerMap;
+		this.streamReviewer = streamReviewer;
 		
 		DeltaResourceUsage.setRawStat(rawStats);
 		DeltaResourceUsage.setSizeEstimator(sizeEstimator);
 		DeltaResourceUsage.setWorkerInputContainersMap(workerInputContainersMap);
 		DeltaResourceUsage.setWorkerInputRawStreamsMap(workerInputRawStreamsMap);
+		log.info("PlanSelectionStrategy="+planSelectionStrategy.toString());
 	}
 	
 	public InstanceStat getContainerStat(String containerName){
@@ -377,26 +386,52 @@ public class CostEvaluator {
 		return cm;
 	}
 	
-	public DeltaResourceUsage computeBestStrategy(RootStream rsl){
-		this.estimateRate(rsl);
-		List<DeltaResourceUsage> rootDRUList=searchRootPlan(rsl);
-		return this.chooseBestOne(rootDRUList);
+	public StreamFlowAndDRU buildAndEvaluateAndChooseBestPlan(List<StreamFlow> sfList){
+		List<DeltaResourceUsage> sfDruList=new ArrayList<DeltaResourceUsage>(sfList.size());
+		for(StreamFlow sf: sfList){
+			RootStream rs=sf.getRootStream();
+			streamReviewer.reset(rs);
+			streamReviewer.check();
+			this.estimateRate(rs);
+			List<DeltaResourceUsage> curSfDruList = this.searchRootPlan(rs);//DRUs for single StreamFlow
+			int druIndex=this.chooseBestIndex(curSfDruList);//choose best one for current StreamFlow
+			sfDruList.add(curSfDruList.get(druIndex));
+		}
+		int sfIndex=chooseBestIndex(sfDruList);//choose best one among all StreamFlows
+		return new StreamFlowAndDRU(sfList.get(sfIndex), sfDruList.get(sfIndex));
 	}
 	
-	public DeltaResourceUsage chooseBestOne(List<DeltaResourceUsage> druList){
-		int index=chooseBestIndex(druList);
-		return druList.get(index);
-	}
+//	public DeltaResourceUsage computeBestStrategy(RootStream rsl){
+//		this.estimateRate(rsl);
+//		List<DeltaResourceUsage> rootDRUList=searchRootPlan(rsl);
+//		return this.chooseBestOne(rootDRUList);
+//	}
+//	
+//	public DeltaResourceUsage chooseBestOne(List<DeltaResourceUsage> druList){
+//		int index=chooseBestIndex(druList);
+//		return druList.get(index);
+//	}
 	
 	public int chooseBestIndex(List<DeltaResourceUsage> druList){
-		CostMetrics[] cms=new CostMetrics[druList.size()];
-		for(int i=0;i<druList.size();i++){
-			druList.get(i).compute(null);
-			cms[i]=computeCostMetrics(druList.get(i));
-			cms[i].setIndex(i);
+		if(planSelectionStrategy==PlanSelectionStrategy.RANDOM){
+			Random rand=new Random();
+			return rand.nextInt(druList.size());
+		}		
+		else{
+			CostMetrics[] cms=new CostMetrics[druList.size()];
+			for(int i=0;i<druList.size();i++){
+				druList.get(i).compute(null);
+				cms[i]=computeCostMetrics(druList.get(i));
+				cms[i].setIndex(i);
+			}
+			if(planSelectionStrategy==PlanSelectionStrategy.GREEDY){
+				Arrays.sort(cms, this.greedyComparator);
+			}
+			else{
+				Arrays.sort(cms, this.mixedComparator);
+			}
+			return cms[0].getIndex();
 		}
-		Arrays.sort(cms,CostMetrics.comparator);
-		return cms[0].getIndex();
 	}
 
 	public List<DeltaResourceUsage> searchPlan(DerivedStream psl, String parentWorkerId){
@@ -758,5 +793,94 @@ public class CostEvaluator {
 			/*do nothing*/
 		}
 		return dru;
+	}
+	
+	public static class StreamFlowAndDRU extends Tuple2D<StreamFlow, DeltaResourceUsage>{
+		public StreamFlowAndDRU(StreamFlow streamFlow,
+				DeltaResourceUsage deltaResourceUsage) {
+			super(streamFlow, deltaResourceUsage);
+		}
+
+		private static final long serialVersionUID = 6354577762750365549L;		
+	}
+	
+	public enum PlanSelectionStrategy{
+		RANDOM("random"),
+		GREEDY("greedy"),
+		MIXED("mixed");
+		
+		String str;
+		private PlanSelectionStrategy(String str){
+			this.str=str;
+		}
+		@Override
+		public String toString(){
+			return str;
+		}
+	}
+	
+	public static class MixedComparator implements Comparator<CostMetrics>{
+		@Override
+		public int compare(CostMetrics a, CostMetrics b) {
+			double out1=a.deltaOutputTimeUS * Math.sqrt(a.outputTimeUSVariance);
+			double cpu1=a.deltaCPUTimeUS * Math.sqrt(a.cpuTimeUSVariance);
+			double mem1=a.deltaMemoryBytes * Math.sqrt(a.memoryBytesVariance);
+			
+			double out2=b.deltaOutputTimeUS * Math.sqrt(b.outputTimeUSVariance);
+			double cpu2=b.deltaCPUTimeUS * Math.sqrt(b.cpuTimeUSVariance);
+			double mem2=b.deltaMemoryBytes * Math.sqrt(b.memoryBytesVariance);
+			
+			double outAvg=(out1+out2)/2;
+			double cpuAvg=(cpu1+cpu2)/2;
+			double memAvg=(mem1+mem2)/2;
+			
+			outAvg=(outAvg==0)?Double.MIN_NORMAL:outAvg;
+			cpuAvg=(cpuAvg==0)?Double.MIN_NORMAL:cpuAvg;
+			memAvg=(memAvg==0)?Double.MIN_NORMAL:memAvg;
+			
+			double outR1=out1/outAvg;
+			double outR2=out2/outAvg;			
+			double cpuR1=cpu1/cpuAvg;
+			double cpuR2=cpu2/cpuAvg;
+			double memR1=mem1/memAvg;
+			double memR2=mem2/memAvg;
+			
+			double alpha=1.0d, beta=1.0d, gamma=1.0d;
+			
+			double v1= outR1 * outR1 * alpha + cpuR1 * cpuR1 * beta + memR1 * memR1 * gamma;
+			double v2= outR2 * outR2 * alpha + cpuR2 * cpuR2 * beta + memR2 * memR2 * gamma;
+			
+			int comp=Double.compare(v1, v2);
+			return 0-comp;
+			/**
+			if(out1!=out2){
+				return out1>out2?1:-1;
+			}
+			else if(cpu1!=cpu2){
+				return cpu1>cpu2?1:-1;
+			}
+			else if(mem1!=mem2){
+				return mem1>mem2?1:-1;
+			}*/
+		}
+	}
+	
+	public static class GreedyComparator implements Comparator<CostMetrics>{
+		@Override
+		public int compare(CostMetrics a, CostMetrics b) {
+			int cpuComp=Double.compare(a.deltaCPUTimeUS, b.deltaCPUTimeUS);
+			if(cpuComp!=0){
+				return cpuComp;
+			}
+			int memComp=Double.compare(a.deltaMemoryBytes, b.deltaMemoryBytes);
+			if(memComp!=0){
+				return memComp;
+			}
+			int outComp=Double.compare(a.deltaOutputTimeUS, b.deltaOutputTimeUS);
+			if(outComp!=0){
+				return outComp;
+			}
+			return 0;
+		}
 	}
 }

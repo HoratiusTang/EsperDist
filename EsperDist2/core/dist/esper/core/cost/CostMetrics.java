@@ -112,7 +112,7 @@ public class CostMetrics {
 		outputTimeUSVariance=var.evaluate(accOutputTimeUS);
 	}
 	
-	public static Comparator<CostMetrics> comparator=new DefaultComparator();
+	//public static Comparator<CostMetrics> comparator=new DefaultComparator();
 	
 	@Override
 	public String toString(){
@@ -173,67 +173,5 @@ public class CostMetrics {
 
 	public double addDeltaOutputTimeUS(double d) {
 		return deltaOutputTimeUS+=d;
-	}
-	
-	public static class DefaultComparator implements Comparator<CostMetrics>{
-//		@Override
-//		public int compare(CostMetrics a, CostMetrics b) {
-//			if(a.deltaOutputTimeUS!=b.deltaOutputTimeUS){
-//				return a.deltaOutputTimeUS>b.deltaOutputTimeUS?1:-1;
-//			}
-//			else if(a.deltaCPUTimeUS!=b.deltaCPUTimeUS){
-//				return a.deltaCPUTimeUS>b.deltaCPUTimeUS?1:-1;
-//			}
-//			else if(a.deltaMemoryBytes!=b.deltaMemoryBytes){
-//				return a.deltaMemoryBytes>b.deltaMemoryBytes?1:-1;
-//			}
-//			return 0;
-//		}
-		@Override
-		public int compare(CostMetrics a, CostMetrics b) {
-			double out1=a.deltaOutputTimeUS * Math.sqrt(a.outputTimeUSVariance);
-			double cpu1=a.deltaCPUTimeUS * Math.sqrt(a.cpuTimeUSVariance);
-			double mem1=a.deltaMemoryBytes * Math.sqrt(a.memoryBytesVariance);
-			
-			double out2=b.deltaOutputTimeUS * Math.sqrt(b.outputTimeUSVariance);
-			double cpu2=b.deltaCPUTimeUS * Math.sqrt(b.cpuTimeUSVariance);
-			double mem2=b.deltaMemoryBytes * Math.sqrt(b.memoryBytesVariance);
-			
-			double outAvg=(out1+out2)/2;
-			double cpuAvg=(cpu1+cpu2)/2;
-			double memAvg=(mem1+mem2)/2;
-			
-			outAvg=(outAvg==0)?Double.MIN_NORMAL:outAvg;
-			cpuAvg=(cpuAvg==0)?Double.MIN_NORMAL:cpuAvg;
-			memAvg=(memAvg==0)?Double.MIN_NORMAL:memAvg;
-			
-			double outR1=out1/outAvg;
-			double outR2=out2/outAvg;			
-			double cpuR1=cpu1/cpuAvg;
-			double cpuR2=cpu2/cpuAvg;
-			double memR1=mem1/memAvg;
-			double memR2=mem2/memAvg;
-			
-			double v1= outR1 * outR1 + cpuR1 * cpuR1 + memR1 * memR1;
-			double v2= outR2 * outR2 + cpuR2 * cpuR2 + memR2 * memR2;
-			
-			if(v1>v2){
-				return 1;
-			}
-			else if(v1<v2){
-				return -1;
-			}
-			/**
-			if(out1!=out2){
-				return out1>out2?1:-1;
-			}
-			else if(cpu1!=cpu2){
-				return cpu1>cpu2?1:-1;
-			}
-			else if(mem1!=mem2){
-				return mem1>mem2?1:-1;
-			}*/
-			return 0;
-		}
 	}
 }

@@ -50,7 +50,7 @@ public class KryoClassRegister {
 		for(Class<?> clazz: allClazzList){
 			//System.out.println(clazz.getSimpleName());
 			Registration reg=kryo.register(clazz);
-			log.info("registed class %s, id=%d", clazz.getSimpleName(), reg.getId());
+			//log.info("registed class %s, id=%d", clazz.getSimpleName(), reg.getId());
 		}
 		log.info("registed %d classes for Kryo", allClazzList.size());
 		return allClazzList.size();
