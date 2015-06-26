@@ -36,7 +36,8 @@ class WorkerStatReportor implements Runnable{
 			if( currentTimestampNS - lastSendTimestampNS > sendIntervalNS){				
 				WorkerStat ws=worker.workerStatCollector.getCurrentWorkerStat();				
 				worker.coordLink.send(ws);
-				log.debug("WorkerStatReportor send WorkerStat to Coordinator");
+				log.debug("WorkerStatReportor send WorkerStat to Coordinator: insStats.count=%d, rawStats.count=%d", 
+						ws.insStats.length, ws.rawStats.length);
 				lastSendTimestampNS = currentTimestampNS;
 			}
 		}
