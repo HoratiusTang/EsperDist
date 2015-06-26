@@ -20,7 +20,7 @@ public class CoordinatorStatReportor implements Runnable{
 	
 	Coordinator coordinator;
 	public CoordinatorStatReportor(Coordinator coordinator){
-		this(coordinator, 4000, 460);
+		this(coordinator, 4000, 4000);
 	}
 
 	public CoordinatorStatReportor(Coordinator coordinator,
@@ -38,7 +38,7 @@ public class CoordinatorStatReportor implements Runnable{
 		while(true){			
 			ThreadUtil.sleep(checkStatIntervalMS);
 			long currentTimestampNS=System.nanoTime();
-			if( currentTimestampNS - lastSendTimestampNS > sendIntervalNS){
+			if( currentTimestampNS - lastSendTimestampNS >= sendIntervalNS){
 				coordinator.lockContainerMap();
 				if(coordinator.costEval.containerStatMap.size() >= coordinator.containerIdMap.size()){
 					refreshGlobalStat();
