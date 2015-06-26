@@ -171,8 +171,12 @@ public class CostEvaluator {
 		smoothenWorkerStat(allWorkerStatMap, ws);
 		
 		ws.getInsStatsLock().lock();
+		log.debug("before containerStatMap.put(WorkerStat[workerId=%s])",ws.getId());
 		for(InstanceStat insStat: ws.insStats){
-			containerStatMap.put(insStat.uniqueName, insStat);
+			InstanceStat lastStat=containerStatMap.put(insStat.uniqueName, insStat);
+			if(lastStat==null){
+				log.debug("add new InstanceStat: workerId=%s, uniqueName=%s", ws.getId(), insStat.getUniqueName());
+			}
 			DerivedStreamContainer psc=containerNameMap.get(insStat.uniqueName);
 			updateContainerStat(psc, insStat);
 		}
