@@ -1,9 +1,14 @@
 package dist.esper.core.worker;
 
+import com.esotericsoftware.minlog.Log;
+
+import dist.esper.core.comm.Link;
 import dist.esper.core.cost.WorkerStat;
+import dist.esper.util.Logger2;
 import dist.esper.util.ThreadUtil;
 
 class WorkerStatReportor implements Runnable{
+	static Logger2 log=Logger2.getLogger(Link.class);
 	public long sendIntervalNS;
 	public long updateStatIntervalMS;
 	
@@ -28,8 +33,9 @@ class WorkerStatReportor implements Runnable{
 			
 			long currentTimestampNS=System.nanoTime();
 			if( currentTimestampNS - lastSendTimestampNS > sendIntervalNS){				
-				WorkerStat ws=worker.workerStatCollector.getCurrentWorkerStat();
+				WorkerStat ws=worker.workerStatCollector.getCurrentWorkerStat();				
 				worker.coordLink.send(ws);
+				log.debug("send WorkerStat to Coordinator");
 				lastSendTimestampNS = currentTimestampNS;
 			}
 		}
