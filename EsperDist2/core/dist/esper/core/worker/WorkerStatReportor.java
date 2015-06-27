@@ -15,7 +15,7 @@ class WorkerStatReportor implements Runnable{
 	Worker worker;
 	
 	public WorkerStatReportor(Worker worker){
-		this(worker, 3000, 600);
+		this(worker, 3000, 3000);
 	}
 	public WorkerStatReportor(Worker worker, long sendIntervalMS, long updateStatIntervalMS) {
 		super();
@@ -33,7 +33,7 @@ class WorkerStatReportor implements Runnable{
 			
 			log.debug("WorkerStatReportor wake up");
 			long currentTimestampNS=System.nanoTime();
-			if( currentTimestampNS - lastSendTimestampNS > sendIntervalNS){				
+			if( currentTimestampNS - lastSendTimestampNS >= sendIntervalNS){				
 				WorkerStat ws=worker.workerStatCollector.getCurrentWorkerStat();				
 				worker.coordLink.send(ws);
 				log.debug("WorkerStatReportor send WorkerStat to Coordinator: insStats.count=%d, rawStats.count=%d", 
