@@ -170,4 +170,7 @@ public class QueryGeneratorMain3 {
 				nodeParams[0].equalRatio, nodeParams[0].implyRatio, true);
 	}
 	*/
+	public static List<EventInstanceGenerator> getEventInstanceGenerators(){
+		return Arrays.asList(eigs);
+	}
 }

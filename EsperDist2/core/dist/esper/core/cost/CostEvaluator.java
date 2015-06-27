@@ -417,6 +417,9 @@ public class CostEvaluator {
 //	}
 	
 	public int chooseBestIndex(List<DeltaResourceUsage> druList){
+		if(druList.size()==0){
+			throw new RuntimeException("druList.size()=0");
+		}
 		if(planSelectionStrategy==PlanSelectionStrategy.RANDOM){
 			Random rand=new Random();
 			return rand.nextInt(druList.size());

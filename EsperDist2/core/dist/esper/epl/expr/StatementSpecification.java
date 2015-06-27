@@ -153,25 +153,25 @@ public class StatementSpecification extends AbstractClause{
 			BooleanExpressionClause whereClause=null;
 			BooleanExpressionClause havingClause=null;
 			
-			log.info("-- patternStream or filterStream ---");
+			//log.info("-- patternStream or filterStream ---");
 			fromClause=FromClause.Factory.make(som.getFromClause());
 			
-			log.info("-- select ---");
+			//log.info("-- select ---");
 			selectClause=SelectClause.Factory.make(som.getSelectClause());
 			if(som.getWhereClause()!=null){
-				log.info("-- where ---");
+				//log.info("-- where ---");
 				whereClause=BooleanExpressionClause.Factory.make(som.getWhereClause(), "where");
 			}
 			if(som.getGroupByClause()!=null){
-				log.info("-- group by ---");
+				//log.info("-- group by ---");
 				groupByClause=GroupByClause.Factory.make(som.getGroupByClause());
 			}
 			if(som.getHavingClause()!=null){
-				log.info("-- having ---");
+				//log.info("-- having ---");
 				havingClause=BooleanExpressionClause.Factory.make(som.getHavingClause(), "having");
 			}
 			if(som.getOrderByClause()!=null){
-				log.info("-- order by ---");
+				//log.info("-- order by ---");
 				orderByClause=OrderByClause.Factory.make(som.getOrderByClause());
 			}
 			if(som.getRowLimitClause()!=null){				

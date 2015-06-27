@@ -31,7 +31,7 @@ class WorkerStatReportor implements Runnable{
 			ThreadUtil.sleep(updateStatIntervalMS);
 			//worker.workerStatCollector.updateCPUAndMem();
 			
-			log.debug("WorkerStatReportor wake up");
+			//log.debug("WorkerStatReportor wake up");
 			long currentTimestampNS=System.nanoTime();
 			if( currentTimestampNS - lastSendTimestampNS >= sendIntervalNS){				
 				WorkerStat ws=worker.workerStatCollector.getCurrentWorkerStat();				

@@ -16,6 +16,7 @@ import dist.esper.event.EventRegistry;
 import dist.esper.experiment.EventGeneratorFactory;
 import dist.esper.experiment.QueryGeneratorMain;
 import dist.esper.experiment.util.MultiLineFileWriter;
+import dist.esper.experiment2.QueryGeneratorMain3;
 import dist.esper.external.Spout;
 import dist.esper.external.event.EventInstanceGenerator;
 import dist.esper.external.event.FieldGenerator;
@@ -32,6 +33,7 @@ public class TestSimulation3 {
 	List<Worker> workerList=new ArrayList<Worker>();
 	List<Spout> spoutList=new ArrayList<Spout>();
 	Coordinator coord=null;
+	String queriesFilePath="query/queries2_filter-join_0010_0.25_0.50.txt";
 	
 	public static void main(String[] args){
 		TestSimulation3 sim=new TestSimulation3();
@@ -71,7 +73,7 @@ public class TestSimulation3 {
 			w.init();
 		}
 		
-		eventGenList=QueryGeneratorMain.genEventInstanceGenerators();
+		eventGenList=QueryGeneratorMain3.getEventInstanceGenerators();
 		for(int i=0;i<eventGenList.size();i++){
 			String id="spout"+(i+1);
 			WorkerId spoutId=new WorkerId(id,"127.0.0.1",2001+i);
@@ -84,8 +86,7 @@ public class TestSimulation3 {
 		}
 	}
 	
-	public void run() throws Exception{
-		String queriesFilePath="query/queries.txt";
+	public void run() throws Exception{		
 		List<String> queryList=MultiLineFileWriter.readFromFile(queriesFilePath);
 		log.info("read %d queries from %s", queryList.size(), queriesFilePath);
 		

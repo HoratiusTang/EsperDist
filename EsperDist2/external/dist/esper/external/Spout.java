@@ -31,7 +31,7 @@ public class Spout {
 	Map<String,Publisher> pubMap=new ConcurrentHashMap<String,Publisher>();
 	NewLinkHandler newLinkHandler=new NewLinkHandler();
 	LinkHandler linkHandler=new LinkHandler();
-	int batchCount=20;
+	int batchCount=10;
 	long sendIntervalMS=1000;
 	
 	class NewLinkHandler implements LinkManager.NewLinkListener{		

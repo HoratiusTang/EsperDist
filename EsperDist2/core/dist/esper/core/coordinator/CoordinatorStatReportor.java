@@ -17,6 +17,7 @@ public class CoordinatorStatReportor implements Runnable{
 	Map<String, DerivedStreamContainer> containerNameMap=new TreeMap<String, DerivedStreamContainer>();
 	Map<Long, DerivedStreamContainer> containerIdMap=new TreeMap<Long, DerivedStreamContainer>();
 	GlobalStat gs=new GlobalStat();
+	boolean sendAlways=false;
 	
 	Coordinator coordinator;
 	public CoordinatorStatReportor(Coordinator coordinator){
@@ -40,7 +41,7 @@ public class CoordinatorStatReportor implements Runnable{
 			long currentTimestampNS=System.nanoTime();
 			if( currentTimestampNS - lastSendTimestampNS >= sendIntervalNS){
 				coordinator.lockContainerMap();
-				if(coordinator.costEval.containerStatMap.size() >= coordinator.containerIdMap.size()){
+				if(sendAlways || coordinator.costEval.containerStatMap.size() >= coordinator.containerIdMap.size()){
 					refreshGlobalStat();
 					coordinator.unlockContainerMap();
 					sendGlobatStatToMonitors();
