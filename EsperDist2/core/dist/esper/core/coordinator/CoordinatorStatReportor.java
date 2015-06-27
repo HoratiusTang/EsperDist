@@ -17,7 +17,7 @@ public class CoordinatorStatReportor implements Runnable{
 	Map<String, DerivedStreamContainer> containerNameMap=new TreeMap<String, DerivedStreamContainer>();
 	Map<Long, DerivedStreamContainer> containerIdMap=new TreeMap<Long, DerivedStreamContainer>();
 	GlobalStat gs=new GlobalStat();
-	boolean sendAlways=false;
+	boolean sendAlways=true;
 	
 	Coordinator coordinator;
 	public CoordinatorStatReportor(Coordinator coordinator){
